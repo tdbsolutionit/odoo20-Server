@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Nhóm quyền tối cao DUY NHẤT dành cho tài khoản Admin gốc (id: 2) -->
+    <record id="group_plm_desktop_token_boss" model="res.groups">
+        <field name="name">PLM - Quản lý Desktop Access Tokens (Chỉ Sếp Admin)</field>
+        <field name="user_ids" eval="[(6, 0, [ref('base.user_admin'), ref('base.user_root')])]"/>
+    </record>
+</odoo>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- 1. Kế thừa web.NavBar để thêm lớp phủ màn hình chính Home Menu -->
+    <t t-inherit="web.NavBar" t-inherit-mode="extension">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-att-class">{'o_navbar_home_menu_active': this.state.isHomeMenuOpened}</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_menu_systray')]" position="before">
+            <!-- Nút chuyển đổi nhanh ngôn ngữ EN | VI -->
+            <div class="o_tdb_lang_switcher d-flex align-items-center me-3 user-select-none">
+                <div class="tdb-lang-pill" role="group" aria-label="Chuyển đổi ngôn ngữ">
+                    <button type="button"
+                            class="tdb-lang-btn"
+                            t-att-class="{'active': this.currentLanguage === 'VI'}"
+                            t-on-click="() => this.switchLanguage('VI')"
+                            title="Đang dùng / Chuyển sang Tiếng Việt">
+                        <span class="tdb-lang-flag">🇻🇳</span>
+                        <span class="tdb-lang-text">VI</span>
+                        <t t-if="this.currentLanguage === 'VI'">
+                            <span class="tdb-active-indicator" title="Đang kích hoạt">●</span>
+                        </t>
+                    </button>
+                    <button type="button"
+                            class="tdb-lang-btn"
+                            t-att-class="{'active': this.currentLanguage === 'EN'}"
+                            t-on-click="() => this.switchLanguage('EN')"
+                            title="Active / Switch to English">
+                        <span class="tdb-lang-flag">🇬🇧</span>
+                        <span class="tdb-lang-text">EN</span>
+                        <t t-if="this.currentLanguage === 'EN'">
+                            <span class="tdb-active-indicator" title="Currently Active">●</span>
+                        </t>
+                    </button>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//nav" position="after">
+            <t t-if="this.state.isHomeMenuOpened">
+                <div class="o_home_menu_overlay" t-on-click.self="() => this.toggleHomeMenu(false)">
+                    <div class="o_home_menu_container">
+                        <!-- Hộp tìm kiếm -->
+                        <div class="o_home_menu_search_box">
+                            <i class="oi me-2 text-white-50" data-icon="search"/>
+                            <input type="text"
+                                   id="o_home_menu_search_input"
+                                   name="search_apps"
+                                   autocomplete="off"
+                                   class="o_home_menu_search_input"
+                                   t-att-placeholder="this.currentLanguage === 'EN' ? 'Search apps...' : 'Tìm kiếm ứng dụng...'"
+                                   t-att-value="this.state.searchQuery"
+                                   t-on-input="(ev) => { this.state.searchQuery = ev.target.value; }"
+                                   t-on-keydown="(ev) => this.onSearchKeyDown(ev)"/>
+                            <i t-if="this.state.searchQuery"
+                               class="oi ms-2 text-white-50 cursor-pointer"
+                               data-icon="close"
+                               t-on-click="() => { this.state.searchQuery = ''; }"/>
+                        </div>
+
+                        <!-- Lưới ứng dụng -->
+                        <div class="o_home_menu_apps_grid">
+                            <t t-foreach="this.displayedApps" t-as="app" t-key="app.id">
+                                <a class="o_home_menu_app_card"
+                                   t-att-title="app.name"
+                                   t-att-href="this.getMenuItemHref(app)"
+                                   t-on-click.prevent="() => this.onAppClick(app)">
+                                    <div class="o_home_menu_app_icon_wrapper">
+                                        <img class="o_home_menu_app_icon"
+                                             t-att-src="this.getAppIcon(app)"
+                                             t-att-alt="app.name"
+                                             onerror="this.onerror=null;this.src='/web/static/img/default_icon_app.png';"/>
+                                    </div>
+                                    <div class="o_home_menu_app_name">
+                                        <t t-out="app.name"/>
+                                    </div>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+    <!-- 2. Kế thừa web.NavBar.AppsMenu để đổi nút thành nút 9 chấm và hiển thị ngày giờ bên trái khi mở Home Menu -->
+    <t t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_navbar_apps_menu')]" position="replace">
+            <div t-if="!this.isScopedApp" class="o_navbar_apps_menu d-flex align-items-center">
+                <button class="o_home_menu_toggle_btn btn btn-link text-reset border-0 shadow-none d-flex align-items-center justify-content-center p-2"
+                        data-hotkey="h"
+                        title="Home Menu"
+                        data-available-offline=""
+                        t-on-click="() => this.toggleHomeMenu()">
+                    <t t-if="this.state.isHomeMenuOpened">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </t>
+                    <t t-else="">
+                        <i class="oi fs-5" data-icon="apps"/>
+                    </t>
+                </button>
+                <div t-if="this.state.isHomeMenuOpened"
+                     class="o_home_menu_datetime d-flex align-items-center text-white ms-2 user-select-none"
+                     title="Ngày giờ hệ thống">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-white-50">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span class="o_home_menu_datetime_text">
+                        <t t-out="this.state.currentDateTime"/>
+                    </span>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+    <!-- 3. Kế thừa web.SearchBar để chuẩn hóa thuộc tính cho thanh tìm kiếm toàn hệ thống -->
+    <t t-inherit="web.SearchBar" t-inherit-mode="extension">
+        <xpath expr="//input[hasclass('o_searchview_input')]" position="attributes">
+            <attribute name="name">search</attribute>
+            <attribute name="id">o_searchview_input</attribute>
+            <attribute name="aria-label">Tìm kiếm</attribute>
+            <attribute name="autocomplete">off</attribute>
+        </xpath>
+    </t>
+
+</templates>

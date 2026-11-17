@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View: CAD Desktop Access Tokens -->
+    <record id="plm_desktop_token_view_list" model="ir.ui.view">
+        <field name="name">plm.desktop.token.list</field>
+        <field name="model">plm.desktop.token</field>
+        <field name="arch" type="xml">
+            <list string="Desktop Access Tokens"
+                  create="false"
+                  delete="false"
+                  edit="false"
+                  decoration-success="state == 'active'"
+                  decoration-danger="state == 'revoked'"
+                  decoration-warning="state == 'expired'">
+                <field name="is_current_user_admin" column_invisible="1"/>
+                <field name="user_id" widget="many2one_avatar_user" string="CAD Engineer"/>
+                <field name="machine_name" string="Workstation"/>
+                <field name="client_ip" string="IP Address"/>
+                <field name="cad_version" string="CAD Version"/>
+                <field name="issued_at" string="Issued At"/>
+                <field name="expires_at" string="Expires At"/>
+                <field name="last_used_date" string="Last Used"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-danger="state == 'revoked'"
+                       decoration-warning="state == 'expired'"
+                       string="Status"/>
+                <!-- Action Buttons: Admin only -->
+                <button name="action_revoke"
+                        type="object"
+                        string="Revoke"
+                        class="btn-danger btn-sm"
+                        invisible="state != 'active' or not is_current_user_admin"
+                        confirm="Are you sure you want to revoke CAD access for this workstation?"/>
+                <button name="action_set_expired_test"
+                        type="object"
+                        string="Test Expired"
+                        class="btn-warning btn-sm"
+                        invisible="state != 'active' or not is_current_user_admin"
+                        confirm="Set token to EXPIRED to test 180-day expiration check?"/>
+                <button name="action_unrevoke"
+                        type="object"
+                        string="Restore Access"
+                        class="btn-success btn-sm"
+                        invisible="state != 'revoked' or not is_current_user_admin"/>
+                <button name="action_renew_180_days"
+                        type="object"
+                        string="Renew 180 Days"
+                        class="btn-primary btn-sm"
+                        invisible="state != 'expired' or not is_current_user_admin"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View: CAD Desktop Access Token -->
+    <record id="plm_desktop_token_view_form" model="ir.ui.view">
+        <field name="name">plm.desktop.token.form</field>
+        <field name="model">plm.desktop.token</field>
+        <field name="arch" type="xml">
+            <form string="Desktop Access Token" create="false" delete="false">
+                <header>
+                    <field name="is_current_user_admin" invisible="1"/>
+                    <button name="action_revoke"
+                            type="object"
+                            string="Revoke Access"
+                            class="btn-danger"
+                            invisible="state != 'active' or not is_current_user_admin"
+                            confirm="Are you sure you want to revoke and disconnect this CAD workstation?"/>
+                    <button name="action_set_expired_test"
+                            type="object"
+                            string="Test Expired"
+                            class="btn-warning"
+                            invisible="state != 'active' or not is_current_user_admin"
+                            confirm="Set token to EXPIRED to test 180-day expiration check?"/>
+                    <button name="action_unrevoke"
+                            type="object"
+                            string="Restore Access"
+                            class="btn-success"
+                            invisible="state != 'revoked' or not is_current_user_admin"/>
+                    <button name="action_renew_180_days"
+                            type="object"
+                            string="Renew 180 Days"
+                            class="btn-primary"
+                            invisible="state != 'expired' or not is_current_user_admin"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'active'"
+                           decoration-danger="state == 'revoked'"
+                           decoration-warning="state == 'expired'"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="machine_name" string="Workstation Name"/>
+                        <h1>
+                            <field name="machine_name" placeholder="e.g. WS-CAD-01"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Device &amp; Engineer Information">
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="machine_uuid"/>
+                            <field name="cad_version"/>
+                            <field name="client_ip"/>
+                        </group>
+                        <group string="Validity &amp; Status">
+                            <field name="issued_at"/>
+                            <field name="expires_at"/>
+                            <field name="last_used_date"/>
+                            <field name="is_revoked"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Technical Parameters &amp; Session" groups="base.group_no_one,base.group_system">
+                            <group>
+                                <field name="name" string="Token Hash"/>
+                                <field name="session_id" string="Session SID"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="plm_desktop_token_view_search" model="ir.ui.view">
+        <field name="name">plm.desktop.token.search</field>
+        <field name="model">plm.desktop.token</field>
+        <field name="arch" type="xml">
+            <search string="Search Desktop Tokens">
+                <field name="user_id"/>
+                <field name="machine_name"/>
+                <field name="client_ip"/>
+                <field name="cad_version"/>
+                <filter name="filter_active" string="Active" domain="[('state', '=', 'active')]"/>
+                <filter name="filter_revoked" string="Revoked" domain="[('state', '=', 'revoked')]"/>
+                <filter name="filter_expired" string="Expired" domain="[('state', '=', 'expired')]"/>
+                <group>
+                    <filter name="group_user" string="Engineer" domain="[]" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_cad" string="CAD Version" domain="[]" context="{'group_by': 'cad_version'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Desktop Tokens -->
+    <record id="action_plm_desktop_token" model="ir.actions.act_window">
+        <field name="name">Desktop Access Tokens</field>
+        <field name="res_model">plm.desktop.token</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No CAD workstation connected yet.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menuitem trên Top Bar PLM: Hiển thị trực tiếp cho Sếp Admin, ẩn hoàn toàn với Kỹ sư -->
+    <menuitem id="menu_plm_desktop_token_top"
+              name="Desktop Access Tokens"
+              parent="plm.plm_menu"
+              action="action_plm_desktop_token"
+              groups="tdb_plm_custom.group_plm_desktop_token_boss"
+              sequence="90"/>
+
+    <!-- Menuitem phụ trong PLM ➔ Cấu hình: Chỉ duy nhất Sếp Admin -->
+    <menuitem id="menu_plm_desktop_token"
+              name="Desktop Access Tokens"
+              parent="plm.plm_menu_dictionaries"
+              action="action_plm_desktop_token"
+              groups="tdb_plm_custom.group_plm_desktop_token_boss"
+              sequence="90"/>
+</odoo>

@@ -1,0 +1,124 @@
+// =============================================================================
+// TDB SOLUTION - PHÂN TẦNG SCSS 3: TABLE HEADER ALIGNMENT
+// Căn lề chuẩn hóa, đồng đều giao diện phân hệ PLM (100% không bị cắt chữ)
+// Để Odoo MagicColumnWidths tự động phân bổ tỷ lệ vừa khít màn hình
+// =============================================================================
+
+.tdb_plm_list_view table.o_list_table,
+div.o_view_controller.tdb_plm_list_view table.o_list_table {
+    thead {
+        // Cấu hình chung cho sortable header
+        th.o_column_sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        // =====================================================================
+        // NHÓM 1: CÁC CỘT CĂN GIỮA (CENTER ALIGNED HEADERS)
+        // =====================================================================
+
+        // 0. Checkbox chọn dòng
+        th.o_list_record_selector {
+            text-align: center !important;
+        }
+
+        // 1. Cột Hình ảnh (Image)
+        th[data-name="image_1920"],
+        th[data-name="preview"],
+        th[data-name="preview_related"] {
+            text-align: center !important;
+
+            .o_column_sortable,
+            .d-flex {
+                justify-content: center !important;
+                text-align: center !important;
+            }
+
+            span,
+            .o_column_title,
+            .text-truncate {
+                text-align: center !important;
+            }
+        }
+
+        // 5. Cột Phiên bản (Revision)
+        th[data-name="engineering_revision"] {
+            text-align: center !important;
+
+            .o_column_sortable,
+            .d-flex {
+                justify-content: center !important;
+                text-align: center !important;
+            }
+
+            span,
+            .o_column_title,
+            .text-truncate {
+                text-align: center !important;
+            }
+        }
+
+        // 6. Cột Trạng thái kỹ thuật (Engineering Status)
+        th[data-name="engineering_state"] {
+            text-align: center !important;
+
+            .o_column_sortable,
+            .d-flex {
+                justify-content: center !important;
+                text-align: center !important;
+            }
+
+            span,
+            .o_column_title,
+            .text-truncate {
+                text-align: center !important;
+            }
+        }
+
+        // 8. Cột Có thể chỉnh sửa (Writable)
+        th[data-name="engineering_writable"] {
+            text-align: center !important;
+
+            .o_column_sortable,
+            .d-flex {
+                justify-content: center !important;
+                text-align: center !important;
+            }
+
+            span,
+            .o_column_title,
+            .text-truncate {
+                text-align: center !important;
+            }
+        }
+
+        // =====================================================================
+        // NHÓM 2: CÁC CỘT CĂN TRÁI (LEFT ALIGNED HEADERS)
+        // =====================================================================
+
+        th[data-name="name"],
+        th[data-name="configuration_name"],
+        th[data-name="engineering_code"],
+        th[data-name="default_code"],
+        th[data-name="description"],
+        th[data-name="engineering_material"],
+        th[data-name="engineering_surface"],
+        th[data-name="linkeddocuments"],
+        th[data-name="document_checkout_user_ids"],
+        th[data-name="checkout_user"] {
+            text-align: left !important;
+
+            .o_column_sortable,
+            .d-flex {
+                justify-content: flex-start !important;
+                text-align: left !important;
+            }
+
+            span,
+            .o_column_title,
+            .text-truncate {
+                text-align: left !important;
+            }
+        }
+    }
+}

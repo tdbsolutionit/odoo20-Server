@@ -1,0 +1,486 @@
+# -*- coding: utf-8 -*-
+# Copyright 2026 TDB Solution Co., Ltd.
+"""
+Phân hệ OdooPLM - Quản lý File History (Lịch sử phiên bản tệp CAD):
+1. Tự động lưu snapshot phiên bản cũ của tài liệu trước khi nội dung tệp (datas) bị ghi đè.
+2. Đảm bảo tính bất biến (Immutability): Chặn mọi hành vi sửa đổi nội dung tệp hay thông tin lịch sử.
+3. Chỉ Quản trị viên PLM hoặc Quản trị hệ thống mới có quyền xóa bản ghi lịch sử.
+4. Cung cấp action tải về trực tiếp file snapshot của từng phiên bản cũ.
+5. Khôi phục phiên bản (Version Restore):
+   - Cơ chế bảo vệ 2 lớp: Quyền giữ Key cục bộ và bảo vệ Cụm máy cha (Where-Used Protection).
+   - Cơ chế khôi phục bất biến (Append-Only Rollback): Sinh phiên bản tiếp theo mang nội dung cũ mà không mất lịch sử.
+   - Ghi nhận nhật ký kiểm toán (Audit Trail) vào Chatter và thông báo Client Action.
+"""
+import os
+import re
+import base64
+import logging
+from markupsafe import Markup
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
+
+
+class PlmDocumentHistory(models.Model):
+    _name = "plm.document.history"
+    _description = "Lịch sử phiên bản tệp tài liệu PLM"
+    _order = "version_number desc, id desc"
+    _rec_name = "version"
+
+    document_id = fields.Many2one(
+        "ir.attachment",
+        string="Document",
+        required=True,
+        ondelete="cascade",
+        index=True,
+        readonly=True,
+        help="Technical / CAD document associated with this version."
+    )
+    version = fields.Char(
+        string="Version",
+        required=True,
+        readonly=True,
+        index=True,
+        help="Version symbol (e.g. v1, v2, ...)."
+    )
+    version_number = fields.Integer(
+        string="Version Number",
+        default=1,
+        readonly=True,
+        index=True,
+        help="Sequential integer version number."
+    )
+    datas = fields.Binary(
+        string="File Content",
+        attachment=True,
+        readonly=True,
+        help="File binary data of this snapshot version."
+    )
+    file_name = fields.Char(
+        string="File Name",
+        readonly=True,
+        help="Attachment file name at the time of snapshot."
+    )
+    file_size = fields.Integer(
+        string="File Size (Bytes)",
+        readonly=True,
+        help="File size in bytes."
+    )
+    file_size_display = fields.Char(
+        string="Size",
+        compute="_compute_file_size_display",
+        store=False,
+        help="Human readable file size."
+    )
+    user_id = fields.Many2one(
+        "res.users",
+        string="User",
+        readonly=True,
+        default=lambda self: self.env.user,
+        help="User who created this version."
+    )
+    create_date = fields.Datetime(
+        string="Date",
+        readonly=True,
+        help="Timestamp when this version was created."
+    )
+    description = fields.Text(
+        string="Note",
+        help="Note or reason for this version."
+    )
+
+    @api.depends("file_size")
+    def _compute_file_size_display(self):
+        """Tính toán định dạng dung lượng thân thiện cho người dùng."""
+        for rec in self:
+            size = rec.file_size or 0
+            if size < 1024:
+                rec.file_size_display = f"{size} B"
+            elif size < 1024 * 1024:
+                rec.file_size_display = f"{size / 1024:.1f} KB"
+            else:
+                rec.file_size_display = f"{size / (1024 * 1024):.2f} MB"
+
+    def write(self, vals):
+        """Bảo vệ tính bất biến (Immutability):
+        Chặn tuyệt đối mọi hành vi chỉnh sửa nội dung tệp hay thông tin lịch sử.
+        Chỉ cho phép cập nhật ghi chú (description) hoặc chạy cơ chế đồng bộ dữ liệu hệ thống (skip_immutability).
+        """
+        allowed_fields = {"description"}
+        if not self.env.context.get("skip_immutability") and any(field not in allowed_fields for field in vals.keys()):
+            raise UserError(
+                _("Lịch sử phiên bản tệp có tính bất biến nhằm đảm bảo tính toàn vẹn kỹ thuật, không thể chỉnh sửa.")
+            )
+        return super().write(vals)
+
+    def unlink(self):
+        """Bảo vệ lịch sử: Chỉ Quản trị viên PLM hoặc Quản trị hệ thống mới có quyền xóa."""
+        is_admin = self.env.user.has_group("plm.group_plm_admin") or self.env.user.has_group("base.group_system")
+        if not is_admin:
+            raise UserError(_("Chỉ Quản trị viên PLM mới có quyền xóa bản ghi lịch sử phiên bản tài liệu."))
+        return super().unlink()
+
+    def init(self):
+        """Khởi tạo bảng và tự động chuẩn hóa tên tệp, ghi chú và khôi phục dữ liệu cho các bản ghi cũ."""
+        super().init()
+        self._fix_existing_history_records()
+
+    @api.model
+    def _read_attachment_bytes(self, att):
+        """Đọc toàn diện dữ liệu nhị phân (raw bytes) của một bản ghi ir.attachment:
+        1. Stream qua ir.binary (chuẩn Odoo 18).
+        2. Đọc trực tiếp từ trường raw hoặc db_datas.
+        3. Đọc từ file vật lý trên ổ đĩa qua store_fname (dùng _full_path hoặc _get_filestore).
+        4. Đọc từ bảng backup OdooPLM (plm.backupdoc / plm.backup.document).
+        """
+        if not att:
+            return b""
+
+        # 1. Thử stream qua ir.binary
+        try:
+            stream = self.env['ir.binary']._get_stream_from(att, field_name='raw')
+            if stream and getattr(stream, 'size', 0) > 0:
+                data = getattr(stream, 'data', None)
+                if data:
+                    return bytes(data)
+                if hasattr(stream, 'read'):
+                    read_bytes = stream.read()
+                    if read_bytes:
+                        return bytes(read_bytes)
+        except Exception:
+            pass
+
+        # 2. Đọc trực tiếp từ att.raw
+        try:
+            raw_val = getattr(att, 'raw', None)
+            if raw_val:
+                raw_bytes = bytes(raw_val)
+                if raw_bytes.startswith(b'UEsDB') or raw_bytes.startswith(b'0M8R4'):
+                    try:
+                        return base64.b64decode(raw_bytes)
+                    except Exception:
+                        pass
+                return raw_bytes
+        except Exception:
+            pass
+
+        # 3. Đọc từ file vật lý trên ổ đĩa qua store_fname
+        try:
+            if att.store_fname:
+                candidate_paths = []
+                if hasattr(att, '_full_path'):
+                    try:
+                        candidate_paths.append(att._full_path(att.store_fname))
+                    except Exception:
+                        pass
+                filestore = att._get_filestore() if hasattr(att, '_get_filestore') else ''
+                if filestore:
+                    candidate_paths.append(os.path.join(filestore, att.store_fname))
+                for cp in candidate_paths:
+                    if cp and os.path.isfile(cp):
+                        with open(cp, 'rb') as f:
+                            content = f.read()
+                        if content:
+                            return content
+        except Exception:
+            pass
+
+        # 4. Đọc db_datas
+        try:
+            db_d = getattr(att, 'db_datas', None)
+            if db_d:
+                if isinstance(db_d, (bytes, bytearray)):
+                    try:
+                        return base64.b64decode(db_d)
+                    except Exception:
+                        return bytes(db_d)
+                elif isinstance(db_d, str):
+                    try:
+                        return base64.b64decode(db_d.strip())
+                    except Exception:
+                        return db_d.encode('latin1')
+        except Exception:
+            pass
+
+        # 5. Đọc att.datas (nếu có)
+        try:
+            if hasattr(att, 'datas') and att.datas:
+                d_val = att.datas
+                if isinstance(d_val, str):
+                    try:
+                        return base64.b64decode(d_val.strip())
+                    except Exception:
+                        return d_val.encode('latin1')
+                elif isinstance(d_val, (bytes, bytearray)):
+                    try:
+                        return base64.b64decode(d_val)
+                    except Exception:
+                        return bytes(d_val)
+        except Exception:
+            pass
+
+        # 6. Tìm trong bảng backup của OdooPLM
+        try:
+            BackupModel = self.env.get('plm.backupdoc') or self.env.get('plm.backup.document')
+            if BackupModel is not None:
+                bcks = BackupModel.sudo().search([('documentid', '=', att.id)], order='id desc')
+                filestore = att._get_filestore() if hasattr(att, '_get_filestore') else ''
+                for bck in bcks:
+                    fname = getattr(bck, 'existingfile', None)
+                    if fname and filestore:
+                        bp = os.path.join(filestore, fname)
+                        if os.path.isfile(bp):
+                            with open(bp, 'rb') as f:
+                                content = f.read()
+                            if content:
+                                return content
+        except Exception:
+            pass
+
+        return b""
+
+    @api.model
+    def _fix_existing_history_records(self):
+        """Tự động chuẩn hóa lại tên file, ghi chú nghiệp vụ và khôi phục dữ liệu tệp cho các bản ghi lịch sử cũ."""
+        try:
+            # 1. Chuẩn hóa tên file
+            records = self.sudo().search([])
+            for rec in records:
+                clean_name = rec.get_clean_filename()
+                if clean_name and clean_name != rec.file_name:
+                    self.env.cr.execute(
+                        "UPDATE plm_document_history SET file_name = %s WHERE id = %s",
+                        (clean_name, rec.id)
+                    )
+
+            # 2. Thay thế các thuật ngữ snapshot khó hiểu bằng ngôn ngữ kỹ thuật cơ khí rõ ràng
+            self.env.cr.execute("""
+                UPDATE plm_document_history
+                SET description = REPLACE(description, 'Snapshot lưu tại thời điểm Check-in từ SolidWorks CAD', 'Check-in từ SolidWorks CAD')
+                WHERE description LIKE '%Snapshot lưu tại thời điểm Check-in từ SolidWorks CAD%';
+
+                UPDATE plm_document_history
+                SET description = REPLACE(description, 'Snapshot lưu tại thời điểm Check-in', 'Lưu khi Check-in bản vẽ')
+                WHERE description LIKE '%Snapshot lưu tại thời điểm Check-in%';
+
+                UPDATE plm_document_history
+                SET description = REPLACE(description, 'Snapshot lưu trước khi chuyển giao Key cho', 'Lưu dự phòng trước khi chuyển Key cho')
+                WHERE description LIKE '%Snapshot lưu trước khi chuyển giao Key cho%';
+
+                UPDATE plm_document_history
+                SET description = REPLACE(description, 'Tự động lưu snapshot trước khi cập nhật file mới', 'Lưu bản vẽ trước khi cập nhật')
+                WHERE description LIKE '%Tự động lưu snapshot trước khi cập nhật file mới%';
+
+                UPDATE plm_document_history
+                SET description = REPLACE(description, 'Snapshot', 'Bản vẽ')
+                WHERE description LIKE '%Snapshot%';
+            """)
+
+            # 3. Khôi phục dữ liệu tệp (datas) cho các bản ghi lịch sử bị thiếu
+            for h in records:
+                if not h.datas:
+                    raw_b = h.get_raw_data()
+                    if raw_b:
+                        try:
+                            h.with_context(skip_immutability=True).write({
+                                'datas': base64.b64encode(raw_b).decode()
+                            })
+                        except Exception as e_backfill:
+                            _logger.debug(f"[TDB PLM] Backfill datas for history ID {h.id}: {e_backfill}")
+        except Exception as e:
+            _logger.debug(f"[TDB PLM] Tự động chuẩn hóa bản ghi lịch sử: {e}")
+
+    def get_raw_data(self):
+        """Lấy dữ liệu nhị phân nguyên bản (bytes) của tệp snapshot qua nhiều tầng phục hồi."""
+        self.ensure_one()
+        rec = self.sudo()
+
+        # 1. Thử đọc trực tiếp từ trường datas của bản ghi lịch sử
+        if rec.datas:
+            val = rec.datas
+            if isinstance(val, (bytes, bytearray)):
+                try:
+                    decoded = base64.b64decode(val, validate=True)
+                    if decoded:
+                        return decoded
+                except Exception:
+                    pass
+                return bytes(val)
+            elif isinstance(val, str):
+                try:
+                    return base64.b64decode(val.strip(), validate=True)
+                except Exception:
+                    return val.encode('latin1')
+
+        # 2. Tìm trong ir.attachment liên kết trường binary của plm.document.history
+        att = self.env['ir.attachment'].sudo().search([
+            ('res_model', '=', self._name),
+            ('res_id', '=', self.id),
+        ], limit=1)
+        if att:
+            b_data = self._read_attachment_bytes(att)
+            if b_data:
+                return b_data
+
+        # 3. Fallback lấy file từ tài liệu gốc document_id
+        if self.document_id:
+            doc = self.document_id.sudo()
+            b_data = self._read_attachment_bytes(doc)
+            if b_data:
+                return b_data
+
+        return b""
+
+    def get_clean_filename(self):
+        """Xác định tên tệp tải về có tên tài liệu và phần mở rộng CAD chuẩn xác (không bị SOLIDWORKS.xxx hay .bin)."""
+        self.ensure_one()
+        doc = self.document_id
+
+        # 1. Xác định tên gốc: Ưu tiên doc.name hoặc doc.engineering_code, loại bỏ hoàn toàn tiền tố SOLIDWORKS.xxx
+        raw_name = ""
+        fn = self.file_name or ""
+        fn_upper = fn.upper()
+        if fn and not fn_upper.startswith("SOLIDWORKS.") and not fn_upper.startswith("INVENTOR.") and not fn_upper.startswith("AUTOCAD."):
+            raw_name = fn
+        elif doc:
+            raw_name = doc.name or doc.engineering_code or f"document_{self.version}"
+        else:
+            raw_name = f"document_{self.version}"
+
+        # 2. Xử lý trường hợp có slash '/' (ví dụ 'yfi-000006/SLDASM' -> 'yfi-000006.sldasm')
+        if "/" in raw_name:
+            base, ext = raw_name.rsplit("/", 1)
+            raw_name = f"{base}.{ext.lower()}"
+
+        # 3. Kiểm tra nếu chưa có đuôi mở rộng, tìm từ doc.name hoặc getFileExtension
+        base, ext = os.path.splitext(raw_name)
+        if not ext and doc:
+            if doc.name and "/" in doc.name:
+                ext = "." + doc.name.rsplit("/", 1)[1].lower()
+            elif doc.name and "." in doc.name:
+                ext = "." + doc.name.rsplit(".", 1)[1]
+            elif hasattr(doc, "getFileExtension"):
+                ext = doc.getFileExtension(doc)
+
+            if ext:
+                raw_name = f"{base}{ext}"
+
+        # 4. Làm sạch các ký tự đặc biệt không hợp lệ trong filename Windows
+        clean_name = re.sub(r'[\\/*?:"<>|]', '_', raw_name)
+        return clean_name
+
+    def action_download_file(self):
+        """Cho phép tải trực tiếp file snapshot từ danh sách lịch sử qua endpoint chuyên dụng chống đuôi .bin."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_url",
+            "url": f"/plm/history/download/{self.id}",
+            "target": "self",
+        }
+
+    def action_restore_version(self):
+        """Khôi phục tài liệu về phiên bản snapshot được chọn (Version Restore).
+        Áp dụng nguyên tắc Top-Down Key Authority và Linear Evolution (Append-Only Rollback):
+        1. Kiểm tra quyền giữ Key cục bộ (Lớp 1 - Local Check):
+           Bắt buộc người thực hiện phải là Người giữ Key của tài liệu hoặc Quản trị viên PLM/Hệ thống.
+        2. Kiểm tra Cụm máy cha (Lớp 2 - Where-Used Protection):
+           Tất cả các Cụm Assembly cha đang sử dụng chi tiết này không được có kỹ sư khác giữ Key.
+        3. Thực hiện Khôi phục (Append-Only Rollback):
+           Ghi đè nội dung file snapshot lên ir.attachment, tự động sinh phiên bản snapshot mới mang dữ liệu cũ.
+        4. Ghi nhận nhật ký kiểm toán (Audit Log) vào Chatter và thông báo Client Action thành công.
+        """
+        self.ensure_one()
+        doc = self.document_id
+        if not doc:
+            raise UserError(_("Không tìm thấy tài liệu gốc liên kết với bản ghi lịch sử này."))
+
+        if not self.datas:
+            raise UserError(_("Bản ghi lịch sử này không có dữ liệu tệp snapshot để khôi phục."))
+
+        is_admin = (
+            self.env.is_admin()
+            or self.env.user.has_group("plm.group_plm_admin")
+            or self.env.user.has_group("base.group_system")
+        )
+
+        # ---------------------------------------------------------------------
+        # 1. KIỂM TRA QUYỀN GIỮ KEY CỤC BỘ (LỚP 1 - LOCAL CHECK)
+        # ---------------------------------------------------------------------
+        if not is_admin and doc.key_holder_id != self.env.user:
+            raise UserError(_(
+                "Bạn không phải Người giữ Key của tài liệu này nên không có quyền khôi phục phiên bản!"
+            ))
+
+        # ---------------------------------------------------------------------
+        # 2. KIỂM TRA CỤM MÁY CHA (LỚP 2 - WHERE-USED PROTECTION)
+        # ---------------------------------------------------------------------
+        if not is_admin and hasattr(doc, "get_where_used_documents"):
+            parent_assemblies = doc.get_where_used_documents()
+            for parent in parent_assemblies:
+                if parent.key_holder_id and parent.key_holder_id != self.env.user:
+                    parent_name = parent.name or parent.engineering_code or str(parent.id)
+                    key_holder_name = parent.key_holder_id.name or _("Kỹ sư khác")
+                    raise UserError(_(
+                        "Không thể khôi phục! Cụm máy cha '%s' hiện đang bị khóa/giữ Key bởi kỹ sư '%s'. "
+                        "Vui lòng liên hệ người giữ Key cụm cha để phối hợp."
+                    ) % (parent_name, key_holder_name))
+
+        # ---------------------------------------------------------------------
+        # 3. THỰC HIỆN KHÔI PHỤC (APPEND-ONLY ROLLBACK)
+        # ---------------------------------------------------------------------
+        old_version_name = self.version or f"v{self.version_number}"
+        raw_bytes = self.get_raw_data()
+        write_vals = {
+            "raw": raw_bytes,
+            "datas": self.datas,
+            "name": self.file_name or doc.name,
+            "history_description": _("Khôi phục từ phiên bản %s") % old_version_name,
+            "desc_modify": _("Khôi phục nội dung từ phiên bản %s") % old_version_name,
+        }
+
+        # Bỏ qua kiểm tra token CAD vì đây là thao tác từ Web
+        # Kích hoạt force_create_snapshot để không bị chặn bởi debounce 10s
+        write_ctx = {
+            "is_web_operation": True,
+            "force_create_snapshot": True,
+        }
+        if is_admin:
+            write_ctx["skip_key_holder_check"] = True
+
+        doc.with_context(**write_ctx).write(write_vals)
+
+        # ---------------------------------------------------------------------
+        # 4. GHI NHẬN NHẬT KÝ KIỂM TOÁN (AUDIT TRAIL) VÀO CHATTER
+        # ---------------------------------------------------------------------
+        audit_body = Markup(_(
+            "<p><b>Khôi phục phiên bản</b>: Đã khôi phục thành công nội dung từ phiên bản <b>%s</b>.</p>"
+        )) % old_version_name
+
+        doc.message_post(
+            body=audit_body,
+            message_type="notification"
+        )
+
+        _logger.info(
+            f"[TDB PLM] Kỹ sư '{self.env.user.name}' đã khôi phục thành công tài liệu ID {doc.id} ({doc.name}) về phiên bản {old_version_name}"
+        )
+
+        # ---------------------------------------------------------------------
+        # 5. PHẢN HỒI THÔNG BÁO CHO NGƯỜI DÙNG (NOTIFICATION BANNER)
+        # ---------------------------------------------------------------------
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Khôi phục phiên bản"),
+                "message": _("Đã khôi phục thành công tài liệu về phiên bản %s.") % old_version_name,
+                "type": "success",
+                "sticky": False,
+                "next": {
+                    "type": "ir.actions.client",
+                    "tag": "reload",
+                },
+            },
+        }
+

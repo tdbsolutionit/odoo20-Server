@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ======================================================================= -->
+    <!-- TDB SOLUTION - PHÂN TẦNG LAYER 5: VIEWS VÀ GIAO DIỆN BACKEND PLM       -->
+    <!-- Quản lý Document Lock: Kiến trúc Người giữ Key (Key Holder Architecture)-->
+    <!-- Chuỗi gốc tiếng Anh chuẩn quốc tế - Hỗ trợ đa ngôn ngữ Anh / Việt     -->
+    <!-- ======================================================================= -->
+
+    <!-- 1. Danh sách Documents (List View): Người giữ Key, Trạng thái & Nút chuyển giao Key -->
+    <record id="plm_ir_attachment_list_inherit_tdb" model="ir.ui.view">
+        <field name="name">ir.attachment.list.plm.tdb.custom</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="plm.ir_attachment_list"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <!-- Thêm class nhận diện chung bảng PLM -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="class">tdb_plm_list_view</attribute>
+                <attribute name="string">Documents</attribute>
+            </xpath>
+
+            <!-- Preview -->
+            <xpath expr="//field[@name='preview']" position="attributes">
+                <attribute name="string">Preview</attribute>
+                <attribute name="class">text-center</attribute>
+                <attribute name="width">75</attribute>
+            </xpath>
+
+            <!-- Tên tài liệu -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Name</attribute>
+            </xpath>
+
+            <!-- Engineering Revision -->
+            <xpath expr="//field[@name='engineering_revision']" position="attributes">
+                <attribute name="string">Revision</attribute>
+                <attribute name="class">text-center</attribute>
+                <attribute name="width">95</attribute>
+            </xpath>
+
+            <!-- Engineering Status -->
+            <xpath expr="//field[@name='engineering_state']" position="attributes">
+                <attribute name="string">Engineering Status</attribute>
+                <attribute name="class">text-center</attribute>
+                <attribute name="width">140</attribute>
+            </xpath>
+
+            <!-- Mã kỹ thuật -->
+            <xpath expr="//field[@name='engineering_code']" position="attributes">
+                <attribute name="string">Engineering Code</attribute>
+            </xpath>
+
+            <!-- Người tạo -->
+            <xpath expr="//field[@name='create_uid']" position="attributes">
+                <attribute name="string">Created by</attribute>
+            </xpath>
+
+            <!-- Ngày tạo -->
+            <xpath expr="//field[@name='create_date']" position="attributes">
+                <attribute name="string">Created on</attribute>
+            </xpath>
+
+            <!-- Người cập nhật -->
+            <xpath expr="//field[@name='write_uid']" position="attributes">
+                <attribute name="string">Last Updated by</attribute>
+            </xpath>
+
+            <!-- Ngày cập nhật -->
+            <xpath expr="//field[@name='write_date']" position="attributes">
+                <attribute name="string">Last Updated on</attribute>
+            </xpath>
+
+            <!-- Người giữ Key & Nút chuyển giao Key -->
+            <xpath expr="//field[@name='checkout_user']" position="replace">
+                <field name="is_checkout" column_invisible="1"/>
+                <field name="key_holder_id" readonly="1" string="Key Holder" widget="many2one_avatar_user" optional="show"/>
+                <field name="lock_state"
+                       widget="badge"
+                       decoration-danger="lock_state == 'locked'"
+                       decoration-success="lock_state == 'unlocked'"
+                       string="Status"
+                       optional="show"/>
+                <button name="action_open_transfer_key_wizard"
+                        type="object"
+                        string="Force Unlock"
+                        class="btn btn-sm btn-outline-danger"
+                        groups="plm.group_plm_admin"
+                        invisible="not key_holder_id or engineering_state in ['released', 'obsoleted']"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. Form View Documents: Banner Người giữ Key, Header Actions & Đa ngôn ngữ -->
+    <record id="plm_ir_attachment_form_inherit_tdb" model="ir.ui.view">
+        <field name="name">ir.attachment.form.plm.tdb.custom</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="plm.view_attachment_form_plm_hinerit"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <!-- Nút luồng trạng thái tài liệu trên Header -->
+            <xpath expr="//button[@name='action_confirm']" position="attributes">
+                <attribute name="string">Confirm Document</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_release']" position="attributes">
+                <attribute name="string">Release Document</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_draft']" position="attributes">
+                <attribute name="string">Correct Document</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_un_release']" position="attributes">
+                <attribute name="string">Un Release</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_un_release_release']" position="attributes">
+                <attribute name="string">Re Release</attribute>
+            </xpath>
+
+            <!-- Thêm các nút thao tác trên Header -->
+            <xpath expr="//header" position="inside">
+                <field name="key_holder_id" invisible="1"/>
+                <field name="is_key_holder" invisible="1"/>
+                <field name="is_checkout" invisible="1"/>
+                <field name="is_checked_out_by_me" invisible="1"/>
+
+                <!-- Nút Lock: Hiển thị khi chưa có ai giữ Key và chưa ban hành -->
+                <button name="action_lock_key"
+                        type="object"
+                        string="Lock"
+                        class="btn-primary"
+                        invisible="key_holder_id or engineering_state in ['released', 'obsoleted']"/>
+
+                <!-- Nút Unlock: Hiển thị cho người đang giữ Key (kể cả Kỹ sư hay Admin) -->
+                <button name="action_open_transfer_key_wizard"
+                        type="object"
+                        string="Unlock"
+                        class="btn-warning"
+                        invisible="not is_key_holder or engineering_state in ['released', 'obsoleted']"/>
+
+                <!-- Nút Force Unlock: Chỉ Admin mới thấy khi tài liệu có người khác giữ Key -->
+                <button name="action_open_transfer_key_wizard"
+                        type="object"
+                        string="Force Unlock"
+                        class="btn-danger"
+                        groups="plm.group_plm_admin"
+                        invisible="not key_holder_id or is_key_holder or engineering_state in ['released', 'obsoleted']"/>
+
+                <!-- Nút Check-out: Mọi kỹ sư đều có thể bấm khi người đó CHƯA Check-out và chưa ban hành -->
+                <button name="action_web_checkout"
+                        type="object"
+                        string="Check-out"
+                        class="btn-secondary"
+                        invisible="is_checked_out_by_me == True or engineering_state in ['released', 'obsoleted']"/>
+
+                <!-- Nút Check-in: Chỉ hiển thị cho người đang giữ Key VÀ đã Check-out và chưa ban hành -->
+                <button name="action_web_checkin"
+                        type="object"
+                        string="Check-in"
+                        class="btn-primary"
+                        invisible="is_checked_out_by_me == False or not is_key_holder or engineering_state in ['released', 'obsoleted']"/>
+
+                <!-- Nút Hủy Check-out: Cho phép người dùng hiện tại hủy phiên Check-out của mình -->
+                <button name="action_web_undo_checkout"
+                        type="object"
+                        string="Undo Check-out"
+                        class="btn-outline-secondary"
+                        invisible="is_checked_out_by_me == False"
+                        confirm="Are you sure you want to UNDO Check-out on this document?"/>
+            </xpath>
+
+            <!-- Banner thông tin Người giữ Key -->
+            <xpath expr="//sheet" position="before">
+                <!-- Banner cảnh báo tài liệu đã ban hành (Đóng băng chỉ đọc) -->
+                <div class="alert alert-success d-flex align-items-center mb-0 py-2 justify-content-between"
+                     role="alert"
+                     invisible="engineering_state not in ['released', 'obsoleted']">
+                    <div>
+                        <span class="fw-bold">Document Released (Read-Only)</span>
+                        <span class="text-muted ms-2">(Document is released/obsoleted and locked against modification or check-in)</span>
+                    </div>
+                    <div>
+                        <span class="badge bg-success" invisible="engineering_state != 'released'">Released</span>
+                        <span class="badge bg-danger" invisible="engineering_state != 'obsoleted'">Obsoleted</span>
+                    </div>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-center mb-0 py-2 justify-content-between"
+                     role="alert"
+                     invisible="not key_holder_id or engineering_state in ['released', 'obsoleted']">
+                    <div>
+                        <span>Key Holder: </span><field name="key_holder_id" readonly="1" options="{'no_open': True}" class="fw-bold"/>
+                        <span class="text-muted ms-2">(Key holder has exclusive permission to Check-in)</span>
+                    </div>
+                    <div>
+                        <span class="badge bg-success" invisible="not is_key_holder">You hold the Key</span>
+                        <span class="badge bg-secondary" invisible="is_key_holder">Reference Mode</span>
+                    </div>
+                </div>
+                <div class="alert alert-warning d-flex align-items-center mb-0 py-2 justify-content-between"
+                     role="alert"
+                     invisible="key_holder_id or engineering_state in ['released', 'obsoleted']">
+                    <div>
+                        <span>Document status: </span><span class="fw-bold">No Key Holder</span>
+                        <span class="text-muted ms-2">(Click 'Lock' button on the header to claim Key)</span>
+                    </div>
+                    <div>
+                        <span class="badge bg-warning text-dark">Waiting for Lock</span>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- Stat Button trên Button Box -->
+            <xpath expr="//field[@name='document_rel_count']" position="attributes">
+                <attribute name="string">Documents</attribute>
+            </xpath>
+            <xpath expr="//button[@name='print_Document_Doc_Structure']" position="attributes">
+                <attribute name="string">Doc Structure</attribute>
+            </xpath>
+            <xpath expr="//button[@name='open_related_document_revisions']" position="attributes">
+                <attribute name="string">Revision</attribute>
+            </xpath>
+
+            <!-- Bổ sung Stat button đếm và xem lịch sử phiên bản tệp & quan hệ tham chiếu -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_file_history"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="history"
+                        invisible="history_count == 0">
+                    <field name="history_count" widget="statinfo" string="Version History"/>
+                </button>
+                <button name="action_view_child_documents"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="account_tree"
+                        invisible="child_document_count == 0">
+                    <field name="child_document_count" widget="statinfo" string="Child Documents"/>
+                </button>
+                <button name="action_view_where_used_documents"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="share"
+                        invisible="parent_document_count == 0">
+                    <field name="parent_document_count" widget="statinfo" string="Where Used"/>
+                </button>
+            </xpath>
+
+            <!-- Nhóm Thông tin PLM -->
+            <xpath expr="//group[@name='main_doc_info']" position="attributes">
+                <attribute name="string">PLM Information</attribute>
+            </xpath>
+            <xpath expr="//field[@name='engineering_code']" position="attributes">
+                <attribute name="string">Eng. Document Name</attribute>
+                <attribute name="readonly">id &gt; 0 or engineering_state in ['released', 'obsoleted']</attribute>
+            </xpath>
+            <xpath expr="//field[@name='engineering_revision']" position="attributes">
+                <attribute name="string">Engineering Revision</attribute>
+            </xpath>
+            <xpath expr="//field[@name='is_plm']" position="attributes">
+                <attribute name="string">Is a PLM Document</attribute>
+            </xpath>
+            <xpath expr="//field[@name='plm_access_id']" position="attributes">
+                <attribute name="string">PLM Access</attribute>
+            </xpath>
+
+            <!-- Bổ sung Người giữ Key vào nhóm thông tin PLM INFOS -->
+            <xpath expr="//group[@name='main_doc_info']" position="inside">
+                <field name="key_holder_id" readonly="1" widget="many2one_avatar_user" string="Key Holder"/>
+            </xpath>
+
+            <!-- Các Tab và Nhóm trường trong Notebook -->
+            <!-- Tab 1: Attachment -->
+            <xpath expr="//page[1]" position="attributes">
+                <attribute name="string">Attachment</attribute>
+            </xpath>
+            <xpath expr="//group[@name='FileData']" position="attributes">
+                <attribute name="string">File Data</attribute>
+            </xpath>
+            <xpath expr="//field[@name='raw']" position="attributes">
+                <attribute name="string">File Content (base64)</attribute>
+            </xpath>
+            <xpath expr="//group[@name='FileData']//field[@name='name']" position="attributes">
+                <attribute name="string">File Name</attribute>
+            </xpath>
+            <xpath expr="//field[@name='document_type']" position="attributes">
+                <attribute name="string">Document Type</attribute>
+            </xpath>
+            <xpath expr="//group[@name='FileData']//field[@name='type']" position="attributes">
+                <attribute name="string">Type</attribute>
+            </xpath>
+            <xpath expr="//group[@name='group_url']" position="attributes">
+                <attribute name="string">Website</attribute>
+            </xpath>
+            <xpath expr="//group[@name='related']//group[1]" position="attributes">
+                <attribute name="string">Related To</attribute>
+            </xpath>
+            <xpath expr="//field[@name='res_id']" position="attributes">
+                <attribute name="string">Resource ID</attribute>
+            </xpath>
+            <xpath expr="//group[@name='related']//group[2]" position="attributes">
+                <attribute name="string">Attachments To</attribute>
+            </xpath>
+            <xpath expr="//field[@name='res_name']" position="attributes">
+                <attribute name="string">Resource Name</attribute>
+            </xpath>
+            <xpath expr="//field[@name='res_model']" position="attributes">
+                <attribute name="string">Resource Model</attribute>
+            </xpath>
+
+            <!-- Tab 2: Workflow History -->
+            <xpath expr="//page[@name='workflow_section']" position="attributes">
+                <attribute name="string">Workflow History</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']/group[1]" position="attributes">
+                <attribute name="string">Changes</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']//label[@for='create_uid']" position="attributes">
+                <attribute name="string">Creation</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']//label[@for='write_uid']" position="attributes">
+                <attribute name="string">Last Update</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']//label[@for='engineering_workflow_user']" position="attributes">
+                <attribute name="string">Workflow User</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']//div[@name='attachment_release_user_div']/.." position="attributes">
+                <attribute name="string">User</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']//label[@for='engineering_release_user']" position="attributes">
+                <attribute name="string">Released By</attribute>
+            </xpath>
+            <xpath expr="//page[@name='workflow_section']//label[@for='engineering_revision_user']" position="attributes">
+                <attribute name="string">Revision By</attribute>
+            </xpath>
+
+            <!-- Tab 3: Linked Parts -->
+            <xpath expr="//page[@name='page_liked_parts']" position="attributes">
+                <attribute name="string">Linked Parts</attribute>
+            </xpath>
+
+            <!-- Tab 4: Indexed Content -->
+            <xpath expr="//page[@name='page_indexed_content']" position="attributes">
+                <attribute name="string">Indexed Content</attribute>
+            </xpath>
+
+            <!-- Tab 5: Notes -->
+            <xpath expr="//page[@name='page_notes']" position="attributes">
+                <attribute name="string">Notes</attribute>
+            </xpath>
+            <xpath expr="//page[@name='page_notes']//label[@for='description']" position="attributes">
+                <attribute name="string">Description</attribute>
+            </xpath>
+            <xpath expr="//page[@name='page_notes']//label[@for='desc_modify']" position="attributes">
+                <attribute name="string">Modification Reason</attribute>
+            </xpath>
+
+            <!-- Bổ sung Tab Version History & Referenced Documents -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Version History" name="file_history">
+                    <field name="history_ids" readonly="1">
+                        <list string="Version History" default_order="version_number desc" create="0" delete="0">
+                            <field name="version_number" column_invisible="1"/>
+                            <field name="version" string="Version" width="90"/>
+                            <field name="file_name" string="File Name"/>
+                            <field name="file_size_display" string="Size" width="110"/>
+                            <field name="user_id" string="User" widget="many2one_avatar_user" width="160"/>
+                            <field name="create_date" string="Date" width="160"/>
+                            <field name="description" string="Note"/>
+                            <button name="action_restore_version"
+                                     type="object"
+                                     string="Restore"
+                                     icon="history"
+                                     class="btn btn-sm btn-link text-warning"
+                                     title="Restore document to this version"
+                                     confirm="Are you sure you want to RESTORE this document to this version?"/>
+                            <button name="action_download_file"
+                                     type="object"
+                                     string="Download"
+                                     class="btn btn-sm btn-secondary"
+                                     title="Download this version"/>
+                        </list>
+                    </field>
+                </page>
+
+                <!-- Tab Referenced Documents & Where Used -->
+                <page string="Referenced Documents" name="related_documents">
+                    <div class="pt-3 pb-2 mb-4">
+                        <separator string="Child Components (References / Assembly)"/>
+                        <field name="child_relation_ids">
+                            <list string="Related Child Components" editable="bottom">
+                                <field name="child_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
+                                <field name="child_id"
+                                       string="Child Document"
+                                       domain="[('is_plm', '=', True), ('id', '!=', parent.id)]"
+                                       context="{'form_view_ref': 'plm.view_attachment_form_plm_hinerit', 'odooPLM': True}"
+                                       required="1"/>
+                                <field name="child_engineering_code" string="Engineering Code" width="130" optional="show" readonly="1"/>
+                                <field name="child_revision" string="Revision" width="80" readonly="1"/>
+                                <field name="child_state"
+                                       string="Engineering State"
+                                       widget="badge"
+                                       decoration-info="child_state == 'draft'"
+                                       decoration-primary="child_state == 'confirmed'"
+                                       decoration-success="child_state == 'released'"
+                                       decoration-warning="child_state == 'undermodify'"
+                                       decoration-danger="child_state == 'obsoleted'"
+                                       width="150"
+                                       readonly="1"/>
+                                <field name="child_lock_state"
+                                       string="Lock State"
+                                       widget="badge"
+                                       decoration-danger="child_lock_state == 'locked'"
+                                       decoration-success="child_lock_state == 'unlocked'"
+                                       width="130"
+                                       readonly="1"/>
+                                <field name="child_key_holder_id"
+                                       string="Key Holder"
+                                       widget="many2one_avatar_user"
+                                       width="150"
+                                       readonly="1"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <div class="pt-3 pb-2">
+                        <separator string="Where Used (Parents)"/>
+                        <field name="parent_relation_ids">
+                            <list string="Related Parent Assemblies" create="0" delete="0">
+                                <field name="parent_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
+                                <field name="parent_id"
+                                       string="Parent Document"
+                                       context="{'form_view_ref': 'plm.view_attachment_form_plm_hinerit', 'odooPLM': True}"
+                                       readonly="1"/>
+                                <field name="parent_engineering_code" string="Engineering Code" width="130" optional="show" readonly="1"/>
+                                <field name="parent_revision" string="Revision" width="80" readonly="1"/>
+                                <field name="parent_state"
+                                       string="Engineering State"
+                                       widget="badge"
+                                       decoration-info="parent_state == 'draft'"
+                                       decoration-primary="parent_state == 'confirmed'"
+                                       decoration-success="parent_state == 'released'"
+                                       decoration-warning="parent_state == 'undermodify'"
+                                       decoration-danger="parent_state == 'obsoleted'"
+                                       width="150"
+                                       readonly="1"/>
+                                <field name="parent_lock_state"
+                                       string="Lock State"
+                                       widget="badge"
+                                       decoration-danger="parent_lock_state == 'locked'"
+                                       decoration-success="parent_lock_state == 'unlocked'"
+                                       width="130"
+                                       readonly="1"/>
+                                <field name="parent_key_holder_id"
+                                       string="Key Holder"
+                                       widget="many2one_avatar_user"
+                                       width="150"
+                                       readonly="1"/>
+                            </list>
+                        </field>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Kế thừa giao diện tìm kiếm Documents Search (plm.ir_attachment_search) -->
+    <record id="plm_ir_attachment_search_inherit_tdb" model="ir.ui.view">
+        <field name="name">ir.attachment.search.plm.tdb.custom</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="plm.ir_attachment_search"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="attributes">
+                <attribute name="string">Documents</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='confirmed']" position="attributes">
+                <attribute name="string">Confirmed</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='released']" position="attributes">
+                <attribute name="string">Released</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='latest']" position="attributes">
+                <attribute name="string">Latest</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='create_by_me']" position="attributes">
+                <attribute name="string">Create By Me</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='changed_by_me']" position="attributes">
+                <attribute name="string">Changed By Me</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='created_in']" position="attributes">
+                <attribute name="string">Created in</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='canged_in']" position="attributes">
+                <attribute name="string">Changed in</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='create_by']" position="attributes">
+                <attribute name="string">Created by</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='changed_by']" position="attributes">
+                <attribute name="string">Changed by</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='status']" position="attributes">
+                <attribute name="string">Status</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='type']" position="attributes">
+                <attribute name="string">Type Document</attribute>
+            </xpath>
+
+            <!-- Bộ lọc trạng thái khóa và người giữ Key -->
+            <xpath expr="//filter[@name='latest']" position="after">
+                <separator orientation="vertical"/>
+                <filter name="filter_my_locked" string="I Hold Key" domain="[('key_holder_id', '=', uid)]"/>
+                <filter name="filter_locked" string="Locked (Key Held)" domain="[('key_holder_id', '!=', False)]"/>
+                <filter name="filter_unlocked" string="Unlocked (Free)" domain="[('key_holder_id', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 4. Kế thừa giao diện Checkout Document (view_plm_checkout_form) -->
+    <record id="plm_checkout_form_tdb" model="ir.ui.view">
+        <field name="name">plm.checkout.form.tdb</field>
+        <field name="model">plm.checkout</field>
+        <field name="inherit_id" ref="plm.view_plm_checkout_form"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_force_unlock"
+                            type="object"
+                            string="Force Unlock"
+                            class="btn-danger"
+                            groups="plm.group_plm_admin"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 5. Danh sách plm.document.history (Tree / List View) -->
+    <record id="view_plm_document_history_list" model="ir.ui.view">
+        <field name="name">plm.document.history.list</field>
+        <field name="model">plm.document.history</field>
+        <field name="arch" type="xml">
+            <list string="Document File History" default_order="version_number desc" create="0" delete="1">
+                <field name="version_number" column_invisible="1"/>
+                <field name="document_id" string="Document"/>
+                <field name="version" string="Version" width="90"/>
+                <field name="file_name" string="File Name"/>
+                <field name="file_size_display" string="Size" width="110"/>
+                <field name="user_id" string="User" widget="many2one_avatar_user" width="160"/>
+                <field name="create_date" string="Date" width="160"/>
+                <field name="description" string="Note"/>
+                <button name="action_restore_version"
+                        type="object"
+                        string="Restore"
+                        icon="history"
+                        class="btn btn-sm btn-link text-warning"
+                        title="Restore document to this version"
+                        confirm="Are you sure you want to RESTORE this document to this version?"/>
+                <button name="action_download_file"
+                        type="object"
+                        string="Download"
+                        class="btn btn-sm btn-secondary"
+                        title="Download this version"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- 6. Form View plm.document.history -->
+    <record id="view_plm_document_history_form" model="ir.ui.view">
+        <field name="name">plm.document.history.form</field>
+        <field name="model">plm.document.history</field>
+        <field name="arch" type="xml">
+            <form string="Document History Detail" create="0" delete="1">
+                <header>
+                    <button name="action_restore_version"
+                            type="object"
+                            string="Restore to this Version"
+                            class="btn-warning"
+                            confirm="Are you sure you want to RESTORE this document to this version?"/>
+                    <button name="action_download_file"
+                            type="object"
+                            string="Download"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Version Information">
+                            <field name="document_id" readonly="1"/>
+                            <field name="version" readonly="1"/>
+                            <field name="file_name" readonly="1"/>
+                            <field name="file_size_display" readonly="1"/>
+                        </group>
+                        <group string="Log">
+                            <field name="user_id" readonly="1"/>
+                            <field name="create_date" readonly="1"/>
+                            <field name="datas" filename="file_name" widget="binary" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Modification Note">
+                        <field name="description" placeholder="Note on changes or update reasons..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cập nhật Action Documents -->
+    <record id="plm.plm_action_document_form" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="context">{"odooPLM": True}</field>
+    </record>
+</odoo>

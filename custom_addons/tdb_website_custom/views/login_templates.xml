@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Giao diện web.login_layout và web.login được đồng bộ trực tiếp qua update_all.py để đảm bảo toàn vẹn CSS inline và độc lập hoàn toàn với asset bundles -->
+</odoo>

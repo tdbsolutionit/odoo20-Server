@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_plm_transfer_key_wizard_form" model="ir.ui.view">
+        <field name="name">plm.transfer.key.wizard.form</field>
+        <field name="model">plm.transfer.key.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Transfer &amp; Release Key Holder">
+                <sheet>
+                    <field name="is_admin" invisible="1"/>
+                    <field name="is_holder" invisible="1"/>
+                    <div class="alert alert-warning mb-3 py-2" role="alert" invisible="is_holder">
+                        Transfer Check-in permission (Key Holder) to another engineer, or Force Unlock to release the document.
+                    </div>
+                    <div class="alert alert-warning mb-3 py-2" role="alert" invisible="not is_holder">
+                        Transfer Check-in permission (Key Holder) to another engineer, or Unlock to release the document.
+                    </div>
+                    <group>
+                        <group string="Document Information">
+                            <field name="document_id" invisible="1"/>
+                            <field name="document_name" string="Document"/>
+                            <field name="current_key_holder_id" string="Current Key Holder" widget="many2one_avatar_user"/>
+                        </group>
+                        <group string="Action Type">
+                            <field name="is_holder" invisible="1"/>
+                            <field name="transfer_type_holder"
+                                   widget="radio"
+                                   string="Action"
+                                   invisible="not is_holder"/>
+                            <field name="transfer_type_admin"
+                                   widget="radio"
+                                   string="Action"
+                                   invisible="is_holder"/>
+                            <field name="new_key_holder_id"
+                                   string="New Key Holder"
+                                   widget="many2one_avatar_user"
+                                   options="{'no_create': True, 'no_open': True}"
+                                   invisible="(is_holder and transfer_type_holder != 'to_user') or (not is_holder and transfer_type_admin != 'to_user')"
+                                   required="(is_holder and transfer_type_holder == 'to_user') or (not is_holder and transfer_type_admin == 'to_user')"/>
+                            <field name="release_all_checkouts" string="Release All Check-outs"/>
+                        </group>
+                    </group>
+                    <group string="Reason (Optional)">
+                        <field name="reason" placeholder="Enter reason for transfer or unlock (optional)..." nolabel="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_transfer"
+                            string="Confirm"
+                            type="object"
+                            class="btn-danger"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

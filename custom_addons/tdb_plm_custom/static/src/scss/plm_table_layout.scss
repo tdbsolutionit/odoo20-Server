@@ -1,0 +1,99 @@
+// =============================================================================
+// TDB SOLUTION - PHÂN TẦNG SCSS 2: TABLE LAYOUT & CONTAINER
+// Bố cục khung bảng chuẩn Odoo, vừa vặn toàn màn hình, không tràn thanh cuộn
+// =============================================================================
+
+.tdb_plm_list_view .o_list_renderer,
+.o_list_renderer.tdb_plm_list_view,
+div.o_view_controller.tdb_plm_list_view .o_list_renderer {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+    &::-webkit-scrollbar {
+        height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+}
+
+.tdb_plm_list_view table.o_list_table,
+div.o_view_controller.tdb_plm_list_view table.o_list_table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    border-bottom: 1px solid $plm-header-border;
+
+    // Dòng tiêu đề cột chuẩn doanh nghiệp
+    thead {
+        tr {
+            background-color: $plm-header-bg;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        th {
+            font-size: 0.78125rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.01em;
+            line-height: 1.35 !important;
+            color: $plm-header-text !important;
+            vertical-align: middle !important;
+            border-bottom: 2px solid $plm-header-border !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.04);
+            padding: 6px 5px !important;
+
+            &:last-child {
+                border-right: none;
+            }
+
+            .d-flex {
+                min-width: 0;
+                align-items: center !important;
+                width: 100%;
+            }
+
+            span,
+            .o_column_title,
+            .text-truncate {
+                white-space: normal !important;
+                word-break: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                text-overflow: unset !important;
+                overflow: visible !important;
+                font-weight: 600 !important;
+                line-height: 1.25 !important;
+                max-width: 100% !important;
+            }
+        }
+    }
+
+    // Dòng dữ liệu
+    tbody {
+        tr.o_data_row {
+            transition: background-color 0.15s ease-in-out;
+
+            &:hover {
+                background-color: $plm-row-hover-bg !important;
+            }
+        }
+
+        td {
+            font-size: 0.8125rem !important;
+            line-height: 1.4 !important;
+            color: #334155;
+            vertical-align: middle !important;
+            padding: 5px 6px !important;
+            border-bottom: 1px solid $plm-cell-border !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.03);
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+    }
+}

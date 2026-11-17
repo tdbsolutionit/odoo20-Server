@@ -1,0 +1,119 @@
+﻿python : 2026-10-31 07:36:07,802 18812 INFO ? odoo: Odoo version 20.0
+At line:1 char:1
++ python .\odoo-bin -c .\odoo.conf -u tdb_website_custom -d odoo20 --st ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2026-10-31 07:3...oo version 20.0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2026-10-31 07:36:07,802 18812 INFO ? odoo: Using configuration file at c:\odoo20\odoo\odoo.conf
+2026-10-31 07:36:07,803 18812 INFO ? odoo: addons paths: _NamespacePath(['C:\\odoo20\\odoo\\odoo\\addons', 'c:\\odoo20\\data\\addons\\20.0', 'c:\\odoo20\\odoo\\odoo\\addons', 
+'c:\\odoo20\\odoo\\addons', 'c:\\odoo20\\odoo\\custom_addons'])
+2026-10-31 07:36:07,803 18812 INFO ? odoo: database: odoo20@localhost:5432
+2026-10-31 07:36:09,541 18812 INFO odoo20 odoo.modules.loading: loading 1 modules...
+2026-10-31 07:36:09,556 18812 INFO odoo20 odoo.modules.loading: 1 modules loaded in 0.02s, 0 queries (+0 extra)
+2026-10-31 07:36:09,657 18812 INFO odoo20 odoo.modules.loading: updating modules list
+2026-10-31 07:36:09,672 18812 INFO odoo20 odoo.addons.base.models.ir_module: ALLOW access to module.update_list on [] to user __system__ #1 via n/a
+2026-10-31 07:36:12,173 18812 INFO odoo20 odoo.modules.loading: loading 206 modules...
+2026-10-31 07:36:12,237 18812 WARNING odoo20 odoo.addons.attachment_indexation.models.ir_attachment: Attachment indexation of PDF documents is unavailable because the 'pdfminer.six' 
+Python library cannot be found on the system. You may install it from https://pypi.org/project/pdfminer.six/ (e.g. `pip3 install pdfminer.six`)
+2026-10-31 07:36:13,066 18812 WARNING odoo20 odoo.addons.mail.controllers.attachment: markdown2 is not installed, markdown will not be rendered
+2026-10-31 07:36:13,818 18812 WARNING odoo20 py.warnings: c:\odoo20\odoo\addons\dms\models\ir_attachment.py:4: DeprecationWarning: Since 20.0 import ormcache from odoo.api
+  File "C:\odoo20\odoo\odoo-bin", line 6, in <module>
+    odoo.cli.main()
+  File "C:\odoo20\odoo\odoo\cli\command.py", line 139, in main
+    command().run(args)
+  File "C:\odoo20\odoo\odoo\cli\server.py", line 127, in run
+    main(args)
+  File "C:\odoo20\odoo\odoo\cli\server.py", line 118, in main
+    rc = server.start(preload=config['db_name'], stop=stop)
+  File "C:\odoo20\odoo\odoo\service\server.py", line 1611, in start
+    rc = server.run(preload, stop)
+  File "C:\odoo20\odoo\odoo\service\server.py", line 587, in run
+    rc = preload_registries(preload)
+  File "C:\odoo20\odoo\odoo\service\server.py", line 1522, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module, install_modules=config['init'], upgrade_modules=config['update'], reinit_modules=config['reinit'])
+  File "C:\odoo20\odoo\odoo\tools\func.py", line 67, in locked
+    return func(inst, *args, **kwargs)
+  File "C:\odoo20\odoo\odoo\orm\registry.py", line 230, in new
+    contextvars.Context().run(
+  File "C:\odoo20\odoo\odoo\modules\loading.py", line 449, in load_modules
+    load_module_graph(
+  File "C:\odoo20\odoo\odoo\modules\loading.py", line 172, in load_module_graph
+    load_openerp_module(package.name)
+  File "C:\odoo20\odoo\odoo\modules\module.py", line 541, in load_openerp_module
+    __import__(qualname)
+  File "c:\odoo20\odoo\addons\dms\__init__.py", line 26, in <module>
+    from . import models
+  File "c:\odoo20\odoo\addons\dms\models\__init__.py", line 21, in <module>
+    from . import ir_attachment
+  File "c:\odoo20\odoo\addons\dms\models\ir_attachment.py", line 4, in <module>
+    from odoo.tools import ormcache
+
+2026-10-31 07:36:13,825 18812 WARNING odoo20 odoo.registry: Model attribute '_sql_constraints' is no longer supported, please define models.Constraint on the model.
+2026-10-31 07:36:13,836 18812 WARNING odoo20 odoo.registry: Model attribute '_sql_constraints' is no longer supported, please define models.Constraint on the model.
+2026-10-31 07:36:13,836 18812 WARNING odoo20 odoo.registry: Model attribute '_sql_constraints' is no longer supported, please define models.Constraint on the model.
+2026-10-31 07:36:16,312 18812 INFO odoo20 odoo.addons.tdb_sale_custom.models.fields_binary_patch: Successfully applied safe patch to odoo.orm.fields_binary.Binary.convert_to_cache
+2026-10-31 07:36:16,853 18812 INFO odoo20 odoo.modules.loading: 206 modules loaded in 4.68s, 0 queries (+0 extra)
+2026-10-31 07:36:17,291 18812 WARNING odoo20 odoo.fields: Field dms.access.group.directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the 
+method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,291 18812 WARNING odoo20 odoo.fields: Field dms.access.group.complete_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to 
+override the method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,291 18812 WARNING odoo20 odoo.fields: Field dms.access.group.users: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,291 18812 WARNING odoo20 odoo.fields: Field dms.storage.root_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the 
+method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,292 18812 WARNING odoo20 odoo.fields: Field dms.directory.storage_id: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,292 18812 WARNING odoo20 odoo.fields: Field dms.storage.storage_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override 
+the method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,292 18812 WARNING odoo20 odoo.fields: Field dms.storage.storage_file_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the 
+method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,292 18812 WARNING odoo20 odoo.fields: Field dms.file.directory_id: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,293 18812 WARNING odoo20 odoo.fields: Field dms.directory.child_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override 
+the method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,293 18812 WARNING odoo20 odoo.fields: Field dms.directory.file_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,768 18812 WARNING odoo20 odoo.fields: Field dms.access.group.directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the 
+method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,768 18812 WARNING odoo20 odoo.fields: Field dms.access.group.complete_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to 
+override the method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,768 18812 WARNING odoo20 odoo.fields: Field dms.access.group.users: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,768 18812 WARNING odoo20 odoo.fields: Field dms.storage.root_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the 
+method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,768 18812 WARNING odoo20 odoo.fields: Field dms.directory.storage_id: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,769 18812 WARNING odoo20 odoo.fields: Field dms.storage.storage_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override 
+the method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,769 18812 WARNING odoo20 odoo.fields: Field dms.storage.storage_file_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the 
+method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,769 18812 WARNING odoo20 odoo.fields: Field dms.file.directory_id: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,769 18812 WARNING odoo20 odoo.fields: Field dms.directory.child_directory_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override 
+the method _valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,770 18812 WARNING odoo20 odoo.fields: Field dms.directory.file_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method 
+_valid_field_parameter on the relevant model in order to allow it
+2026-10-31 07:36:17,956 18812 INFO odoo20 odoo.registry: verifying fields for every extended model
+2026-10-31 07:36:20,611 18812 INFO odoo20 odoo.modules.loading: Modules loaded.
+2026-10-31 07:36:20,655 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on res.partner.group_rfq
+2026-10-31 07:36:20,656 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on res.partner.group_on
+2026-10-31 07:36:20,658 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on res.company.sale_invoice_policy
+2026-10-31 07:36:20,659 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on res.company.security_lead
+2026-10-31 07:36:20,663 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on product.template.invoice_policy
+2026-10-31 07:36:20,664 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on product.document.attached_on_sale
+2026-10-31 07:36:20,671 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.picking_type_id
+2026-10-31 07:36:20,672 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.picking_policy
+2026-10-31 07:36:20,673 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.self_ordering_mode
+2026-10-31 07:36:20,674 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.self_ordering_service_mode
+2026-10-31 07:36:20,675 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.self_ordering_pay_after
+2026-10-31 07:36:20,676 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.down_payment_product_id
+2026-10-31 07:36:20,677 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.config.default_product_id
+2026-10-31 07:36:20,678 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on pos.preset.service_at
+2026-10-31 07:36:20,679 18812 WARNING odoo20 odoo.schema: Missing not-null constraint on purchase.order.picking_type_id
+2026-10-31 07:36:20,682 18812 INFO odoo20 odoo.registry: Registry changed, signaling through the database
+2026-10-31 07:36:20,685 18812 INFO odoo20 odoo.registry: Registry loaded in 11.313s
+2026-10-31 07:36:20,685 18812 INFO odoo20 odoo.service.server.ThreadedServer: Initiating shutdown
+2026-10-31 07:36:20,685 18812 INFO odoo20 odoo.service.server.ThreadedServer: Hit CTRL-C again or send a second signal to force the shutdown.
+2026-10-31 07:36:20,686 18812 INFO odoo20 odoo.addons.bus.websocket: Disconnecting 0 websockets
+2026-10-31 07:36:20,803 18812 INFO odoo20 odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=64): Closed 1 connections 

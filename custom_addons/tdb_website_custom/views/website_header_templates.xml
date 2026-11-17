@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ẩn hoàn toàn menu điều hướng và nút giỏ hàng theo đúng yêu cầu Hình 1 -->
+    <template id="bace_header_clean" inherit_id="website.template_header_default" priority="99">
+        <!-- Bỏ toàn bộ các menu: Trang chủ, Cửa hàng, Sự kiện, Khóa học, Tuyển dụng, Liên hệ -->
+        <xpath expr="//t[@t-call='website.navbar_nav']" position="replace"/>
+    </template>
+
+    <!-- Tự động chuyển hướng trang chủ (/) sang thẳng trang /web/login -->
+    <template id="tdb_root_guard" inherit_id="website.layout" priority="1">
+        <xpath expr="//div[@id='wrapwrap']" position="before">
+            <script type="text/javascript">
+                if (window.location.pathname === '/' || window.location.pathname === '') {
+                    window.location.replace('/web/login');
+                }
+            </script>
+        </xpath>
+    </template>
+</odoo>

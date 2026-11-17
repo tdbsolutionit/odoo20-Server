@@ -1,0 +1,24 @@
+// =============================================================================
+// TDB SOLUTION – THEME ENTRYPOINT (MAIN SCSS)
+// Cấu trúc phân tầng chuẩn Sass 7-1 Architecture:
+// - abstract/: Variables, tokens, màu sắc, font chữ
+// - base/:     Reset, typography, ẩn header/footer Odoo
+// - layout/:   Khung login-wrapper, cột layout, responsive
+// - components/: Giá trị cốt lõi, 3 cards, login card, inputs, buttons
+// =============================================================================
+
+// 1. Abstract & Variables (Hệ màu sắc Gold Theme & Thông số thiết kế)
+@import "abstract/variables";
+
+// 2. Base & Reset (Cấu hình toàn cục & Ẩn thành phần thừa)
+@import "base/reset";
+
+// 3. Layout System (Bố cục 2 cột màn hình chính)
+@import "layout/wrapper";
+
+// 4. Components (Các khối giao diện chức năng)
+@import "components/presentation";
+@import "components/login_card";
+
+// 5. Responsive Design (Tương thích màn hình Tablet & Mobile)
+@import "layout/responsive";

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ======================================================================= -->
+    <!-- TDB SOLUTION - PHÂN TẦNG LAYER 5: VIEWS VÀ GIAO DIỆN BACKEND PLM       -->
+    <!-- Chuẩn hóa cấu trúc Menu phân hệ PLM theo chuẩn quốc tế                 -->
+    <!-- Đảm bảo đầy đủ parent="..." để không bị tràn icon ra màn hình chính    -->
+    <!-- ======================================================================= -->
+
+    <!-- 1. Menu chính (Top Bar & Level 1) -->
+    <menuitem id="plm.plm_menu" name="PLM"/>
+    <menuitem id="plm.plm_component_menu_view" name="Components" parent="plm.plm_menu"/>
+    <menuitem id="plm.ir_attachment_form" name="Documents" parent="plm.plm_menu"/>
+    <menuitem id="plm.plm_menu_relation" name="Component Relations" parent="plm.plm_menu"/>
+    <menuitem id="plm.plm_menu_dictionaries" name="Configuration" parent="plm.plm_menu"/>
+
+    <!-- 2. Menu con thuộc "Components" -->
+    <menuitem id="plm.menu_base_component" name="Search on Engineering Parts" parent="plm.plm_component_menu_view"/>
+
+    <!-- 3. Menu con thuộc "Documents" -->
+    <menuitem id="plm.menu_document_files" name="Search on Documents" parent="plm.ir_attachment_form"/>
+    <menuitem id="plm.menu_document_relations" name="Search on Document Relations" parent="plm.ir_attachment_form"/>
+    <menuitem id="plm.menu_checkout" name="Search on Checked-Out Documents" parent="plm.ir_attachment_form"/>
+    <menuitem id="plm.menu_backupdoc" name="Search on Backup Data Set" parent="plm.ir_attachment_form"/>
+    <menuitem id="plm.menu_cad_open" name="CAD Opens" parent="plm.ir_attachment_form"/>
+    <menuitem id="plm.menu_cad_open_bck" name="CAD Opens Bck" parent="plm.ir_attachment_form"/>
+
+    <!-- 4. Menu con thuộc "Component Relations" -->
+    <menuitem id="plm.menu_relation_normal" name="Search on Normal Bill of Materials" parent="plm.plm_menu_relation"/>
+
+    <!-- 5. Menu con thuộc "Configuration" -->
+    <menuitem id="plm.menu_description" name="Descriptions" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.menu_finishing" name="Finishings" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.menu_treatment" name="Treatments" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.menu_material" name="Materials" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.plm_dbthread_id" name="DbThread" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.plm_groups" name="Groups" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.plm_product_cad_search" name="Product Cad Search" parent="plm.plm_menu_dictionaries"/>
+    <menuitem id="plm.plm_settings" name="Settings" parent="plm.plm_menu_dictionaries"/>
+</odoo>
