@@ -74,3 +74,34 @@ class BaseCadSecurity(models.AbstractModel):
         self._check_cad_active_token()
         return super().unlink()
 
+    @api.model
+    def koo_fields_view_get(self, view_id=None, view_type="form", toolbar=False, submenu=False):
+        """Tương thích ngược thuộc tính attrs={'readonly': ...} cho SolidWorks Add-in (Koo Client):
+        Koo không hiểu cú pháp điều kiện Python trong readonly của Odoo 17/18/20.
+        Việc chuyển đổi sang attrs chuẩn giúp SolidWorks tự động khóa xám (disable) toàn bộ các ô nhập
+        khi linh kiện / tài liệu ở trạng thái 'released' hoặc 'obsoleted'.
+        """
+        result = super().koo_fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        if result and "arch" in result and isinstance(result["arch"], str):
+            try:
+                from lxml import etree
+                node = etree.fromstring(result["arch"])
+                modified = False
+                for el in node.xpath(".//field"):
+                    fname = el.get("name")
+                    ro = el.get("readonly", "")
+                    if "released" in ro or fname in (
+                        'name', 'description', 'categ_id', 'std_description',
+                        'tmp_material', 'engineering_material',
+                        'tmp_surface', 'engineering_surface',
+                        'tmp_treatment', 'engineering_treatment',
+                        'weight', 'uom_id'
+                    ):
+                        el.set("attrs", "{'readonly': [('engineering_state', 'in', ['released', 'obsoleted'])]}")
+                        modified = True
+                if modified:
+                    result["arch"] = etree.tostring(node, encoding="utf-8").decode("utf-8")
+            except Exception as e:
+                _logger.warning(f"[TDB PLM] koo_fields_view_get attrs injection warning: {e}")
+        return result
+

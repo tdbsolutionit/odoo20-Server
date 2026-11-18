@@ -543,6 +543,30 @@ class IrAttachment(models.Model):
                 return False, msg
         return True, ""
 
+    def canCheckOut1(self, host_name='', host_pws=''):
+        """Mở rộng canCheckOut1 cho SolidWorks CAD Client:
+        Cho phép Check-out tài liệu ở trạng thái Xác nhận (confirmed) hoặc Ban hành (released)
+        phục vụ mở / đọc / tham chiếu CAD trên máy trạm SolidWorks.
+        Chỉ chặn khi tài liệu đã ở trạng thái Lỗi thời (obsoleted).
+        """
+        for docBrws in self:
+            if docBrws.engineering_state == 'obsoleted':
+                msg = _("Unable to check-Out document %s that is in state %s") % (
+                    docBrws.name or docBrws.engineering_code, docBrws.engineering_state
+                )
+                return docBrws.id, 'check_out_released', msg
+
+            check_out, check_out_browser = docBrws.isCheckedOutByMeOr(host_name, host_pws)
+            if check_out:
+                msg = _("Unable to check-Out document %s that is already checked Out By %s") % (
+                    docBrws.name or docBrws.engineering_code, docBrws.checkout_user
+                )
+                return docBrws.id, 'check_out_by_me', msg
+            else:
+                # Trả về cờ 'check_in' để SolidWorks Add-in biết tài liệu được phép Check-out tải về PWS
+                return docBrws.id, 'check_in', ''
+        return False, 'not_found', 'No document found'
+
     def checkout(self, hostName, hostPws, showError=True, user_id=False):
         """Khóa tài liệu Check-out:
         Cho phép mọi kỹ sư Check-out để lấy file về máy trạm SolidWorks (PWS) phục vụ thiết kế và tham chiếu.
