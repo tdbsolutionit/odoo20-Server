@@ -54,6 +54,37 @@ class ProductProduct(models.Model):
                 if not active:
                     raise UserError(_("Phiên làm việc CAD 180 ngày đã hết hạn. Vui lòng bấm 'Execute New Login' từ SolidWorks để tiếp tục."))
 
+    def _get_comp_effective_state(self, comp):
+        """Xác định trạng thái hiệu lực thực tế của linh kiện:
+        Nếu linh kiện ở trạng thái 'confirmed' hoặc 'draft' nhưng bản vẽ CAD / tài liệu PLM liên kết
+        đã ở trạng thái 'released' (Đã ban hành), thì ưu tiên trạng thái 'released' để thông báo chính xác cho người dùng.
+        """
+        state = comp.engineering_state
+        if state != 'released':
+            # 1. Kiểm tra qua quan hệ linkeddocuments
+            if hasattr(comp, 'linkeddocuments') and comp.linkeddocuments:
+                if any(d.engineering_state == 'released' for d in comp.linkeddocuments):
+                    try:
+                        comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': 'released'})
+                    except Exception:
+                        pass
+                    return 'released'
+            # 2. Tìm kiếm tài liệu PLM theo mã linh kiện (engineering_code hoặc tên tệp)
+            if comp.engineering_code:
+                rel_docs = self.env['ir.attachment'].sudo().search([
+                    ('is_plm', '=', True),
+                    '|',
+                    ('engineering_code', 'ilike', comp.engineering_code),
+                    ('name', 'ilike', comp.engineering_code)
+                ], order='engineering_revision desc, id desc', limit=10)
+                if any(d.engineering_state == 'released' for d in rel_docs):
+                    try:
+                        comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': 'released'})
+                    except Exception:
+                        pass
+                    return 'released'
+        return state
+
     @api.model
     def SaveOrUpdate(self, vals):
         """Lưu / Cập nhật linh kiện từ CAD Client:
@@ -66,22 +97,30 @@ class ProductProduct(models.Model):
         for partVals in (vals or []):
             eng_code = partVals.get("engineering_code")
             eng_rev = partVals.get("engineering_revision", 0)
+            try:
+                eng_rev_int = int(eng_rev) if eng_rev is not None else 0
+            except (ValueError, TypeError):
+                eng_rev_int = 0
             comp = False
             if eng_code:
                 comp = self.search([
                     ("engineering_code", "=", eng_code),
-                    ("engineering_revision", "=", eng_rev)
+                    ("engineering_revision", "=", eng_rev_int)
                 ], limit=1)
                 if not comp:
-                    comp = self.search([("engineering_code", "=", eng_code)], limit=1)
-            if comp and comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
-                part_copy = dict(partVals)
-                part_copy['componentID'] = comp.id
-                part_copy['name'] = comp.name
-                part_copy['hasSaved'] = False
-                readonly_vals.append(part_copy)
-            else:
-                writable_vals.append(partVals)
+                    comp = self.search([
+                        ("engineering_code", "=", eng_code)
+                    ], order="engineering_revision desc, id desc", limit=1)
+            if comp:
+                state = self._get_comp_effective_state(comp)
+                if state in ['confirmed', 'released', 'obsoleted']:
+                    part_copy = dict(partVals)
+                    part_copy['componentID'] = comp.id
+                    part_copy['name'] = comp.name
+                    part_copy['hasSaved'] = False
+                    readonly_vals.append(part_copy)
+                    continue
+            writable_vals.append(partVals)
 
         res = []
         if writable_vals:
@@ -101,19 +140,31 @@ class ProductProduct(models.Model):
         self._check_cad_access_token()
         eng_code = productAttribute.get("engineering_code")
         eng_rev = productAttribute.get("engineering_revision", 0)
+        try:
+            eng_rev_int = int(eng_rev) if eng_rev is not None else 0
+        except (ValueError, TypeError):
+            eng_rev_int = 0
+
+        comp = False
         if eng_code:
             comp = self.search([
                 ("engineering_code", "=", eng_code),
-                ("engineering_revision", "=", eng_rev)
+                ("engineering_revision", "=", eng_rev_int)
             ], limit=1)
             if not comp:
-                comp = self.search([("engineering_code", "=", eng_code)], limit=1)
-            if comp and comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
-                state_desc = "Đã ban hành" if comp.engineering_state == 'released' else ("Đang chờ duyệt" if comp.engineering_state == 'confirmed' else "Lỗi thời")
+                comp = self.search([
+                    ("engineering_code", "=", eng_code)
+                ], order="engineering_revision desc, id desc", limit=1)
+
+        if comp:
+            state = self._get_comp_effective_state(comp)
+            if state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if state == 'released' else ("Đang chờ duyệt" if state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
                     "Linh kiện '%s' đang ở trạng thái %s (%s). "
-                    "Không được phép chỉnh sửa thuộc tính từ SolidWorks!"
-                ) % (comp.engineering_code or comp.name, state_desc, comp.engineering_state))
+                    "Không được phép chỉnh sửa thông tin từ SolidWorks!"
+                ) % (comp.engineering_code or comp.name, state_desc, state))
+
         return super().createFromProps(productAttribute)
 
     @api.model_create_multi
@@ -125,16 +176,17 @@ class ProductProduct(models.Model):
 
     def write(self, vals):
         """Chặn sửa linh kiện khi thao tác từ SolidWorks nếu đã Ban hành/Chờ duyệt hoặc token hết hạn."""
-        if self.env.context.get('odooPLM'):
+        if self.env.context.get('odooPLM') and not self.env.context.get('skip_released_freeze'):
             self._check_cad_access_token()
             system_fields = {'message_follower_ids', 'message_ids', 'activity_ids'}
             data_fields = set(vals.keys()) - system_fields
             if data_fields:
                 for comp in self:
-                    if comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
-                        state_desc = "Đã ban hành" if comp.engineering_state == 'released' else ("Đang chờ duyệt" if comp.engineering_state == 'confirmed' else "Lỗi thời")
+                    state = self._get_comp_effective_state(comp)
+                    if state in ['confirmed', 'released', 'obsoleted']:
+                        state_desc = "Đã ban hành" if state == 'released' else ("Đang chờ duyệt" if state == 'confirmed' else "Lỗi thời")
                         raise UserError(_(
                             "Linh kiện '%s' đang ở trạng thái %s (%s). "
                             "Không được phép chỉnh sửa thông tin từ SolidWorks!"
-                        ) % (comp.engineering_code or comp.name, state_desc, comp.engineering_state))
+                        ) % (comp.engineering_code or comp.name, state_desc, state))
         return super().write(vals)

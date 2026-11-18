@@ -1068,11 +1068,59 @@ class IrAttachment(models.Model):
         self._check_cad_access_token()
         return super().saveStructure(arguments)
 
+    def _commonWFAction(self, writable, state, check):
+        """Đồng bộ trạng thái linh kiện liên kết khi tài liệu chuyển trạng thái workflow."""
+        res = super()._commonWFAction(writable, state, check)
+        for doc in self:
+            if getattr(doc, 'is_plm', False) and hasattr(doc, 'linkedcomponents') and doc.linkedcomponents:
+                for comp in doc.linkedcomponents:
+                    if comp.engineering_state != state:
+                        try:
+                            comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': state})
+                        except Exception as e:
+                            _logger.debug(f"[TDB PLM] Sync component state on workflow: {e}")
+        return res
+
     @api.model
-    def createFromProps(self, *args, **kwargs):
-        """Chặn tạo/sửa bản vẽ từ hộp thoại Properties của SolidWorks."""
+    def createFromProps(self, documentAttribute={}, dbThread=False, hostName=False, hostPws=False):
+        """Chặn sửa thuộc tính tài liệu từ hộp thoại Properties của SolidWorks nếu đã Ban hành / Chờ duyệt."""
         self._check_cad_access_token()
-        return super().createFromProps(*args, **kwargs)
+        eng_code = documentAttribute.get("engineering_code", False)
+        eng_rev = documentAttribute.get("engineering_revision", 0)
+        try:
+            eng_rev_int = int(eng_rev) if eng_rev is not None else 0
+        except (ValueError, TypeError):
+            eng_rev_int = 0
+
+        target_doc = False
+        if eng_code:
+            target_doc = self.search([
+                ("engineering_code", "=", eng_code),
+                ("engineering_revision", "=", eng_rev_int),
+                ("is_plm", "=", True)
+            ], limit=1)
+            if not target_doc:
+                target_doc = self.search([
+                    ("engineering_code", "=", eng_code),
+                    ("is_plm", "=", True)
+                ], order="engineering_revision desc, id desc", limit=1)
+
+        if not target_doc:
+            doc_name = documentAttribute.get("name") or documentAttribute.get("KEY", "")
+            if doc_name:
+                target_doc = self.search([
+                    ("name", "=", doc_name),
+                    ("is_plm", "=", True)
+                ], order="engineering_revision desc, id desc", limit=1)
+
+        if target_doc and target_doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+            state_desc = "Đã ban hành" if target_doc.engineering_state == 'released' else ("Đang chờ duyệt" if target_doc.engineering_state == 'confirmed' else "Lỗi thời")
+            raise UserError(_(
+                "Tài liệu '%s' đang ở trạng thái %s (%s). "
+                "Không được phép chỉnh sửa thuộc tính từ SolidWorks!"
+            ) % (target_doc.name or target_doc.engineering_code, state_desc, target_doc.engineering_state))
+
+        return super().createFromProps(documentAttribute=documentAttribute, dbThread=dbThread, hostName=hostName, hostPws=hostPws)
 
     @api.model
     def saveSingleLevel(self, clientArg):
