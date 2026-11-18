@@ -87,6 +87,17 @@ class BaseCadSecurity(models.AbstractModel):
                 from lxml import etree
                 node = etree.fromstring(result["arch"])
                 modified = False
+
+                # 1. Đảm bảo engineering_state có mặt trực tiếp trong <sheet> để Koo load vào record buffer
+                sheet_nodes = node.xpath(".//sheet")
+                if sheet_nodes:
+                    has_eng_state = bool(node.xpath(".//sheet//field[@name='engineering_state']"))
+                    if not has_eng_state:
+                        eng_state_el = etree.Element("field", name="engineering_state", invisible="1")
+                        sheet_nodes[0].insert(0, eng_state_el)
+                        modified = True
+
+                # 2. Xử lý thuộc tính readonly và attrs cho Koo client
                 for el in node.xpath(".//field"):
                     fname = el.get("name")
                     ro = el.get("readonly", "")
@@ -95,12 +106,22 @@ class BaseCadSecurity(models.AbstractModel):
                         'tmp_material', 'engineering_material',
                         'tmp_surface', 'engineering_surface',
                         'tmp_treatment', 'engineering_treatment',
-                        'weight', 'uom_id'
+                        'weight', 'uom_id', 'std_umc1', 'std_value1',
+                        'std_umc2', 'std_value2', 'std_umc3', 'std_value3',
+                        'desc_modify'
                     ):
-                        el.set("attrs", "{'readonly': [('engineering_state', 'in', ['released', 'obsoleted'])]}")
+                        # Xóa thuộc tính readonly Python expression để tránh Koo bị lỗi eval
+                        if "engineering_state" in ro:
+                            el.attrib.pop("readonly", None)
+                        # Dùng cú pháp Polish OR chuẩn mực của OpenERP 6 / Koo
+                        el.set("attrs", "{'readonly': ['|', ('engineering_state', '=', 'released'), ('engineering_state', '=', 'obsoleted')]}")
                         modified = True
+
                 if modified:
                     result["arch"] = etree.tostring(node, encoding="utf-8").decode("utf-8")
+                    # Cập nhật danh sách fields nếu có thêm engineering_state
+                    if "fields" in result and "engineering_state" not in result["fields"] and hasattr(self, '_fields') and 'engineering_state' in self._fields:
+                        result["fields"].update(self.fields_get(["engineering_state"]))
             except Exception as e:
                 _logger.warning(f"[TDB PLM] koo_fields_view_get attrs injection warning: {e}")
         return result

@@ -157,8 +157,12 @@
             <xpath expr="//button[@name='action_confirm']" position="attributes">
                 <attribute name="string">Confirm Component</attribute>
             </xpath>
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="engineering_state" invisible="1"/>
+            </xpath>
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Description</attribute>
+                <attribute name="readonly">engineering_state in ['released', 'obsoleted']</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_code']" position="attributes">
                 <attribute name="string">Engineering Code</attribute>
@@ -177,6 +181,7 @@
             </xpath>
             <xpath expr="//field[@name='categ_id']" position="attributes">
                 <attribute name="string">Category</attribute>
+                <attribute name="readonly">engineering_state in ['released', 'obsoleted']</attribute>
             </xpath>
             <xpath expr="//group[@name='technical_infos_group']" position="attributes">
                 <attribute name="string">Material / Surface / Treatment</attribute>

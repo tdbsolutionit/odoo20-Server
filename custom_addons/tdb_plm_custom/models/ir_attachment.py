@@ -741,56 +741,156 @@ class IrAttachment(models.Model):
         }
 
     # =========================================================================
-    # 6. CÁC HÀM CAD CHẶN LƯU & BẢO VỆ CLIENT COM
+    # 6. CÁC HÀM CAD CHẶN LƯU, CHECK-IN & BẢO VỆ CLIENT COM
     # =========================================================================
     @api.model
-    def SaveOrUpdate(self, documents, default=None):
-        """Chặn lưu/cập nhật tài liệu CAD khi token hết hạn."""
+    def _resolve_cad_doc(self, arg):
+        """Hàm phụ trợ tìm bản ghi ir.attachment từ tham số dict/id/name từ CAD Client."""
+        if not arg:
+            return self.browse()
+        if isinstance(arg, int):
+            return self.browse(arg)
+        if isinstance(arg, models.Model):
+            return arg
+        if isinstance(arg, dict):
+            doc_id = arg.get("id") or arg.get("_id") or arg.get("documentID")
+            if doc_id:
+                doc = self.browse(doc_id)
+                if doc.exists():
+                    return doc
+            eng_code = arg.get("engineering_code")
+            doc_rev = arg.get("engineering_revision")
+            doc_name = arg.get("name") or arg.get("datas_fname")
+            if eng_code:
+                domain = [("engineering_code", "=", eng_code)]
+                if doc_rev is not None and doc_rev is not False:
+                    domain.append(("engineering_revision", "=", doc_rev))
+                doc = self.search(domain, limit=1)
+                if doc:
+                    return doc
+                doc = self.search([("engineering_code", "=", eng_code)], limit=1)
+                if doc:
+                    return doc
+            if doc_name:
+                doc = self.search([("name", "=", doc_name)], limit=1)
+                if doc:
+                    return doc
+                if "." in doc_name:
+                    base_name = doc_name.rsplit(".", 1)[0]
+                    doc = self.search([("engineering_code", "=", base_name)], limit=1)
+                    if doc:
+                        return doc
+        return self.browse()
+
+    @api.model
+    def preCheckInRecursive_all(self, doc_props):
+        """Chặn Check-in trước khi CAD client mở giao diện Check-in nếu tài liệu đã Ban hành hoặc không giữ Key."""
         self._check_cad_access_token()
+        if doc_props and len(doc_props) > 0:
+            dict_props = json.loads(doc_props[0]) if isinstance(doc_props[0], str) else doc_props[0]
+            root_id = self._resolve_cad_doc(dict_props)
+            if root_id:
+                if root_id.engineering_state in ['released', 'obsoleted']:
+                    raise UserError(_(
+                        "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                        "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                    ) % (root_id.name or root_id.engineering_code, root_id.engineering_state))
+                root_id._check_key_holder_permission()
+        return super().preCheckInRecursive_all(doc_props)
+
+    @api.model
+    def preCheckInRecursive(self, doc_props, **kwargs):
+        """Chặn Check-in đơn lẻ/đệ quy cũ nếu tài liệu đã Ban hành hoặc không giữ Key."""
+        self._check_cad_access_token()
+        if doc_props:
+            dict_props = json.loads(doc_props) if isinstance(doc_props, str) else doc_props
+            root_id = self._resolve_cad_doc(dict_props)
+            if root_id:
+                if root_id.engineering_state in ['released', 'obsoleted']:
+                    raise UserError(_(
+                        "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                        "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                    ) % (root_id.name or root_id.engineering_code, root_id.engineering_state))
+                root_id._check_key_holder_permission()
+        return super().preCheckInRecursive(doc_props, **kwargs)
+
+    @api.model
+    def SaveOrUpdate(self, documents, default=None):
+        """Chặn lưu/cập nhật tài liệu CAD khi đã Ban hành hoặc token hết hạn."""
+        self._check_cad_access_token()
+        for doc_vals in (documents or []):
+            doc = self._resolve_cad_doc(doc_vals)
+            if doc and doc.engineering_state in ['released', 'obsoleted']:
+                raise UserError(_(
+                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Không được phép ghi đè hoặc cập nhật từ SolidWorks!"
+                ) % (doc.name or doc.engineering_code, doc.engineering_state))
         return super().SaveOrUpdate(documents, default=default)
 
     @api.model
     def CheckSaveUpdate(self, documents, default=None):
-        """Chặn kiểm tra lưu tài liệu CAD khi token hết hạn."""
+        """Chặn kiểm tra lưu tài liệu CAD khi đã Ban hành hoặc token hết hạn."""
         self._check_cad_access_token()
+        for doc_vals in (documents or []):
+            doc = self._resolve_cad_doc(doc_vals)
+            if doc and doc.engineering_state in ['released', 'obsoleted']:
+                raise UserError(_(
+                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Không được phép ghi đè hoặc cập nhật từ SolidWorks!"
+                ) % (doc.name or doc.engineering_code, doc.engineering_state))
         return super().CheckSaveUpdate(documents, default=default)
 
     @api.model
     def CheckIn(self, attrs):
-        """Chặn Check-in đơn lẻ khi không giữ Key hoặc token hết hạn."""
+        """Chặn Check-in đơn lẻ khi tài liệu đã Ban hành hoặc không giữ Key hoặc token hết hạn."""
         self._check_cad_access_token()
-        doc_id = attrs.get("id")
-        if doc_id:
-            doc = self.browse(doc_id)
+        doc = self._resolve_cad_doc(attrs)
+        if doc:
+            if doc.engineering_state in ['released', 'obsoleted']:
+                raise UserError(_(
+                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                ) % (doc.name or doc.engineering_code, doc.engineering_state))
             doc._check_key_holder_permission()
         return super().CheckIn(attrs)
 
     @api.model
     def CheckInRecursive(self, request, default=None):
-        """Chặn Check-in đệ quy khi token hết hạn, kiểm tra quyền giữ Key và bảo vệ client CAD chống crash COM."""
+        """Chặn Check-in đệ quy khi tài liệu đã Ban hành hoặc không giữ Key hoặc token hết hạn."""
         self._check_cad_access_token()
 
         target_doc = False
         if request and isinstance(request, (list, tuple)) and len(request) > 0:
-            doc_args = request[0]
-            if isinstance(doc_args, dict):
-                eng_code = doc_args.get("engineering_code")
-                doc_rev = doc_args.get("engineering_revision")
-                if eng_code:
-                    target_doc = self.search([
-                        ("engineering_code", "=", eng_code),
-                        ("engineering_revision", "=", doc_rev)
-                    ], limit=1)
-                    if target_doc:
-                        # 1. Kiểm tra quyền giữ Key độc quyền
-                        target_doc._check_key_holder_permission()
-
-                        # 2. Đảm bảo bản ghi checkout tồn tại cho user này để tránh lỗi COM SolidWorks
-                        if not target_doc.isCheckedOutByMe():
-                            host_name = doc_args.get("hostname") or "SolidWorks CAD"
-                            target_doc.checkout(host_name, "pws", showError=False)
+            target_doc = self._resolve_cad_doc(request[0])
 
         if target_doc:
+            if target_doc.engineering_state in ['released', 'obsoleted']:
+                raise UserError(_(
+                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                ) % (target_doc.name or target_doc.engineering_code, target_doc.engineering_state))
+            target_doc._check_key_holder_permission()
+
+            # Đảm bảo bản ghi checkout tồn tại cho user này để tránh lỗi COM SolidWorks
+            if not target_doc.isCheckedOutByMe():
+                doc_args = request[0] if isinstance(request[0], dict) else {}
+                host_name = doc_args.get("hostname") or "SolidWorks CAD"
+                target_doc.checkout(host_name, "pws", showError=False)
+
+            try:
+                doc_tree_ids = self.getRelatedAllLevelDocumentsTree(target_doc)
+                for rel_doc in self.browse(doc_tree_ids):
+                    if rel_doc.engineering_state in ['released', 'obsoleted']:
+                        raise UserError(_(
+                            "Tài liệu '%s' (trong cây lắp ráp) đã ở trạng thái Ban hành (%s). "
+                            "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                        ) % (rel_doc.name or rel_doc.engineering_code, rel_doc.engineering_state))
+                    rel_doc._check_key_holder_permission()
+            except UserError:
+                raise
+            except Exception as e:
+                _logger.warning(f"[TDB PLM] Kiểm tra cây tài liệu CheckInRecursive: {e}")
+
             target_doc._create_document_history_snapshot(
                 description=_("Check-in từ SolidWorks CAD"),
                 user_id=self.env.user
@@ -925,27 +1025,42 @@ class IrAttachment(models.Model):
 
     @api.model
     def CheckIn2(self, request, default=None, force=False):
-        """Chặn CheckIn2 khi không giữ Key hoặc token hết hạn."""
+        """Chặn CheckIn2 khi tài liệu đã Ban hành hoặc không giữ Key hoặc token hết hạn."""
         self._check_cad_access_token()
+        if request and isinstance(request, (list, tuple)) and len(request) > 0:
+            doc = self._resolve_cad_doc(request[0])
+            if doc:
+                if doc.engineering_state in ['released', 'obsoleted']:
+                    raise UserError(_(
+                        "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                        "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                    ) % (doc.name or doc.engineering_code, doc.engineering_state))
+                doc._check_key_holder_permission()
         return super().CheckIn2(request, default=default, force=force)
 
     @api.model
     def CheckInRecursive2(self, involved_docs_dict, **kargs):
-        """Chặn CheckInRecursive2 khi token hết hạn và lưu snapshot lịch sử."""
+        """Chặn CheckInRecursive2 khi tài liệu đã Ban hành hoặc không giữ Key hoặc token hết hạn."""
         self._check_cad_access_token()
-        try:
-            import json
-            involved = json.loads(involved_docs_dict)
-            for doc_vals in involved.get("to_check_in", []):
-                docId = self.getDocId(doc_vals)
-                if docId:
-                    docId._check_key_holder_permission()
-                    docId._create_document_history_snapshot(
-                        description=_("Check-in từ SolidWorks CAD"),
-                        user_id=self.env.user
-                    )
-        except Exception as e:
-            _logger.warning(f"[TDB PLM] Lỗi khi tạo snapshot CheckInRecursive2: {e}")
+        dict_data = json.loads(involved_docs_dict) if isinstance(involved_docs_dict, str) else (involved_docs_dict or {})
+        for doc_vals in dict_data.get("to_check_in", []):
+            checked = doc_vals.get("checked", False)
+            if checked or kargs.get("force", False):
+                doc_id = self.getDocId(doc_vals) or self._resolve_cad_doc(doc_vals)
+                if doc_id:
+                    if doc_id.engineering_state in ['released', 'obsoleted']:
+                        raise UserError(_(
+                            "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                            "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                        ) % (doc_id.name or doc_id.engineering_code, doc_id.engineering_state))
+                    doc_id._check_key_holder_permission()
+                    try:
+                        doc_id._create_document_history_snapshot(
+                            description=_("Check-in từ SolidWorks CAD (v2)"),
+                            user_id=self.env.user
+                        )
+                    except Exception as e:
+                        _logger.warning(f"[TDB PLM] Lỗi khi tạo snapshot CheckInRecursive2: {e}")
 
         return super().CheckInRecursive2(involved_docs_dict, **kargs)
 
