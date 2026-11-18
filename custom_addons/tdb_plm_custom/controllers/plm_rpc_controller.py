@@ -220,7 +220,7 @@ def _cad_dispatch_rpc(service_name, method, params):
                 dbs = db_list()
             except Exception:
                 try:
-                    from odoo.http import db_list
+                    from odoo.http.router import db_list
                     dbs = db_list()
                 except Exception:
                     try:

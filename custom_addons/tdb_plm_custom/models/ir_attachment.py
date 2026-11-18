@@ -529,11 +529,14 @@ class IrAttachment(models.Model):
     # 4. THAO TÁC CHECK-OUT VÀ CHECK-IN
     # =========================================================================
     def canCheckOut(self, showError=False):
-        """Mở rộng canCheckOut: Cho phép tất cả kỹ sư đều có thể Check-out tài liệu để lấy file về máy trạm."""
+        """Mở rộng canCheckOut: Cho phép tất cả kỹ sư đều có thể Check-out tài liệu để lấy file về máy trạm,
+        kể cả khi tài liệu ở trạng thái Xác nhận (confirmed) hoặc Ban hành (released) phục vụ tham chiếu / mở bản vẽ trong CAD.
+        Chỉ chặn khi tài liệu đã bị Lỗi thời / Hủy bỏ (obsoleted).
+        """
         for doc in self:
-            if doc.engineering_state not in ['draft', 'wip', False]:
-                msg = _("Tài liệu '%s' đang ở trạng thái '%s' nên không thể Check-out.") % (
-                    doc.name or doc.engineering_code, doc.engineering_state
+            if doc.engineering_state == 'obsoleted':
+                msg = _("Tài liệu '%s' đã ở trạng thái Lỗi thời (obsoleted) nên không thể Check-out.") % (
+                    doc.name or doc.engineering_code
                 )
                 if showError:
                     raise UserError(msg)

@@ -37,9 +37,16 @@ def main():
     except ImportError:
         from odoo.orm.registry import Registry
 
-    config_path = os.path.join(odoo_dir, 'odoo.conf')
-    if not os.path.exists(config_path):
-        config_path = 'odoo.conf'
+    config_candidates = [
+        os.path.join(odoo_dir, 'config', 'odoo.conf'),
+        os.path.join(odoo_dir, 'odoo.conf'),
+        'odoo.conf',
+    ]
+    config_path = 'odoo.conf'
+    for c in config_candidates:
+        if os.path.exists(c):
+            config_path = c
+            break
 
     try:
         config.parse_config(['-c', config_path, '-d', 'odoo20'], setup_logging=False)

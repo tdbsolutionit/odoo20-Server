@@ -143,12 +143,12 @@
                         groups="plm.group_plm_admin"
                         invisible="not key_holder_id or is_key_holder or engineering_state in ['released', 'obsoleted']"/>
 
-                <!-- Nút Check-out: Mọi kỹ sư đều có thể bấm khi người đó CHƯA Check-out và chưa ban hành -->
+                <!-- Nút Check-out: Mọi kỹ sư đều có thể bấm khi người đó CHƯA Check-out (kể cả khi đã Ban hành để tham chiếu) -->
                 <button name="action_web_checkout"
                         type="object"
                         string="Check-out"
                         class="btn-secondary"
-                        invisible="is_checked_out_by_me == True or engineering_state in ['released', 'obsoleted']"/>
+                        invisible="is_checked_out_by_me == True or engineering_state == 'obsoleted'"/>
 
                 <!-- Nút Check-in: Chỉ hiển thị cho người đang giữ Key VÀ đã Check-out và chưa ban hành -->
                 <button name="action_web_checkin"

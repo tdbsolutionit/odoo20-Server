@@ -25,8 +25,15 @@ if (-not $PythonExe) {
 }
 
 if (-not $ConfigFile) {
-    $cfg = Join-Path $OdooDir "odoo.conf"
-    $ConfigFile = if (Test-Path $cfg) { $cfg } else { "odoo.conf" }
+    $cfgConfig = Join-Path $OdooDir "config\odoo.conf"
+    $cfgRoot = Join-Path $OdooDir "odoo.conf"
+    if (Test-Path $cfgConfig) {
+        $ConfigFile = $cfgConfig
+    } elseif (Test-Path $cfgRoot) {
+        $ConfigFile = $cfgRoot
+    } else {
+        $ConfigFile = if (Test-Path "config\odoo.conf") { "config\odoo.conf" } else { "odoo.conf" }
+    }
 }
 
 $odooBin = Join-Path $OdooDir "odoo-bin"
