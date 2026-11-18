@@ -11,4 +11,3 @@ from . import plm_checkout
 from . import plm_desktop_token
 from . import ir_http
 from . import res_users
-from . import plm_client

@@ -56,11 +56,17 @@ class ProductProduct(models.Model):
 
     @api.model
     def SaveOrUpdate(self, vals):
-        """Chặn đứng lưu/sửa linh kiện từ CAD Client nếu đã Ban hành/Chờ duyệt hoặc token hết hạn/thu hồi."""
+        """Lưu / Cập nhật linh kiện từ CAD Client:
+        Linh kiện đã Ban hành (released), Chờ duyệt (confirmed), Lỗi thời (obsoleted):
+        Bảo vệ không cho phép ghi đè, đặt hasSaved = False để SolidWorks không đánh dấu xanh và không lưu.
+        """
         self._check_cad_access_token()
+        writable_vals = []
+        readonly_vals = []
         for partVals in (vals or []):
             eng_code = partVals.get("engineering_code")
             eng_rev = partVals.get("engineering_revision", 0)
+            comp = False
             if eng_code:
                 comp = self.search([
                     ("engineering_code", "=", eng_code),
@@ -68,13 +74,20 @@ class ProductProduct(models.Model):
                 ], limit=1)
                 if not comp:
                     comp = self.search([("engineering_code", "=", eng_code)], limit=1)
-                if comp and comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
-                    state_desc = "Đã ban hành" if comp.engineering_state == 'released' else ("Đang chờ duyệt" if comp.engineering_state == 'confirmed' else "Lỗi thời")
-                    raise UserError(_(
-                        "Linh kiện '%s' đang ở trạng thái %s (%s). "
-                        "Không được phép chỉnh sửa hoặc ghi đè thông tin từ SolidWorks!"
-                    ) % (comp.engineering_code or comp.name, state_desc, comp.engineering_state))
-        return super().SaveOrUpdate(vals)
+            if comp and comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                part_copy = dict(partVals)
+                part_copy['componentID'] = comp.id
+                part_copy['name'] = comp.name
+                part_copy['hasSaved'] = False
+                readonly_vals.append(part_copy)
+            else:
+                writable_vals.append(partVals)
+
+        res = []
+        if writable_vals:
+            res = super().SaveOrUpdate(writable_vals)
+        res.extend(readonly_vals)
+        return res
 
     @api.model
     def ConvertToPlmProduct(self, attributes_list=[]):

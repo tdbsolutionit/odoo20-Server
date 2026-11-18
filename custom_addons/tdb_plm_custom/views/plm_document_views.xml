@@ -121,41 +121,41 @@
                 <field name="is_checkout" invisible="1"/>
                 <field name="is_checked_out_by_me" invisible="1"/>
 
-                <!-- Nút Lock: Hiển thị khi chưa có ai giữ Key và chưa ban hành -->
+                <!-- Nút Lock: Hiển thị khi chưa có ai giữ Key và đang ở trạng thái draft -->
                 <button name="action_lock_key"
                         type="object"
                         string="Lock"
                         class="btn-primary"
-                        invisible="key_holder_id or engineering_state in ['released', 'obsoleted']"/>
+                        invisible="key_holder_id or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
 
-                <!-- Nút Unlock: Hiển thị cho người đang giữ Key (kể cả Kỹ sư hay Admin) -->
+                <!-- Nút Unlock: Hiển thị cho người đang giữ Key khi đang ở draft -->
                 <button name="action_open_transfer_key_wizard"
                         type="object"
                         string="Unlock"
                         class="btn-warning"
-                        invisible="not is_key_holder or engineering_state in ['released', 'obsoleted']"/>
+                        invisible="not is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
 
-                <!-- Nút Force Unlock: Chỉ Admin mới thấy khi tài liệu có người khác giữ Key -->
+                <!-- Nút Force Unlock: Chỉ Admin mới thấy khi tài liệu có người khác giữ Key khi đang draft -->
                 <button name="action_open_transfer_key_wizard"
                         type="object"
                         string="Force Unlock"
                         class="btn-danger"
                         groups="plm.group_plm_admin"
-                        invisible="not key_holder_id or is_key_holder or engineering_state in ['released', 'obsoleted']"/>
+                        invisible="not key_holder_id or is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
 
-                <!-- Nút Check-out: Mọi kỹ sư đều có thể bấm khi người đó CHƯA Check-out (kể cả khi đã Ban hành để tham chiếu) -->
+                <!-- Nút Check-out: Mọi kỹ sư đều có thể bấm khi người đó CHƯA Check-out và tài liệu ở trạng thái Draft -->
                 <button name="action_web_checkout"
                         type="object"
                         string="Check-out"
                         class="btn-secondary"
-                        invisible="is_checked_out_by_me == True or engineering_state == 'obsoleted'"/>
+                        invisible="is_checked_out_by_me == True or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
 
-                <!-- Nút Check-in: Chỉ hiển thị cho người đang giữ Key VÀ đã Check-out và chưa ban hành -->
+                <!-- Nút Check-in: Chỉ hiển thị cho người đang giữ Key VÀ đã Check-out khi đang ở Draft -->
                 <button name="action_web_checkin"
                         type="object"
                         string="Check-in"
                         class="btn-primary"
-                        invisible="is_checked_out_by_me == False or not is_key_holder or engineering_state in ['released', 'obsoleted']"/>
+                        invisible="is_checked_out_by_me == False or not is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
 
                 <!-- Nút Hủy Check-out: Cho phép người dùng hiện tại hủy phiên Check-out của mình -->
                 <button name="action_web_undo_checkout"

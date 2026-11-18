@@ -529,29 +529,44 @@ class IrAttachment(models.Model):
     # =========================================================================
     # 4. THAO TÁC CHECK-OUT VÀ CHECK-IN
     # =========================================================================
+    def _clean_invalid_checkouts(self):
+        """Tự động dọn dẹp các bản ghi check-out không hợp lệ của tài liệu đã Ban hành / Chờ duyệt / Lỗi thời."""
+        try:
+            invalid_co = self.env['plm.checkout'].sudo().search([
+                ('documentid.engineering_state', 'in', ['confirmed', 'released', 'obsoleted'])
+            ])
+            if invalid_co:
+                _logger.info(f"[TDB PLM] Tự động giải phóng {len(invalid_co)} bản ghi checkout của tài liệu đã ban hành/chờ duyệt/lỗi thời.")
+                invalid_co.with_context(skip_checkin_audit=True).unlink()
+        except Exception as e:
+            _logger.warning(f"[TDB PLM] Lỗi dọn dẹp invalid checkout: {e}")
+
     def canCheckOut(self, showError=False):
-        """Mở rộng canCheckOut: Cho phép tất cả kỹ sư đều có thể Check-out tài liệu để lấy file về máy trạm,
-        kể cả khi tài liệu ở trạng thái Xác nhận (confirmed) hoặc Ban hành (released) phục vụ tham chiếu / mở bản vẽ trong CAD.
-        Chỉ chặn khi tài liệu đã bị Lỗi thời / Hủy bỏ (obsoleted).
+        """Mở rộng canCheckOut: Chỉ cho phép Check-out tài liệu khi ở trạng thái Dự thảo (draft).
+        Tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted) bị khóa tuyệt đối,
+        không được phép Check-out để đảm bảo tính đóng băng thiết kế.
         """
         for doc in self:
-            if doc.engineering_state == 'obsoleted':
-                msg = _("Tài liệu '%s' đã ở trạng thái Lỗi thời (obsoleted) nên không thể Check-out.") % (
-                    doc.name or doc.engineering_code
+            if doc.engineering_state not in ['draft', False]:
+                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
+                msg = _("Tài liệu '%s' đang ở trạng thái %s (%s) nên không thể Check-out.") % (
+                    doc.name or doc.engineering_code, state_desc, doc.engineering_state
                 )
                 if showError:
                     raise UserError(msg)
                 return False, msg
-        return True, ""
+        return super().canCheckOut(showError=showError)
 
     def canCheckOut1(self, host_name='', host_pws=''):
-        """Mở rộng canCheckOut1 cho SolidWorks CAD Client:
-        Cho phép Check-out tài liệu ở trạng thái Xác nhận (confirmed) hoặc Ban hành (released)
-        phục vụ mở / đọc / tham chiếu CAD trên máy trạm SolidWorks.
-        Chỉ chặn khi tài liệu đã ở trạng thái Lỗi thời (obsoleted).
+        """Kiểm tra quyền Check-out cho SolidWorks CAD Client:
+        Tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted):
+        Phải trả về 'check_out_released' theo đúng chuẩn OdooPLM gốc.
+        SolidWorks Add-in sẽ nhận biết tài liệu đã khóa/đóng băng và mở ở chế độ Chỉ đọc (Read-Only),
+        tuyệt đối không tạo phiên check-out làm bẩn / đánh dấu xanh linh kiện trong Multi Edit Parts!
         """
+        self._clean_invalid_checkouts()
         for docBrws in self:
-            if docBrws.engineering_state == 'obsoleted':
+            if docBrws.engineering_state not in ['draft', False]:
                 msg = _("Unable to check-Out document %s that is in state %s") % (
                     docBrws.name or docBrws.engineering_code, docBrws.engineering_state
                 )
@@ -564,17 +579,32 @@ class IrAttachment(models.Model):
                 )
                 return docBrws.id, 'check_out_by_me', msg
             else:
-                # Trả về cờ 'check_in' để SolidWorks Add-in biết tài liệu được phép Check-out tải về PWS
-                return docBrws.id, 'check_in', ''
+                if check_out_browser:
+                    msg = _("Unable to check-Out document %s that is already checked out by user %s on %s, %s") % (
+                        docBrws.name or docBrws.engineering_code, docBrws.checkout_user, host_name, host_pws
+                    )
+                    return docBrws.id, 'check_out_by_user', msg
+                else:
+                    return docBrws.id, 'check_in', ''
         return False, 'not_found', 'No document found'
 
     def checkout(self, hostName, hostPws, showError=True, user_id=False):
         """Khóa tài liệu Check-out:
-        Cho phép mọi kỹ sư Check-out để lấy file về máy trạm SolidWorks (PWS) phục vụ thiết kế và tham chiếu.
+        Chặn đứng Check-out nếu tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted).
         Quyền Check-in ghi đè được kiểm soát riêng biệt bởi Người giữ Key (key_holder_id).
         Check-out không tự động cấp Key (kỹ sư phải bấm nút 'Lock' khi tài liệu tự do để nhận quyền giữ Key).
         """
         self._check_cad_access_token()
+        for doc in self:
+            if doc.engineering_state not in ['draft', False]:
+                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
+                msg = _("Tài liệu '%s' đang ở trạng thái %s (%s) nên không thể Check-out.") % (
+                    doc.name or doc.engineering_code, state_desc, doc.engineering_state
+                )
+                if showError:
+                    raise UserError(msg)
+                return False, msg
+
         if not user_id:
             user_id = self.env.uid
 
@@ -819,31 +849,45 @@ class IrAttachment(models.Model):
 
     @api.model
     def SaveOrUpdate(self, documents, default=None):
-        """Chặn lưu/cập nhật tài liệu CAD khi đã Ban hành/Chờ duyệt hoặc token hết hạn."""
+        """Lưu / Cập nhật tài liệu CAD:
+        Bảo vệ tài liệu đã Ban hành (released), Chờ duyệt (confirmed), Lỗi thời (obsoleted):
+        Tuyệt đối không ghi đè, đặt hasSaved = False, hasUpdated = False để SolidWorks không lưu lại.
+        """
         self._check_cad_access_token()
+        self._clean_invalid_checkouts()
+        writable_docs = []
+        readonly_docs = []
         for doc_vals in (documents or []):
             doc = self._resolve_cad_doc(doc_vals)
             if doc and doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
-                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
-                raise UserError(_(
-                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
-                    "Không được phép ghi đè hoặc cập nhật từ SolidWorks!"
-                ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
-        return super().SaveOrUpdate(documents, default=default)
+                doc_copy = dict(doc_vals)
+                doc_copy['documentID'] = doc.id
+                doc_copy['hasSaved'] = False
+                doc_copy['hasUpdated'] = False
+                readonly_docs.append(doc_copy)
+            else:
+                writable_docs.append(doc_vals)
+
+        res = []
+        if writable_docs:
+            res = super().SaveOrUpdate(writable_docs, default=default)
+        res.extend(readonly_docs)
+        return res
 
     @api.model
     def CheckSaveUpdate(self, documents, default=None):
-        """Chặn kiểm tra lưu tài liệu CAD khi đã Ban hành/Chờ duyệt hoặc token hết hạn."""
+        """Kiểm tra lưu tài liệu CAD:
+        Đối với tài liệu đã Ban hành (released), Chờ duyệt (confirmed), Lỗi thời (obsoleted):
+        Tuyệt đối đặt hasSaved = False (không được phép lưu/ghi đè), không đánh dấu xanh trong Multi Edit Parts!
+        """
         self._check_cad_access_token()
-        for doc_vals in (documents or []):
-            doc = self._resolve_cad_doc(doc_vals)
+        self._clean_invalid_checkouts()
+        res = super().CheckSaveUpdate(documents, default=default)
+        for doc_dict in res:
+            doc = self._resolve_cad_doc(doc_dict)
             if doc and doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
-                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
-                raise UserError(_(
-                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
-                    "Không được phép ghi đè hoặc cập nhật từ SolidWorks!"
-                ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
-        return super().CheckSaveUpdate(documents, default=default)
+                doc_dict['hasSaved'] = False
+        return res
 
     @api.model
     def CheckIn(self, attrs):
@@ -995,6 +1039,11 @@ class IrAttachment(models.Model):
                 ])
 
             for doc in docs:
+                if doc.engineering_state not in ['draft', False]:
+                    item['checkout'] = False
+                    item['err_msg'] = _("Unable to check-Out document %s that is in state %s") % (doc.name or doc.engineering_code, doc.engineering_state)
+                    continue
+
                 isCheckoutByMe, _checkoutUser = doc.checkoutByMeWithUser()
                 if not isCheckoutByMe:
                     checkout_id, msg = doc.checkout(hostname, pws_path, showError=False)
