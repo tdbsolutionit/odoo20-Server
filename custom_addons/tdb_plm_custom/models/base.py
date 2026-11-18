@@ -113,8 +113,8 @@ class BaseCadSecurity(models.AbstractModel):
                         # Xóa thuộc tính readonly Python expression để tránh Koo bị lỗi eval
                         if "engineering_state" in ro:
                             el.attrib.pop("readonly", None)
-                        # Dùng cú pháp Polish OR chuẩn mực của OpenERP 6 / Koo
-                        el.set("attrs", "{'readonly': ['|', ('engineering_state', '=', 'released'), ('engineering_state', '=', 'obsoleted')]}")
+                        # Dùng cú pháp chuẩn OpenERP 6 / Koo: khóa mọi trạng thái khác draft
+                        el.set("attrs", "{'readonly': [('engineering_state', '!=', 'draft')]}")
                         modified = True
 
                 if modified:

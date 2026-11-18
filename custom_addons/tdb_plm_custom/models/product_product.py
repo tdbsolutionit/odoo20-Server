@@ -56,7 +56,7 @@ class ProductProduct(models.Model):
 
     @api.model
     def SaveOrUpdate(self, vals):
-        """Chặn đứng lưu/sửa linh kiện từ CAD Client nếu đã Ban hành hoặc token hết hạn/thu hồi."""
+        """Chặn đứng lưu/sửa linh kiện từ CAD Client nếu đã Ban hành/Chờ duyệt hoặc token hết hạn/thu hồi."""
         self._check_cad_access_token()
         for partVals in (vals or []):
             eng_code = partVals.get("engineering_code")
@@ -68,11 +68,12 @@ class ProductProduct(models.Model):
                 ], limit=1)
                 if not comp:
                     comp = self.search([("engineering_code", "=", eng_code)], limit=1)
-                if comp and comp.engineering_state in ['released', 'obsoleted']:
+                if comp and comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                    state_desc = "Đã ban hành" if comp.engineering_state == 'released' else ("Đang chờ duyệt" if comp.engineering_state == 'confirmed' else "Lỗi thời")
                     raise UserError(_(
-                        "Linh kiện '%s' đã ở trạng thái Ban hành (%s). "
+                        "Linh kiện '%s' đang ở trạng thái %s (%s). "
                         "Không được phép chỉnh sửa hoặc ghi đè thông tin từ SolidWorks!"
-                    ) % (comp.engineering_code or comp.name, comp.engineering_state))
+                    ) % (comp.engineering_code or comp.name, state_desc, comp.engineering_state))
         return super().SaveOrUpdate(vals)
 
     @api.model
@@ -83,7 +84,7 @@ class ProductProduct(models.Model):
 
     @api.model
     def createFromProps(self, productAttribute):
-        """Chặn tạo/sửa linh kiện từ hộp thoại Component Properties của SolidWorks Add-in nếu đã Ban hành."""
+        """Chặn tạo/sửa linh kiện từ hộp thoại Component Properties của SolidWorks Add-in nếu đã Ban hành/Chờ duyệt."""
         self._check_cad_access_token()
         eng_code = productAttribute.get("engineering_code")
         eng_rev = productAttribute.get("engineering_revision", 0)
@@ -94,11 +95,12 @@ class ProductProduct(models.Model):
             ], limit=1)
             if not comp:
                 comp = self.search([("engineering_code", "=", eng_code)], limit=1)
-            if comp and comp.engineering_state in ['released', 'obsoleted']:
+            if comp and comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if comp.engineering_state == 'released' else ("Đang chờ duyệt" if comp.engineering_state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
-                    "Linh kiện '%s' đã ở trạng thái Ban hành (%s). "
+                    "Linh kiện '%s' đang ở trạng thái %s (%s). "
                     "Không được phép chỉnh sửa thuộc tính từ SolidWorks!"
-                ) % (comp.engineering_code or comp.name, comp.engineering_state))
+                ) % (comp.engineering_code or comp.name, state_desc, comp.engineering_state))
         return super().createFromProps(productAttribute)
 
     @api.model_create_multi
@@ -109,16 +111,17 @@ class ProductProduct(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
-        """Chặn sửa linh kiện khi thao tác từ SolidWorks nếu đã Ban hành hoặc token hết hạn."""
+        """Chặn sửa linh kiện khi thao tác từ SolidWorks nếu đã Ban hành/Chờ duyệt hoặc token hết hạn."""
         if self.env.context.get('odooPLM'):
             self._check_cad_access_token()
             system_fields = {'message_follower_ids', 'message_ids', 'activity_ids'}
             data_fields = set(vals.keys()) - system_fields
             if data_fields:
                 for comp in self:
-                    if comp.engineering_state in ['released', 'obsoleted']:
+                    if comp.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                        state_desc = "Đã ban hành" if comp.engineering_state == 'released' else ("Đang chờ duyệt" if comp.engineering_state == 'confirmed' else "Lỗi thời")
                         raise UserError(_(
-                            "Linh kiện '%s' đã ở trạng thái Ban hành (%s). "
+                            "Linh kiện '%s' đang ở trạng thái %s (%s). "
                             "Không được phép chỉnh sửa thông tin từ SolidWorks!"
-                        ) % (comp.engineering_code or comp.name, comp.engineering_state))
+                        ) % (comp.engineering_code or comp.name, state_desc, comp.engineering_state))
         return super().write(vals)

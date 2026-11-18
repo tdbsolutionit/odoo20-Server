@@ -155,11 +155,12 @@ class IrAttachment(models.Model):
             if not getattr(doc, 'is_plm', False):
                 continue
 
-            if doc.engineering_state in ['released', 'obsoleted']:
+            if doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
-                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                ) % (doc.name or doc.engineering_code, doc.engineering_state))
+                ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
 
             if not doc.key_holder_id:
                 raise UserError(_(
@@ -790,11 +791,12 @@ class IrAttachment(models.Model):
             dict_props = json.loads(doc_props[0]) if isinstance(doc_props[0], str) else doc_props[0]
             root_id = self._resolve_cad_doc(dict_props)
             if root_id:
-                if root_id.engineering_state in ['released', 'obsoleted']:
+                if root_id.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                    state_desc = "Đã ban hành" if root_id.engineering_state == 'released' else ("Đang chờ duyệt" if root_id.engineering_state == 'confirmed' else "Lỗi thời")
                     raise UserError(_(
-                        "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                        "Tài liệu '%s' đang ở trạng thái %s (%s). "
                         "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                    ) % (root_id.name or root_id.engineering_code, root_id.engineering_state))
+                    ) % (root_id.name or root_id.engineering_code, state_desc, root_id.engineering_state))
                 root_id._check_key_holder_permission()
         return super().preCheckInRecursive_all(doc_props)
 
@@ -806,38 +808,41 @@ class IrAttachment(models.Model):
             dict_props = json.loads(doc_props) if isinstance(doc_props, str) else doc_props
             root_id = self._resolve_cad_doc(dict_props)
             if root_id:
-                if root_id.engineering_state in ['released', 'obsoleted']:
+                if root_id.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                    state_desc = "Đã ban hành" if root_id.engineering_state == 'released' else ("Đang chờ duyệt" if root_id.engineering_state == 'confirmed' else "Lỗi thời")
                     raise UserError(_(
-                        "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                        "Tài liệu '%s' đang ở trạng thái %s (%s). "
                         "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                    ) % (root_id.name or root_id.engineering_code, root_id.engineering_state))
+                    ) % (root_id.name or root_id.engineering_code, state_desc, root_id.engineering_state))
                 root_id._check_key_holder_permission()
         return super().preCheckInRecursive(doc_props, **kwargs)
 
     @api.model
     def SaveOrUpdate(self, documents, default=None):
-        """Chặn lưu/cập nhật tài liệu CAD khi đã Ban hành hoặc token hết hạn."""
+        """Chặn lưu/cập nhật tài liệu CAD khi đã Ban hành/Chờ duyệt hoặc token hết hạn."""
         self._check_cad_access_token()
         for doc_vals in (documents or []):
             doc = self._resolve_cad_doc(doc_vals)
-            if doc and doc.engineering_state in ['released', 'obsoleted']:
+            if doc and doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
-                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép ghi đè hoặc cập nhật từ SolidWorks!"
-                ) % (doc.name or doc.engineering_code, doc.engineering_state))
+                ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
         return super().SaveOrUpdate(documents, default=default)
 
     @api.model
     def CheckSaveUpdate(self, documents, default=None):
-        """Chặn kiểm tra lưu tài liệu CAD khi đã Ban hành hoặc token hết hạn."""
+        """Chặn kiểm tra lưu tài liệu CAD khi đã Ban hành/Chờ duyệt hoặc token hết hạn."""
         self._check_cad_access_token()
         for doc_vals in (documents or []):
             doc = self._resolve_cad_doc(doc_vals)
-            if doc and doc.engineering_state in ['released', 'obsoleted']:
+            if doc and doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
-                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép ghi đè hoặc cập nhật từ SolidWorks!"
-                ) % (doc.name or doc.engineering_code, doc.engineering_state))
+                ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
         return super().CheckSaveUpdate(documents, default=default)
 
     @api.model
@@ -846,17 +851,18 @@ class IrAttachment(models.Model):
         self._check_cad_access_token()
         doc = self._resolve_cad_doc(attrs)
         if doc:
-            if doc.engineering_state in ['released', 'obsoleted']:
+            if doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
-                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                ) % (doc.name or doc.engineering_code, doc.engineering_state))
+                ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
             doc._check_key_holder_permission()
         return super().CheckIn(attrs)
 
     @api.model
     def CheckInRecursive(self, request, default=None):
-        """Chặn Check-in đệ quy khi tài liệu đã Ban hành hoặc không giữ Key hoặc token hết hạn."""
+        """Chặn Check-in đệ quy khi tài liệu đã Ban hành/Chờ duyệt hoặc không giữ Key hoặc token hết hạn."""
         self._check_cad_access_token()
 
         target_doc = False
@@ -864,11 +870,12 @@ class IrAttachment(models.Model):
             target_doc = self._resolve_cad_doc(request[0])
 
         if target_doc:
-            if target_doc.engineering_state in ['released', 'obsoleted']:
+            if target_doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                state_desc = "Đã ban hành" if target_doc.engineering_state == 'released' else ("Đang chờ duyệt" if target_doc.engineering_state == 'confirmed' else "Lỗi thời")
                 raise UserError(_(
-                    "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                    "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                ) % (target_doc.name or target_doc.engineering_code, target_doc.engineering_state))
+                ) % (target_doc.name or target_doc.engineering_code, state_desc, target_doc.engineering_state))
             target_doc._check_key_holder_permission()
 
             # Đảm bảo bản ghi checkout tồn tại cho user này để tránh lỗi COM SolidWorks
@@ -880,11 +887,12 @@ class IrAttachment(models.Model):
             try:
                 doc_tree_ids = self.getRelatedAllLevelDocumentsTree(target_doc)
                 for rel_doc in self.browse(doc_tree_ids):
-                    if rel_doc.engineering_state in ['released', 'obsoleted']:
+                    if rel_doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                        state_desc = "Đã ban hành" if rel_doc.engineering_state == 'released' else ("Đang chờ duyệt" if rel_doc.engineering_state == 'confirmed' else "Lỗi thời")
                         raise UserError(_(
-                            "Tài liệu '%s' (trong cây lắp ráp) đã ở trạng thái Ban hành (%s). "
+                            "Tài liệu '%s' (trong cây lắp ráp) đang ở trạng thái %s (%s). "
                             "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                        ) % (rel_doc.name or rel_doc.engineering_code, rel_doc.engineering_state))
+                        ) % (rel_doc.name or rel_doc.engineering_code, state_desc, rel_doc.engineering_state))
                     rel_doc._check_key_holder_permission()
             except UserError:
                 raise
@@ -1030,11 +1038,12 @@ class IrAttachment(models.Model):
         if request and isinstance(request, (list, tuple)) and len(request) > 0:
             doc = self._resolve_cad_doc(request[0])
             if doc:
-                if doc.engineering_state in ['released', 'obsoleted']:
+                if doc.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                    state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
                     raise UserError(_(
-                        "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                        "Tài liệu '%s' đang ở trạng thái %s (%s). "
                         "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                    ) % (doc.name or doc.engineering_code, doc.engineering_state))
+                    ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
                 doc._check_key_holder_permission()
         return super().CheckIn2(request, default=default, force=force)
 
@@ -1048,11 +1057,12 @@ class IrAttachment(models.Model):
             if checked or kargs.get("force", False):
                 doc_id = self.getDocId(doc_vals) or self._resolve_cad_doc(doc_vals)
                 if doc_id:
-                    if doc_id.engineering_state in ['released', 'obsoleted']:
+                    if doc_id.engineering_state in ['confirmed', 'released', 'obsoleted']:
+                        state_desc = "Đã ban hành" if doc_id.engineering_state == 'released' else ("Đang chờ duyệt" if doc_id.engineering_state == 'confirmed' else "Lỗi thời")
                         raise UserError(_(
-                            "Tài liệu '%s' đã ở trạng thái Ban hành (%s). "
+                            "Tài liệu '%s' đang ở trạng thái %s (%s). "
                             "Không được phép Check-in hoặc cập nhật bản vẽ!"
-                        ) % (doc_id.name or doc_id.engineering_code, doc_id.engineering_state))
+                        ) % (doc_id.name or doc_id.engineering_code, state_desc, doc_id.engineering_state))
                     doc_id._check_key_holder_permission()
                     try:
                         doc_id._create_document_history_snapshot(
