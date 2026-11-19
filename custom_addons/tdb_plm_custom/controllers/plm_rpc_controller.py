@@ -242,7 +242,7 @@ def _cad_dispatch_rpc(service_name, method, params):
         elif method == 'db_exist':
             target_db = params[0] if params else ''
             cfg_db = odoo.tools.config.get('db_name') or 'odoo20'
-            return target_db in (cfg_db, 'odoo20', 'odoo20_dev')
+            return target_db in (cfg_db, 'odoo20', 'odoo20')
         elif method == 'server_version':
             return odoo.release.version
         elif method == 'server_environment':

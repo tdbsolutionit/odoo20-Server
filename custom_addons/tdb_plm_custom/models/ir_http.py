@@ -33,6 +33,22 @@ class IrHttp(models.AbstractModel):
         if path in ('/plm_document_upload/login', '/plm_document_upload/isalive'):
             return
 
+        # Bỏ qua hoàn toàn các endpoint xem trước hình ảnh, bản in PDF kỹ thuật trên Web Browser
+        web_exempt_prefixes = (
+            '/plm/ir_attachment_printout/',
+            '/plm/ir_attachment_preview/',
+            '/plm/product_product_image_1920/',
+            '/plm/product_product_preview/',
+        )
+        if any(path.startswith(prefix) for prefix in web_exempt_prefixes):
+            return
+
+        # Bỏ qua kiểm tra token nếu request xuất phát từ trình duyệt web thông thường (Chrome, Edge, Firefox, Safari)
+        user_agent = request.httprequest.headers.get('User-Agent', '')
+        if 'Mozilla' in user_agent and ('Chrome' in user_agent or 'Safari' in user_agent or 'Firefox' in user_agent or 'Edg' in user_agent):
+            if not path.startswith('/plm_document_upload/'):
+                return
+
         # 2. Kiểm tra token cho các thao tác CAD (upload, download, v.v.)
         if 'plm.desktop.token' not in request.env.registry:
             return

@@ -120,20 +120,34 @@
                 <field name="is_key_holder" invisible="1"/>
                 <field name="is_checkout" invisible="1"/>
                 <field name="is_checked_out_by_me" invisible="1"/>
+                <field name="is_parent_frozen" invisible="1"/>
+                <field name="parent_released_name" invisible="1"/>
+                <field name="has_drawing" invisible="1"/>
+                <field name="drawing_count" invisible="1"/>
+                <field name="source_3d_count" invisible="1"/>
+                <field name="child_document_count" invisible="1"/>
+
+                <!-- Nút Đồng bộ BOM sang Sản xuất (HT-2.2) -->
+                <button name="action_sync_cad_bom_to_mrp"
+                        type="object"
+                        string="Đồng bộ BOM sang Sản xuất"
+                        class="btn-primary"
+                        invisible="child_document_count == 0 or document_type != '3d'"
+                        confirm="Hệ thống sẽ tự động tạo/cập nhật Linh kiện và Định mức vật tư (BOM) từ cây CAD này. Bạn có muốn tiếp tục?"/>
 
                 <!-- Nút Lock: Hiển thị khi chưa có ai giữ Key và đang ở trạng thái draft -->
                 <button name="action_lock_key"
                         type="object"
                         string="Lock"
                         class="btn-primary"
-                        invisible="key_holder_id or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
+                        invisible="key_holder_id or engineering_state in ['confirmed', 'released', 'obsoleted'] or is_parent_frozen == True"/>
 
                 <!-- Nút Unlock: Hiển thị cho người đang giữ Key khi đang ở draft -->
                 <button name="action_open_transfer_key_wizard"
                         type="object"
                         string="Unlock"
                         class="btn-warning"
-                        invisible="not is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
+                        invisible="not is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted'] or is_parent_frozen == True"/>
 
                 <!-- Nút Force Unlock: Chỉ Admin mới thấy khi tài liệu có người khác giữ Key khi đang draft -->
                 <button name="action_open_transfer_key_wizard"
@@ -141,21 +155,21 @@
                         string="Force Unlock"
                         class="btn-danger"
                         groups="plm.group_plm_admin"
-                        invisible="not key_holder_id or is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
+                        invisible="not key_holder_id or is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted'] or is_parent_frozen == True"/>
 
                 <!-- Nút Check-out: Mọi kỹ sư đều có thể bấm khi người đó CHƯA Check-out và tài liệu ở trạng thái Draft -->
                 <button name="action_web_checkout"
                         type="object"
                         string="Check-out"
                         class="btn-secondary"
-                        invisible="is_checked_out_by_me == True or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
+                        invisible="is_checked_out_by_me == True or engineering_state in ['confirmed', 'released', 'obsoleted'] or is_parent_frozen == True"/>
 
                 <!-- Nút Check-in: Chỉ hiển thị cho người đang giữ Key VÀ đã Check-out khi đang ở Draft -->
                 <button name="action_web_checkin"
                         type="object"
                         string="Check-in"
                         class="btn-primary"
-                        invisible="is_checked_out_by_me == False or not is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted']"/>
+                        invisible="is_checked_out_by_me == False or not is_key_holder or engineering_state in ['confirmed', 'released', 'obsoleted'] or is_parent_frozen == True"/>
 
                 <!-- Nút Hủy Check-out: Cho phép người dùng hiện tại hủy phiên Check-out của mình -->
                 <button name="action_web_undo_checkout"
@@ -164,10 +178,39 @@
                         class="btn-outline-secondary"
                         invisible="is_checked_out_by_me == False"
                         confirm="Are you sure you want to UNDO Check-out on this document?"/>
+
+                <!-- Nút Tải lên Bản in PDF kỹ thuật cho bản vẽ 2D -->
+                <button name="action_upload_printout_wizard"
+                        type="object"
+                        string="Tải lên PDF"
+                        class="btn-outline-primary"
+                        invisible="document_type != '2d' or engineering_state in ['released', 'obsoleted']"
+                        title="Tải lên tệp bản vẽ in PDF kỹ thuật (Printout) cho bản vẽ này"/>
+
+                <!-- Nút Xem trước Bản in PDF kỹ thuật (Popup Modal) -->
+                <button name="action_preview_pdf"
+                        type="object"
+                        string="Xem trước PDF"
+                        class="btn-outline-danger"
+                        invisible="not has_printout"
+                        title="Xem trước bản in PDF kỹ thuật trong cửa sổ popup"/>
             </xpath>
 
             <!-- Banner thông tin Người giữ Key -->
             <xpath expr="//sheet" position="before">
+                <!-- Banner cảnh báo tài liệu con bị khóa do Cụm máy cha đã Ban hành -->
+                <div class="alert alert-warning d-flex align-items-center mb-0 py-2 justify-content-between"
+                     role="alert"
+                     invisible="not is_parent_frozen or engineering_state in ['released', 'obsoleted']">
+                    <div>
+                        <span class="fw-bold">Bị khóa bởi Cụm máy cha đã Ban hành (Chỉ đọc)</span>
+                        <span class="text-muted ms-2">(Tài liệu này thuộc Cụm máy cha: <field name="parent_released_name" readonly="1" class="fw-bold text-dark"/> đã ở trạng thái Ban hành. Bị đóng băng chỉ đọc, không được phép Check-out hoặc Check-in!)</span>
+                    </div>
+                    <div>
+                        <span class="badge bg-warning text-dark">Parent Assembly Released</span>
+                    </div>
+                </div>
+
                 <!-- Banner cảnh báo tài liệu đã ban hành (Đóng băng chỉ đọc) -->
                 <div class="alert alert-success d-flex align-items-center mb-0 py-2 justify-content-between"
                      role="alert"
@@ -241,6 +284,41 @@
                         invisible="parent_document_count == 0">
                     <field name="parent_document_count" widget="statinfo" string="Where Used"/>
                 </button>
+
+                <!-- Smart Button: Bản vẽ 2D (cho 3D Part / Assembly) -->
+                <button name="action_view_drawings"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="edit"
+                        invisible="drawing_count == 0 or document_type == '2d'">
+                    <field name="drawing_count" widget="statinfo" string="Bản vẽ 2D"/>
+                </button>
+
+                <!-- Smart Button: Mô hình 3D (cho 2D Drawing) -->
+                <button name="action_open_source_3d"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="category"
+                        invisible="source_3d_count == 0 or document_type != '2d'">
+                    <field name="source_3d_count" widget="statinfo" string="Mô hình 3D"/>
+                </button>
+
+                <!-- Smart Button: Linh kiện (Product) (HT-2.1) -->
+                <button name="action_view_linked_products"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="category">
+                    <field name="linked_product_count" widget="statinfo" string="Linh kiện"/>
+                </button>
+
+                <!-- Smart Button: Định mức BOM (HT-2.2) -->
+                <button name="action_view_mrp_boms"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="build"
+                        invisible="document_type != '3d'">
+                    <field name="bom_count" widget="statinfo" string="Định mức BOM"/>
+                </button>
             </xpath>
 
             <!-- Nhóm Thông tin PLM -->
@@ -285,6 +363,29 @@
             </xpath>
             <xpath expr="//group[@name='FileData']//field[@name='type']" position="attributes">
                 <attribute name="string">Type</attribute>
+            </xpath>
+            <!-- Hiển thị trường Bản in PDF kỹ thuật trong Tab Attachment -->
+            <xpath expr="//field[@name='printout']" position="replace">
+                <field name="printout"
+                       filename="printout_name"
+                       widget="binary"
+                       string="Bản in PDF (Printout Content)"
+                       readonly="engineering_state in ['released', 'obsoleted']"/>
+                <field name="printout_name"
+                       string="Tên file bản in PDF"
+                       readonly="1"/>
+                <div class="d-flex gap-2 mt-1" invisible="not has_printout">
+                    <button name="action_preview_pdf"
+                            type="object"
+                            string="Xem trước PDF"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Xem trước bản in PDF kỹ thuật trong cửa sổ popup"/>
+                    <button name="action_download_printout"
+                            type="object"
+                            string="Tải file PDF"
+                            class="btn btn-sm btn-outline-primary"
+                            title="Tải tệp bản in PDF kỹ thuật về máy"/>
+                </div>
             </xpath>
             <xpath expr="//group[@name='group_url']" position="attributes">
                 <attribute name="string">Website</attribute>
@@ -382,14 +483,105 @@
 
                 <!-- Tab Referenced Documents & Where Used -->
                 <page string="Referenced Documents" name="related_documents">
+                    <!-- Khu vực hiển thị Bản vẽ 2D chuyên biệt (2D Drawings - Layout Tree) -->
+                    <div class="pt-3 pb-2 mb-4" invisible="document_type == '2d' and drawing_count == 0">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <separator string="2D Drawings (Bản vẽ 2D - Layout Tree)" class="mb-0"/>
+                                <button name="action_open_link_drawing_wizard"
+                                        type="object"
+                                        string="Thêm liên kết Bản vẽ 2D"
+                                        class="btn btn-sm btn-outline-primary py-0 px-2"
+                                        invisible="document_type == '2d' or engineering_state in ['released', 'obsoleted']"
+                                        title="Liên kết một bản vẽ 2D (.slddrw) với chi tiết 3D này"/>
+                            </div>
+                            <span class="badge bg-primary text-white" invisible="drawing_count == 0">
+                                <field name="drawing_count"/> bản vẽ 2D
+                            </span>
+                        </div>
+                        <field name="drawing_relation_ids" context="{'default_link_kind': 'LyTree'}">
+                            <list string="Bản vẽ 2D" editable="bottom">
+                                <field name="child_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
+                                <field name="child_id"
+                                       string="Tên file bản vẽ 2D (.slddrw)"
+                                       domain="[('is_plm', '=', True), ('id', '!=', parent.id), '|', ('document_type', '=', '2d'), ('name', '=ilike', '%.slddrw')]"
+                                       context="{'form_view_ref': 'plm.view_attachment_form_plm_hinerit', 'odooPLM': True, 'default_document_type': '2d', 'default_is_plm': True}"
+                                       required="1"/>
+                                <button name="action_open_child_document"
+                                        type="object"
+                                        icon="arrow_forward"
+                                        class="btn btn-light btn-sm d-inline-flex align-items-center py-0 px-1 border"
+                                        title="Liên kết nội bộ (Mở bản vẽ 2D)"/>
+                                <field name="child_engineering_code" string="Mã kỹ thuật" width="130" optional="show" readonly="1"/>
+                                <field name="child_revision" string="Revision" width="70" readonly="1"/>
+                                <field name="child_state"
+                                       string="Trạng thái"
+                                       widget="badge"
+                                       decoration-info="child_state == 'draft'"
+                                       decoration-primary="child_state == 'confirmed'"
+                                       decoration-success="child_state == 'released'"
+                                       decoration-warning="child_state == 'undermodify'"
+                                       decoration-danger="child_state == 'obsoleted'"
+                                       width="130"
+                                       readonly="1"/>
+                                <field name="child_has_printout" column_invisible="True"/>
+                                <field name="child_printout_name" string="Bản in PDF" width="180" readonly="1"/>
+                                <button name="action_preview_child_pdf"
+                                        type="object"
+                                        string="Xem trước PDF"
+                                        class="btn btn-sm btn-outline-danger"
+                                        invisible="not child_has_printout"
+                                        title="Xem trước bản in PDF kỹ thuật trong cửa sổ popup"/>
+                                <button name="action_upload_child_printout_wizard"
+                                        type="object"
+                                        string="Tải lên PDF"
+                                        class="btn btn-sm btn-outline-primary"
+                                        invisible="child_has_printout"
+                                        title="Tải lên tệp PDF kỹ thuật cho bản vẽ này"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <!-- Khu vực hiển thị Mô hình 3D nguồn (Source 3D Models khi là file 2D Drawing) -->
+                    <div class="pt-3 pb-2 mb-4" invisible="document_type != '2d'">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <separator string="Mô hình 3D nguồn (Source 3D Models)" class="mb-0"/>
+                            <span class="badge bg-info text-dark" invisible="source_3d_count == 0">
+                                <field name="source_3d_count"/> mô hình 3D
+                            </span>
+                        </div>
+                        <field name="linked_source_3d_ids" readonly="1">
+                            <list string="Mô hình 3D nguồn" create="0" delete="0">
+                                <field name="preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
+                                <field name="name" string="Tên file mô hình 3D"/>
+                                <button name="action_open_document_form"
+                                        type="object"
+                                        icon="arrow_forward"
+                                        class="btn btn-light btn-sm d-inline-flex align-items-center py-0 px-1 border"
+                                        title="Liên kết nội bộ"/>
+                                <field name="engineering_code" string="Mã kỹ thuật" width="130" optional="show"/>
+                                <field name="engineering_revision" string="Revision" width="70"/>
+                                <field name="engineering_state"
+                                       string="Trạng thái"
+                                       widget="badge"
+                                       decoration-info="engineering_state == 'draft'"
+                                       decoration-primary="engineering_state == 'confirmed'"
+                                       decoration-success="engineering_state == 'released'"
+                                       decoration-warning="engineering_state == 'undermodify'"
+                                       decoration-danger="engineering_state == 'obsoleted'"
+                                       width="130"/>
+                            </list>
+                        </field>
+                    </div>
+
                     <div class="pt-3 pb-2 mb-4">
                         <separator string="Child Components (References / Assembly)"/>
-                        <field name="child_relation_ids">
+                        <field name="child_relation_ids" context="{'default_link_kind': 'HiTree'}">
                             <list string="Related Child Components" editable="bottom">
                                 <field name="child_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
                                 <field name="child_id"
                                        string="Child Document"
-                                       domain="[('is_plm', '=', True), ('id', '!=', parent.id)]"
+                                       domain="[('is_plm', '=', True), ('id', '!=', parent.id), ('document_type', '!=', '2d')]"
                                        context="{'form_view_ref': 'plm.view_attachment_form_plm_hinerit', 'odooPLM': True}"
                                        required="1"/>
                                 <field name="child_engineering_code" string="Engineering Code" width="130" optional="show" readonly="1"/>
@@ -416,6 +608,7 @@
                                        widget="many2one_avatar_user"
                                        width="150"
                                        readonly="1"/>
+                                <field name="child_printout_name" string="Bản in PDF" optional="hide" readonly="1"/>
                             </list>
                         </field>
                     </div>
@@ -453,6 +646,7 @@
                                        widget="many2one_avatar_user"
                                        width="150"
                                        readonly="1"/>
+                                <field name="parent_printout_name" string="Bản in PDF" optional="hide" readonly="1"/>
                             </list>
                         </field>
                     </div>
@@ -607,5 +801,29 @@
     <record id="plm.plm_action_document_form" model="ir.actions.act_window">
         <field name="name">Documents</field>
         <field name="context">{"odooPLM": True}</field>
+    </record>
+
+    <!-- ======================================================================= -->
+    <!-- POPUP XEM TRƯỚC BẢN IN PDF KỸ THUẬT (MODAL EXTRA-LARGE 95VW)          -->
+    <!-- Hiển thị trực tiếp bản vẽ 2D trong cửa sổ Modal không cần mở tab mới    -->
+    <!-- ======================================================================= -->
+    <record id="view_plm_attachment_preview_modal" model="ir.ui.view">
+        <field name="name">plm.attachment.preview.modal</field>
+        <field name="model">ir.attachment</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Xem trước Bản vẽ kỹ thuật" class="o_plm_preview_box">
+                <field name="has_printout" invisible="1"/>
+                <field name="preview_pdf_html" widget="html" nolabel="1" readonly="1" class="d-block w-100 m-0 p-0"/>
+                <footer>
+                    <button name="action_download_printout"
+                            type="object"
+                            string="Tải file PDF"
+                            class="btn btn-outline-primary"
+                            invisible="not has_printout"/>
+                    <button string="Đóng" class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
     </record>
 </odoo>
