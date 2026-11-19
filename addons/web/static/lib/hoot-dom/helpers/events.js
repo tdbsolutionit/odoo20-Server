@@ -1229,7 +1229,7 @@ async function _fill(targetResolver, value, options) {
 
     if (options?.instantly) {
         // Simulates filling the clipboard with the value (can be from external source)
-        globalThis.navigator.clipboard.writeText(value).catch();
+        globalThis.navigator.clipboard?.writeText?.(value)?.catch?.();
         await _press(targetResolver, { ctrlKey: true, key: "v" });
     } else {
         if (options?.composition) {
@@ -1536,7 +1536,7 @@ async function _keyDown(targetResolver, eventInit, options) {
             if (ctrlKey) {
                 // Get selection from window
                 const text = globalThis.getSelection().toString();
-                globalThis.navigator.clipboard.writeText(text).catch();
+                globalThis.navigator.clipboard?.writeText?.(text)?.catch?.();
 
                 runTime.clipboardData = createDataTransfer(eventInit);
                 await _dispatch(inputTarget, "copy", { clipboardData: runTime.clipboardData });
@@ -1626,7 +1626,7 @@ async function _keyDown(targetResolver, eventInit, options) {
             if (ctrlKey && isEditable(inputTarget)) {
                 // Get selection from window
                 const text = globalThis.getSelection().toString();
-                globalThis.navigator.clipboard.writeText(text).catch();
+                globalThis.navigator.clipboard?.writeText?.(text)?.catch?.();
 
                 nextValue = deleteSelection(inputTarget);
                 inputType = "deleteByCut";

@@ -57,3 +57,9 @@ package.json
 _pycache_/
 *.pyc
 *.log
+
+addons/dms_backup/
+
+
+config/odoo.conf
+

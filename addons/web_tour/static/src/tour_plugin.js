@@ -211,9 +211,14 @@ export class TourPlugin extends Plugin {
             new TourAutomatic(tour).start();
         } else {
             await loadBundle("web_tour.interactive");
-            const { TourInteractive } = odoo.loader.modules.get(
+            const module = odoo.loader.modules.get(
                 "@web_tour/tour_interactive/tour_interactive"
             );
+            if (!module || !module.TourInteractive) {
+                tourState.clear();
+                return;
+            }
+            const { TourInteractive } = module;
             new TourInteractive(tour, {
                 orm: this.orm,
                 effect: this.effect,
