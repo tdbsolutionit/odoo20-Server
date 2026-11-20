@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_plm_projects" model="ir.actions.act_window">
+        <field name="name">Dự án</field>
+        <field name="res_model">project.project</field>
+        <field name="domain">[("is_template", "=", False)]</field>
+        <field name="context">{'display_milestone_deadline': True}</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="project.view_project_project_filter"/>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_plm_projects"
+              name="Dự án"
+              parent="plm.plm_menu"
+              action="action_plm_projects"
+              sequence="13"
+              groups="plm_project.group_plm_project_user"/>
+</odoo>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_plm_project_form_link" model="ir.ui.view">
+        <field name="name">plm.project.form.link</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="plm_project.view_plm_project_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" icon="account_tree" type="object"
+                        name="action_plm_open_scope_docs" context="{'plm_scope_folder': False}">
+                    <field name="plm_scope_doc_count" widget="statinfo" string="Tài liệu PLM"/>
+                </button>
+                <button class="oe_stat_button" icon="checklist" type="object"
+                        name="action_plm_open_scope_parts" context="{'plm_scope_folder': False}">
+                    <field name="plm_scope_part_count" widget="statinfo" string="Part PLM"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Thông tin ban đầu" name="plm_folder_info">
+                    <div class="mb-2">
+                        <button name="%(action_plm_project_assign_wizard)d" type="action"
+                                string="Gán tài liệu / Part" class="btn-primary"
+                                context="{'default_plm_folder': 'info'}"
+                                groups="plm_project.group_plm_project_user"/>
+                        <button name="action_plm_open_scope_docs" type="object"
+                                string="Xem toàn bộ tài liệu" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'info'}"/>
+                        <button name="action_plm_open_scope_parts" type="object"
+                                string="Xem toàn bộ part" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'info'}"/>
+                    </div>
+                     
+                    <field name="plm_item_info_ids" readonly="1">
+                        <list>
+                            <field name="item_name"/>
+                            <field name="document_id" string="Tài liệu"/>
+                            <field name="part_id" string="Part"/>
+                            <field name="include_children"/>
+                            <field name="assigned_uid"/>
+                            <field name="assigned_date"/>
+                            <button name="action_plm_remove" type="object" string="Gỡ"
+                                    class="btn btn-link text-danger p-0"
+                                    groups="plm_project.group_plm_project_manager"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Design CAD" name="plm_folder_cad">
+                    <div class="mb-2">
+                        <button name="%(action_plm_project_assign_wizard)d" type="action"
+                                string="Gán tài liệu / Part" class="btn-primary"
+                                context="{'default_plm_folder': 'cad'}"
+                                groups="plm_project.group_plm_project_user"/>
+                        <button name="action_plm_open_scope_docs" type="object"
+                                string="Xem toàn bộ tài liệu" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'cad'}"/>
+                        <button name="action_plm_open_scope_parts" type="object"
+                                string="Xem toàn bộ part" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'cad'}"/>
+                    </div>
+                     
+                    <field name="plm_item_cad_ids" readonly="1">
+                        <list>
+                            <field name="item_name"/>
+                            <field name="document_id" string="Tài liệu"/>
+                            <field name="part_id" string="Part"/>
+                            <field name="include_children"/>
+                            <field name="assigned_uid"/>
+                            <field name="assigned_date"/>
+                            <button name="action_plm_remove" type="object" string="Gỡ"
+                                    class="btn btn-link text-danger p-0"
+                                    groups="plm_project.group_plm_project_manager"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Sản xuất và mua hàng" name="plm_folder_production">
+                    <div class="mb-2">
+                        <button name="%(action_plm_project_assign_wizard)d" type="action"
+                                string="Gán tài liệu / Part" class="btn-primary"
+                                context="{'default_plm_folder': 'production'}"
+                                groups="plm_project.group_plm_project_user"/>
+                        <button name="action_plm_open_scope_docs" type="object"
+                                string="Xem toàn bộ tài liệu" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'production'}"/>
+                        <button name="action_plm_open_scope_parts" type="object"
+                                string="Xem toàn bộ part" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'production'}"/>
+                    </div>
+                     
+                    <field name="plm_item_production_ids" readonly="1">
+                        <list>
+                            <field name="item_name"/>
+                            <field name="document_id" string="Tài liệu"/>
+                            <field name="part_id" string="Part"/>
+                            <field name="include_children"/>
+                            <field name="assigned_uid"/>
+                            <field name="assigned_date"/>
+                            <button name="action_plm_remove" type="object" string="Gỡ"
+                                    class="btn btn-link text-danger p-0"
+                                    groups="plm_project.group_plm_project_manager"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Quản lý chất lượng" name="plm_folder_quality">
+                    <div class="mb-2">
+                        <button name="%(action_plm_project_assign_wizard)d" type="action"
+                                string="Gán tài liệu / Part" class="btn-primary"
+                                context="{'default_plm_folder': 'quality'}"
+                                groups="plm_project.group_plm_project_user"/>
+                        <button name="action_plm_open_scope_docs" type="object"
+                                string="Xem toàn bộ tài liệu" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'quality'}"/>
+                        <button name="action_plm_open_scope_parts" type="object"
+                                string="Xem toàn bộ part" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'quality'}"/>
+                    </div>
+                     
+                    <field name="plm_item_quality_ids" readonly="1">
+                        <list>
+                            <field name="item_name"/>
+                            <field name="document_id" string="Tài liệu"/>
+                            <field name="part_id" string="Part"/>
+                            <field name="include_children"/>
+                            <field name="assigned_uid"/>
+                            <field name="assigned_date"/>
+                            <button name="action_plm_remove" type="object" string="Gỡ"
+                                    class="btn btn-link text-danger p-0"
+                                    groups="plm_project.group_plm_project_manager"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Bảo trì" name="plm_folder_maintenance">
+                    <div class="mb-2">
+                        <button name="%(action_plm_project_assign_wizard)d" type="action"
+                                string="Gán tài liệu / Part" class="btn-primary"
+                                context="{'default_plm_folder': 'maintenance'}"
+                                groups="plm_project.group_plm_project_user"/>
+                        <button name="action_plm_open_scope_docs" type="object"
+                                string="Xem toàn bộ tài liệu" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'maintenance'}"/>
+                        <button name="action_plm_open_scope_parts" type="object"
+                                string="Xem toàn bộ part" class="btn-secondary ms-2"
+                                context="{'plm_scope_folder': 'maintenance'}"/>
+                    </div>
+                     
+                    <field name="plm_item_maintenance_ids" readonly="1">
+                        <list>
+                            <field name="item_name"/>
+                            <field name="document_id" string="Tài liệu"/>
+                            <field name="part_id" string="Part"/>
+                            <field name="include_children"/>
+                            <field name="assigned_uid"/>
+                            <field name="assigned_date"/>
+                            <button name="action_plm_remove" type="object" string="Gỡ"
+                                    class="btn btn-link text-danger p-0"
+                                    groups="plm_project.group_plm_project_manager"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

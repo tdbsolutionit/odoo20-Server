@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_plm_project_assign_wizard_user,plm.project.assign.wizard user,plm.project.assign.wizard,plm_project.group_plm_project_user,crud,
+access_plm_project_item_user,plm.project.item user,plm.project.item,plm_project.group_plm_project_user,cr,
+access_plm_project_item_manager,plm.project.item manager,plm.project.item,plm_project.group_plm_project_manager,crud,
