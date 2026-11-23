@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_review_manager" model="res.groups">
+        <field name="name">OdooPLM - Reviewer</field>
+        <field name="privilege_id" ref="plm.res_groups_privilege_odooplm"/>
+        <field name="implied_ids" eval="[(4, ref('plm.group_plm_integration_user'))]"/>
+    </record>
+    <record id="group_review_admin" model="res.groups">
+        <field name="name">OdooPLM - Confirm and Release</field>
+        <field name="privilege_id" ref="plm.res_groups_privilege_odooplm"/>
+        <field name="implied_ids" eval="[(4, ref('plm.group_plm_admin')), (4, ref('plm.group_plm_release_users'))]"/>
+    </record>
+    <record id="access_reject_wizard" model="ir.access">
+        <field name="name">PLM rejection dialog</field>
+        <field name="model_id" ref="model_tdb_plm_reject_wizard"/>
+        <field name="group_id" ref="plm.group_plm_integration_user"/>
+        <field name="operation">crud</field>
+    </record>
+    <record id="access_task_wizard" model="ir.access">
+        <field name="name">PLM review and redo assignment</field>
+        <field name="model_id" ref="model_tdb_plm_task_wizard"/>
+        <field name="group_id" ref="plm.group_plm_integration_user"/>
+        <field name="operation">crud</field>
+    </record>
+</odoo>
