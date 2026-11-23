@@ -23,14 +23,6 @@
                 'searchpanel_default_parent_id': active_id
             }
         </field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
-            ]"
-        />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Click to add a new directory.
@@ -89,14 +81,6 @@
                 'default_parent_id': active_id,
             }
         </field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
-            ]"
-        />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Click to add a new directory.
@@ -785,5 +769,26 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="view_id" ref="view_dms_directory_new_form" />
+    </record>
+    <!-- Bind views after their definitions so fresh installations resolve XML IDs. -->
+    <record id="action_dms_directories_directory" model="ir.actions.act_window">
+        <field
+            name="view_ids"
+            eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
+            ]"
+        />
+    </record>
+    <record id="action_dms_directories_all_directory" model="ir.actions.act_window">
+        <field
+            name="view_ids"
+            eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
+            ]"
+        />
     </record>
 </odoo>
