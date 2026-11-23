@@ -10,10 +10,13 @@ class ProjectProject(models.Model):
     def _plm_scope_doc_ids(self, folder=None, kinds=DOC_KINDS):
         """Id tài liệu thuộc phạm vi dự án: mục gốc + toàn bộ con cháu."""
         self.ensure_one()
+        project_id = self._origin.id
+        if not project_id:
+            return []
         self.env['plm.project.item'].flush_model()
         self.env['ir.attachment.relation'].flush_model()
         folder_sql = 'AND folder = %s' if folder else ''
-        params = [self.id] + ([folder] if folder else []) + [tuple(kinds)]
+        params = [project_id] + ([folder] if folder else []) + [tuple(kinds)]
         self.env.cr.execute(f"""
             WITH RECURSIVE tree(id, expand) AS (
                 SELECT document_id, include_children
@@ -32,9 +35,12 @@ class ProjectProject(models.Model):
     def _plm_scope_part_ids(self, folder=None):
         """Id part thuộc phạm vi dự án: mục gốc + toàn bộ part con theo BoM."""
         self.ensure_one()
+        project_id = self._origin.id
+        if not project_id:
+            return []
         self.env['plm.project.item'].flush_model()
         folder_sql = 'AND folder = %s' if folder else ''
-        params = [self.id] + ([folder] if folder else [])
+        params = [project_id] + ([folder] if folder else [])
         self.env.cr.execute(f"""
             WITH RECURSIVE tree(id, expand) AS (
                 SELECT part_id, include_children
