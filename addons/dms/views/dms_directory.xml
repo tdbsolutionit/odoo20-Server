@@ -23,14 +23,6 @@
                 'searchpanel_default_parent_id': active_id
             }
         </field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
-            ]"
-        />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Click to add a new directory.
@@ -56,14 +48,6 @@
                 'searchpanel_default_directory_id': active_id
             }
         </field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('dms.view_dms_file_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('dms.view_dms_file_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('dms.view_dms_file_form')}),
-            ]"
-        />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Click to add a new file.
@@ -89,14 +73,6 @@
                 'default_parent_id': active_id,
             }
         </field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
-            ]"
-        />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Click to add a new directory.
@@ -122,14 +98,6 @@
                 'searchpanel_default_directory_id': active_id
             }
         </field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('dms.view_dms_file_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('dms.view_dms_file_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('dms.view_dms_file_form')}),
-            ]"
-        />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Click to add a new file.
@@ -694,14 +662,7 @@
         <field name="res_model">dms.directory</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="domain">[("is_hidden", "=", False)]</field>
-        <field
-            name="view_ids"
-            eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dms_directory_kanban')}),
-                (0, 0, {'view_mode': 'list', 'view_id': ref('view_dms_directory_tree')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('view_dms_directory_form')}),
-            ]"
-        />
+
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Add a new Directory.
