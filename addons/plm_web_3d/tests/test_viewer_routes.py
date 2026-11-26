@@ -1,0 +1,613 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    OmniaSolutions, ERP-PLM-CAD Open Source Solutions
+#    Copyright (C) 2011-2026 https://OmniaSolutions.website
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+import base64
+import json
+
+from odoo import Command
+from odoo.exceptions import ValidationError
+from odoo.tests import HttpCase, tagged
+from odoo.tools import mute_logger
+
+#
+# --test-tags=odoo_plm_web_3d_routes
+#
+
+RAW = b"solid"
+CONTENT = base64.b64encode(RAW)
+
+
+@tagged("-standard", "odoo_plm_web_3d_routes", "post_install", "-at_install")
+class PlmWeb3dRoutes(HttpCase):
+    """The viewer routes answer what the user may read: they used to read every
+    document by its id, under sudo."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.group_rd = cls.env["res.groups"].create({"name": "PLM 3d R&D"})
+        cls.node = cls.env["plm.access"].create(
+            {
+                "name": "3d R&D",
+                "parent_id": cls.env.company.plm_access_id.id,
+                "read_group_ids": [Command.set(cls.group_rd.ids)],
+            }
+        )
+        cls.document = cls.env["ir.attachment"].create(
+            {
+                "name": "WEB3D-1.stl",
+                "engineering_code": "WEB3D-1",
+                "raw": RAW,
+                "is_plm": True,
+                "document_type": "3d",
+                "plm_access_id": cls.node.id,
+            }
+        )
+        cls.component = cls.env["product.product"].create({"name": "WEB3D-COMP"})
+        cls.document.linkedcomponents = cls.component
+        cls.outsider = cls._user("web3d_outsider")
+        cls.insider = cls._user("web3d_insider", cls.group_rd)
+
+    @classmethod
+    def _user(cls, login, extra_group=None):
+        groups = cls.env.ref("base.group_user") | cls.env.ref(
+            "plm.group_plm_integration_user"
+        )
+        if extra_group:
+            groups |= extra_group
+        return cls.env["res.users"].create(
+            {
+                "name": login,
+                "login": login,
+                "password": login,
+                "group_ids": [Command.set(groups.ids)],
+            }
+        )
+
+    def _product_info(self, login):
+        self.authenticate(login, login)
+        response = self.url_open(
+            "/plm/get_product_info?document_id=%s" % self.document.id
+        )
+        self.assertEqual(response.status_code, 200)
+        return json.loads(response.content)
+
+    def test_the_page_says_when_odoo_is_in_debug(self):
+        """The CAD dimensions of a feature show in debug mode only."""
+        self.authenticate("web3d_insider", "web3d_insider")
+        url = "/plm/show_treejs_model?document_id=%s&document_name=WEB3D-1.stl" % (
+            self.document.id
+        )
+        page = self.url_open(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertNotIn('data-debug="1"', page.text)
+        page = self.url_open(url + "&debug=1")
+        self.assertIn('data-debug="1"', page.text)
+
+    def test_the_material_look_is_found_by_its_designation(self):
+        """A cad3d export names its material: the viewer gets its look,
+        whatever the case of the name, and nothing for an unknown one."""
+        self.env["plm.material"].create({
+            "name": "AISI 304",
+            "web3d_color": "#b4b8bd",
+            "web3d_metalness": 0.9,
+            "web3d_roughness": 0.2,
+        })
+        self.authenticate("web3d_outsider", "web3d_outsider")
+        look = self.url_open("/plm/material_appearance?name=aisi 304").json()
+        self.assertEqual("AISI 304", look["name"])
+        self.assertEqual("#b4b8bd", look["color"])
+        self.assertEqual((0.9, 0.2, 1.0), (look["metalness"], look["roughness"], look["opacity"]))
+        self.assertIsNone(look["texture"])
+        self.assertEqual({}, self.url_open("/plm/material_appearance?name=AISI%").json())
+        self.assertEqual({}, self.url_open("/plm/material_appearance?name=Unobtainium").json())
+
+    def test_the_backgrounds_are_the_active_ones(self):
+        """The five HDRIs come with the module; an archived background is
+        neither offered nor served."""
+        studio = self.env.ref("plm_web_3d.web3d_background_studio")
+        self.assertEqual("hdr", studio.file_type)
+        warehouse = self.env.ref("plm_web_3d.web3d_background_warehouse")
+        warehouse.active = False
+        self.authenticate("web3d_insider", "web3d_insider")
+        page = self.url_open(
+            "/plm/show_treejs_model?document_id=%s&document_name=WEB3D-1.stl"
+            % self.document.id
+        ).text
+        self.assertIn('value="bg_%s"' % studio.id, page)
+        self.assertNotIn('value="bg_%s"' % warehouse.id, page)
+        served = self.url_open("/plm/web3d_background?background_id=%s" % studio.id)
+        self.assertEqual(200, served.status_code)
+        self.assertTrue(served.content.startswith(b"#?RADIANCE"))
+        backdrop = self.url_open(
+            "/plm/web3d_background?background_id=%s&part=backdrop" % studio.id
+        )
+        self.assertEqual(200, backdrop.status_code)
+        self.assertTrue(backdrop.content.startswith(b"\xff\xd8"), "a JPEG")
+        hidden = self.url_open("/plm/web3d_background?background_id=%s" % warehouse.id)
+        self.assertEqual(404, hidden.status_code)
+
+    def test_a_background_is_an_hdri_or_a_photo(self):
+        with self.assertRaises(ValidationError):
+            self.env["plm.web3d.background"].create(
+                {"name": "Wrong", "file": base64.b64encode(RAW).decode(), "file_name": "drawing.pdf"}
+            )
+
+    def test_a_component_by_references_gets_the_file_it_names(self):
+        """A .glb assembly by references names each part's file: two
+        configurations of one part are two files under one native document."""
+        Attachment = self.env["ir.attachment"]
+        native = Attachment.create({"name": "WEB3D-CFG.par", "engineering_code": "WEB3D-CFG",
+                                    "engineering_revision": 1, "is_plm": True})
+        files = {}
+        for name in ("WEB3D-CFG_1_Default.glb", "WEB3D-CFG_1_Long.glb"):
+            files[name] = Attachment.create({"name": name, "engineering_code": name, "is_plm": True,
+                                             "raw": b"glTF"})
+            self.env["ir.attachment.relation"].create({"parent_id": native.id, "child_id": files[name].id,
+                                                       "link_kind": "Web3DTree"})
+        self.authenticate("admin", "admin")
+        base = "/plm/web3d_component?engineering_code=WEB3D-CFG&engineering_revision=1&suffix=.glb"
+        long_file = self.url_open(base + "&name=WEB3D-CFG_1_Long.glb").json()
+        self.assertEqual(long_file["document_id"], files["WEB3D-CFG_1_Long.glb"].id)
+        # a name the native document does not have: nothing, not another configuration
+        self.assertEqual(self.url_open(base + "&name=WEB3D-CFG_1_Short.glb").json(), {})
+        # no name (a cad3d JSON assembly): the format's file, as before
+        self.assertIn(self.url_open(base).json()["document_id"], [f.id for f in files.values()])
+
+    def test_a_component_is_found_in_the_web_tree(self):
+        """An imported assembly .glb with no native CAD document: its parts
+        are its WebHiTree children, found by the name the component gives."""
+        Attachment = self.env["ir.attachment"]
+        assembly = Attachment.create({"name": "WEB3D-ASM_0.glb", "engineering_code": "WEB3D-ASM_0.glb",
+                                      "is_plm": True, "raw": b"glTF"})
+        part = Attachment.create({"name": "WEB3D-PRT_0_Default.glb", "engineering_code": "WEB3D-PRT_0_Default.glb",
+                                  "is_plm": True, "raw": b"glTF"})
+        self.env["ir.attachment.relation"].create({"parent_id": assembly.id, "child_id": part.id,
+                                                   "link_kind": "WebHiTree"})
+        self.authenticate("admin", "admin")
+        base = "/plm/web3d_component?engineering_code=WEB3D-PRT&engineering_revision=0&suffix=.glb"
+        found = self.url_open(base + "&name=WEB3D-PRT_0_Default.glb&parent_id=%s" % assembly.id).json()
+        self.assertEqual(found["document_id"], part.id)
+        # another document's tree does not answer, and no native: nothing
+        self.assertEqual(self.url_open(base + "&name=WEB3D-PRT_0_Default.glb&parent_id=%s" % part.id).json(), {})
+        # a top assembly naming the part of its subassembly (leaves flattened)
+        top = Attachment.create({"name": "WEB3D-TOP_0.glb", "engineering_code": "WEB3D-TOP_0.glb",
+                                 "is_plm": True, "raw": b"glTF"})
+        self.env["ir.attachment.relation"].create({"parent_id": top.id, "child_id": assembly.id,
+                                                   "link_kind": "WebHiTree"})
+        found = self.url_open(base + "&name=WEB3D-PRT_0_Default.glb&parent_id=%s" % top.id).json()
+        self.assertEqual(found["document_id"], part.id)
+
+    def test_the_changes_give_the_checksum_of_what_the_user_may_read(self):
+        """The live update of the viewer asks for the checksum of the files it
+        shows: a file written again has another one, a file the user may not
+        read answers null, like one that is gone."""
+        self.authenticate("web3d_insider", "web3d_insider")
+        url = "/plm/web3d_changes?ids=%s,999999999,abc" % self.document.id
+        before = self.url_open(url).json()
+        self.assertEqual(before, {str(self.document.id): self.document.checksum, "999999999": None})
+        self.document.raw = b"solid changed"
+        after = self.url_open(url).json()
+        self.assertNotEqual(before[str(self.document.id)], after[str(self.document.id)])
+        self.assertEqual(after[str(self.document.id)], self.document.checksum)
+        self.authenticate("web3d_outsider", "web3d_outsider")
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            self.assertEqual(self.url_open(url).json(), {str(self.document.id): None, "999999999": None})
+
+    def test_a_web_file_url_changes_with_its_content(self):
+        """web3d_component puts the checksum in the url, so the browser never
+        answers a file written again from its cache; the download takes it."""
+        Attachment = self.env["ir.attachment"]
+        native = Attachment.create({"name": "WEB3D-V.par", "engineering_code": "WEB3D-V",
+                                    "engineering_revision": 0, "is_plm": True})
+        part = Attachment.create({"name": "WEB3D-V_0_Default.glb", "engineering_code": "WEB3D-V_0_Default.glb",
+                                  "is_plm": True, "raw": b"glTF one"})
+        self.env["ir.attachment.relation"].create({"parent_id": native.id, "child_id": part.id,
+                                                   "link_kind": "Web3DTree"})
+        self.authenticate("admin", "admin")
+        base = "/plm/web3d_component?engineering_code=WEB3D-V&engineering_revision=0&suffix=.glb"
+        first = self.url_open(base).json()
+        self.assertEqual(first["checksum"], part.checksum)
+        self.assertTrue(first["url"].endswith("&v=%s" % part.checksum))
+        part.raw = b"glTF two"
+        second = self.url_open(base).json()
+        self.assertNotEqual(first["url"], second["url"])
+        download = self.url_open(second["url"])
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(download.content, b"glTF two")
+
+    def test_the_page_carries_the_checksum_of_the_document(self):
+        self.authenticate("web3d_insider", "web3d_insider")
+        page = self.url_open(
+            "/plm/show_treejs_model?document_id=%s&document_name=WEB3D-1.stl" % self.document.id
+        ).text
+        self.assertIn('document_checksum="%s"' % self.document.checksum, page)
+
+    def test_product_info_follows_the_node(self):
+        self.assertIn("document", self._product_info("web3d_insider"))
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            self.assertEqual(self._product_info("web3d_outsider"), {})
+
+    def test_product_info_lists_every_product_and_the_description(self):
+        """The Description of the document was its state, and of several
+        linked products only the last one was listed."""
+        second = self.env["product.product"].create({"name": "WEB3D-COMP-2"})
+        self.document.write({"linkedcomponents": [Command.link(second.id)],
+                             "description": "WEB3D description"})
+        answer = self._product_info("web3d_insider")
+        self.assertIn("WEB3D-COMP", answer["component"])
+        self.assertIn("WEB3D-COMP-2", answer["component"])
+        self.assertIn("WEB3D description", answer["document"])
+
+    # the product of a part of a .glb of ours, by code and revision
+
+    def _web3d_product(self, login, code, revision, document=None):
+        self.authenticate(login, login)
+        query = "engineering_code=%s&engineering_revision=%s" % (code, revision)
+        if document:
+            query += "&document_id=%s" % document.id
+        response = self.url_open("/plm/web3d_product?" + query)
+        self.assertEqual(response.status_code, 200)
+        return response.json()
+
+    def test_a_glb_part_finds_its_product_by_code_and_revision(self):
+        product = self.env["product.product"].create(
+            {"name": "WEB3D glb part", "engineering_code": "WEB3D-GLB", "engineering_revision": 2})
+        found = self._web3d_product("web3d_insider", "WEB3D-GLB", 2, self.document)
+        self.assertEqual(found, {"id": product.id, "engineering_code": "WEB3D-GLB",
+                                 "engineering_revision": 2, "name": "WEB3D glb part"})
+        # the revision counts, and no document is needed by an internal user
+        self.assertEqual(self._web3d_product("web3d_insider", "WEB3D-GLB", 1), {})
+        self.assertEqual(self._web3d_product("web3d_insider", "WEB3D-GLB", 2)["id"], product.id)
+        self.assertEqual(self._web3d_product("web3d_insider", "WEB3D-GLB", "x"), {})
+
+    def test_a_glb_part_is_found_as_the_user(self):
+        """No sudo: a user who reads the released records only does not get
+        a draft product."""
+        self.env["product.product"].create(
+            {"name": "WEB3D draft", "engineering_code": "WEB3D-DRAFT", "engineering_revision": 0})
+        reader = self.env["res.users"].create({
+            "name": "web3d_reader", "login": "web3d_reader", "password": "web3d_reader",
+            "group_ids": [Command.set((self.env.ref("base.group_user")
+                                       | self.env.ref("plm.group_plm_readonly_released")).ids)],
+        })
+        self.assertTrue(reader)
+        self.assertEqual(self._web3d_product("web3d_reader", "WEB3D-DRAFT", 0), {})
+        self.assertTrue(self._web3d_product("web3d_insider", "WEB3D-DRAFT", 0))
+
+    def test_part_colors_load_follows_the_node(self):
+        self.document.sudo().web3d_part_colors = '{"part-1": "#ff0000"}'
+        self.authenticate("web3d_insider", "web3d_insider")
+        mine = self.url_open(
+            "/plm/part_colors/load?document_id=%s" % self.document.id
+        )
+        self.assertIn("part-1", mine.text)
+        self.authenticate("web3d_outsider", "web3d_outsider")
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            theirs = self.url_open(
+                "/plm/part_colors/load?document_id=%s" % self.document.id
+            )
+        self.assertEqual(json.loads(theirs.text), {})
+
+    def _save_colors(self, login, colors):
+        self.authenticate(login, login)
+        response = self.url_open(
+            "/plm/part_colors/save",
+            json={
+                "params": {
+                    "document_id": self.document.id,
+                    "colors": colors,
+                }
+            },
+        )
+        return json.loads(response.content)["result"]
+
+    def test_part_colors_save_follows_the_node(self):
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            self.assertEqual(
+                self._save_colors("web3d_outsider", {"part-1": "#00ff00"}),
+                {"success": False},
+            )
+        self.assertFalse(self.document.web3d_part_colors)
+        self.assertEqual(
+            self._save_colors("web3d_insider", {"part-1": "#00ff00"}),
+            {"success": True},
+        )
+        self.assertIn("#00ff00", self.document.web3d_part_colors)
+
+    def test_part_colors_save_needs_the_write_right(self):
+        """Reading the document is not writing it: a readonly level may not."""
+        reader = self.env["res.users"].create(
+            {
+                "name": "web3d_reader",
+                "login": "web3d_reader",
+                "password": "web3d_reader",
+                "group_ids": [
+                    Command.set(
+                        (
+                            self.env.ref("base.group_user")
+                            | self.env.ref("plm.group_plm_view_user")
+                            | self.group_rd
+                        ).ids
+                    )
+                ],
+            }
+        )
+        self.assertTrue(reader)
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            self.assertEqual(
+                self._save_colors("web3d_reader", {"part-1": "#0000ff"}),
+                {"success": False},
+            )
+
+    # the markup
+
+    def _markup(self, login, res_model, res_id, **values):
+        self.authenticate(login, login)
+        payload = {
+            "image": "data:image/jpeg;base64,%s" % CONTENT.decode(),
+            "filename": "markup.jpg",
+            "comment": "a note",
+            "res_model": res_model,
+            "res_id": res_id,
+        }
+        payload.update(values)
+        response = self.url_open("/plm/save_markup", json={"params": payload})
+        return json.loads(response.content)["result"]
+
+    def test_a_markup_lands_on_the_document(self):
+        answer = self._markup("web3d_insider", "ir.attachment", self.document.id)
+        self.assertTrue(answer["success"])
+        log = self.env["plm.markup.log"].sudo().browse(answer["markup_id"])
+        self.assertEqual(log.create_uid, self.insider, "the author is the user")
+        self.assertEqual(log.res_id, self.document.id)
+
+    def test_no_markup_on_a_document_that_is_not_theirs(self):
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            answer = self._markup("web3d_outsider", "ir.attachment", self.document.id)
+        self.assertEqual(answer, {"success": False})
+        self.assertFalse(
+            self.env["plm.markup.log"].sudo().search_count([("res_id", "=", self.document.id)])
+        )
+
+    def test_no_markup_on_a_model_the_viewer_does_not_work_on(self):
+        """It took the model and the id from the caller and browsed them under
+        sudo: any record of the database could be given a message."""
+        partner = self.env["res.partner"].create({"name": "3d markup target"})
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            answer = self._markup("web3d_insider", "res.partner", partner.id)
+        self.assertEqual(answer, {"success": False})
+        self.assertFalse(partner.message_ids.filtered(lambda m: "a note" in (m.body or "")))
+
+    def test_the_activity_goes_to_an_internal_user(self):
+        portal = self.env["res.users"].create(
+            {
+                "name": "web3d_activity_portal",
+                "login": "web3d_activity_portal",
+                "group_ids": [Command.set(self.env.ref("base.group_portal").ids)],
+            }
+        )
+        answer = self._markup(
+            "web3d_insider",
+            "ir.attachment",
+            self.document.id,
+            schedule_activity=True,
+            activity_user_id=portal.id,
+        )
+        self.assertTrue(answer["success"])
+        activity = self.env["mail.activity"].sudo().search(
+            [("res_id", "=", self.document.id)], limit=1
+        )
+        self.assertTrue(activity)
+        self.assertEqual(activity.user_id, self.insider, "not the portal user named")
+
+    # the markups already saved
+
+    def _saved_markup(self):
+        answer = self._markup("web3d_insider", "ir.attachment", self.document.id)
+        self.assertTrue(answer["success"])
+        return answer["markup_id"]
+
+    def _call(self, login, route, params):
+        self.authenticate(login, login)
+        response = self.url_open(route, json={"params": params})
+        return json.loads(response.content)["result"]
+
+    def test_the_markups_of_a_document_follow_it(self):
+        markup_id = self._saved_markup()
+        mine = self._call(
+            "web3d_insider",
+            "/plm/markup/load",
+            {"res_model": "ir.attachment", "res_id": self.document.id},
+        )
+        self.assertEqual([m["id"] for m in mine["markups"]], [markup_id])
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            theirs = self._call(
+                "web3d_outsider",
+                "/plm/markup/load",
+                {"res_model": "ir.attachment", "res_id": self.document.id},
+            )
+        self.assertEqual(theirs, {"markups": []})
+
+    def test_a_markup_is_not_read_by_its_id_alone(self):
+        markup_id = self._saved_markup()
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            theirs = self._call(
+                "web3d_outsider", "/plm/markup/addon", {"markup_id": markup_id}
+            )
+            deleted = self._call(
+                "web3d_outsider", "/plm/markup/delete", {"markup_id": markup_id}
+            )
+        self.assertEqual(theirs, {"markup": False})
+        self.assertEqual(deleted, {"success": False})
+        self.assertTrue(self.env["plm.markup.log"].sudo().browse(markup_id).exists())
+
+    def test_the_markups_are_not_read_around_the_viewer(self):
+        """Not only through the routes: the record rule keeps a markup with
+        the document it was drawn on."""
+        markup_id = self._saved_markup()
+        markups = self.env["plm.markup.log"].with_user(self.outsider)
+        self.assertFalse(markups.search([("id", "=", markup_id)]))
+        self.assertTrue(
+            self.env["plm.markup.log"]
+            .with_user(self.insider)
+            .search([("id", "=", markup_id)])
+        )
+
+    # the portal
+
+    def _portal_customer(self, level, login="web3d_portal"):
+        # the scope of a customer is made of their sale order lines
+        if "sale.order" not in self.env:
+            self.skipTest("sale is not installed")
+        partner = self.env["res.partner"].create({"name": "3d portal customer"})
+        partner.plm_portal_access = level
+        user = self.env["res.users"].create(
+            {
+                "name": login,
+                "login": login,
+                "password": login,
+                "partner_id": partner.id,
+                "group_ids": [Command.set(self.env.ref("base.group_portal").ids)],
+            }
+        )
+        self.env["sale.order"].create(
+            {
+                "partner_id": partner.id,
+                "order_line": [Command.create({"product_id": self.component.id})],
+            }
+        )
+        return user
+
+    def test_a_customer_opens_what_was_sold_to_them(self):
+        """The viewer file of their own machine, and nothing else."""
+        viewer_document = self.env["ir.attachment"].create(
+            {
+                "name": "WEB3D-1.3mf",
+                "engineering_code": "WEB3D-1-3MF",
+                "raw": RAW,
+                "is_plm": True,
+                "plm_access_id": self.node.id,
+            }
+        )
+        viewer_document.linkedcomponents = self.component
+        self._portal_customer("view")
+        self.authenticate("web3d_portal", "web3d_portal")
+        page = self.url_open(
+            "/plm/show_treejs_model?document_id=%s&document_name=WEB3D-1.3mf"
+            % viewer_document.id
+        )
+        self.assertEqual(page.status_code, 200)
+        self.assertNotIn("markup_button_perm", page.text, "view only: no markup")
+        model = self.url_open(
+            "/plm/download_treejs_model?document_id=%s" % viewer_document.id
+        )
+        self.assertEqual(model.status_code, 200)
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            native = self.url_open(
+                "/plm/download_treejs_model?document_id=%s" % self.document.id
+            )
+        self.assertNotEqual(native.status_code, 200, "never the native CAD file")
+
+    def test_a_customer_allowed_to_markup_gets_the_commands(self):
+        viewer_document = self.env["ir.attachment"].create(
+            {
+                "name": "WEB3D-2.3mf",
+                "engineering_code": "WEB3D-2-3MF",
+                "raw": RAW,
+                "is_plm": True,
+                "plm_access_id": self.node.id,
+            }
+        )
+        viewer_document.linkedcomponents = self.component
+        self._portal_customer("markup", login="web3d_portal_markup")
+        self.authenticate("web3d_portal_markup", "web3d_portal_markup")
+        page = self.url_open(
+            "/plm/show_treejs_model?document_id=%s&document_name=WEB3D-2.3mf"
+            % viewer_document.id
+        )
+        self.assertIn("markup_button_perm", page.text)
+
+    def test_a_customer_does_not_paint_the_model(self):
+        """Saving the part colours writes on the document: the viewer of a
+        customer looks, it does not change what the drawing office keeps."""
+        self._portal_customer("markup", login="web3d_portal_colors")
+        self.document.sudo().linkedcomponents = self.component
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            self.assertEqual(
+                self._save_colors("web3d_portal_colors", {"part-1": "#123456"}),
+                {"success": False},
+            )
+
+    def test_a_stranger_opens_nothing(self):
+        stranger = self.env["res.users"].create(
+            {
+                "name": "web3d_stranger",
+                "login": "web3d_stranger",
+                "password": "web3d_stranger",
+                "group_ids": [Command.set(self.env.ref("base.group_portal").ids)],
+            }
+        )
+        self.assertTrue(stranger)
+        self.authenticate("web3d_stranger", "web3d_stranger")
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            page = self.url_open(
+                "/plm/show_treejs_model?document_id=%s&document_name=x"
+                % self.document.id
+            )
+        self.assertEqual(page.status_code, 404)
+
+    def test_a_customer_names_only_the_products_of_their_document(self):
+        """A portal user gets the product of a .glb part only under the
+        document they were given, its WebHiTree descendants included: never
+        another product by trying codes, nor by name through the old routes."""
+        self.component.write({"engineering_code": "WEB3D-SOLD", "engineering_revision": 0})
+        viewer_document = self.env["ir.attachment"].create(
+            {"name": "WEB3D-SOLD.3mf", "engineering_code": "WEB3D-SOLD-3MF", "raw": RAW,
+             "is_plm": True, "plm_access_id": self.node.id})
+        viewer_document.linkedcomponents = self.component
+        part_product = self.env["product.product"].create(
+            {"name": "WEB3D sold part", "engineering_code": "WEB3D-SOLD-PART", "engineering_revision": 0})
+        part_document = self.env["ir.attachment"].create(
+            {"name": "WEB3D-SOLD-PART.glb", "engineering_code": "WEB3D-SOLD-PART.glb", "raw": b"glTF",
+             "is_plm": True, "plm_access_id": self.node.id})
+        part_document.linkedcomponents = part_product
+        self.env["ir.attachment.relation"].create(
+            {"parent_id": viewer_document.id, "child_id": part_document.id, "link_kind": "WebHiTree"})
+        self.env["product.product"].create(
+            {"name": "WEB3D secret", "engineering_code": "WEB3D-SECRET", "engineering_revision": 0})
+        self._portal_customer("view", login="web3d_portal_products")
+        login = "web3d_portal_products"
+        self.assertEqual(self._web3d_product(login, "WEB3D-SOLD", 0, viewer_document)["id"],
+                         self.component.id)
+        self.assertEqual(self._web3d_product(login, "WEB3D-SOLD-PART", 0, viewer_document)["id"],
+                         part_product.id)
+        self.assertEqual(self._web3d_product(login, "WEB3D-SECRET", 0, viewer_document), {})
+        self.assertEqual(self._web3d_product(login, "WEB3D-SOLD", 0), {})
+        old_route = "/plm/get_product_id?src_name=WEB3D-SECRET&parent_id=%s" % viewer_document.id
+        self.assertEqual(self.url_open(old_route).json(), {"product_id": None})
+        tooltip = "/plm/get_3d_web_document_info?src_name=WEB3D-SECRET&parent_id=%s" % viewer_document.id
+        self.assertEqual(self.url_open(tooltip).text, "WEB3D-SECRET")
+
+    def test_product_info_hides_the_engineering_data(self):
+        with mute_logger("odoo.addons.plm_web_3d.controllers.main"):
+            answer = json.dumps(self._product_info("web3d_outsider"))
+        self.assertNotIn("WEB3D-1", answer)
+        self.assertNotIn("WEB3D-COMP", answer)

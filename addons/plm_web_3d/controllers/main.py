@@ -1,0 +1,857 @@
+# -*- coding: utf-8 -*-
+import base64
+import functools
+import json
+import logging
+from odoo import fields, http
+from odoo.http import Controller, route, request, Response
+from odoo.tools import BinaryBytes
+from markupsafe import Markup
+from werkzeug.exceptions import HTTPException
+
+_logger = logging.getLogger(__name__)
+
+# What the 3D viewer works on, and so what a markup may be filed against.
+MARKUP_MODELS = ("ir.attachment", "product.product", "product.template", "mrp.bom")
+
+
+def _resolve_components(record):
+    """Return linked product.product records for a document.
+
+    Walks the source chain so converted files (e.g. 3MF from STEP) still
+    find the products attached to the original engineering document:
+      1. direct linkedcomponents on the record
+      2. linkedcomponents of source_convert_document (conversion source)
+      3. linkedcomponents of the Web3DTree parent relation
+    """
+    if hasattr(record, 'linkedcomponents') and record.linkedcomponents:
+        return record.linkedcomponents
+    if hasattr(record, 'source_convert_document') and record.source_convert_document:
+        src = record.source_convert_document
+        if hasattr(src, 'linkedcomponents') and src.linkedcomponents:
+            return src.linkedcomponents
+    parent_rel = record.env['ir.attachment.relation'].search([
+        ('child_id', '=', record.id),
+        ('link_kind', '=', 'Web3DTree'),
+    ], limit=1)
+    if parent_rel and hasattr(parent_rel.parent_id, 'linkedcomponents'):
+        return parent_rel.parent_id.linkedcomponents
+    return record.env['product.product']
+
+
+def _web_tree(document):
+    """document and its WebHiTree descendants, level by level, each once,
+    read in document's environment."""
+    relations = document.env["ir.attachment.relation"]
+    found, level = document, document
+    while level:
+        level = relations.search([
+            ("parent_id", "in", level.ids),
+            ("link_kind", "=", "WebHiTree"),
+        ]).mapped("child_id") - found
+        found |= level
+    return found
+
+
+def _viewer_product(document, domain):
+    """The first product of domain the viewer of document may name, or an
+    empty recordset.
+
+    An internal user searches as themselves. A portal user has no products of
+    their own to search: _plm_document gave them document in sudo, through
+    their order, so they get only the products of that document and of its
+    WebHiTree descendants, never any other by trying codes. Without a document
+    a portal user gets nothing."""
+    if document and document.env.su:
+        products = document.env["product.product"]
+        for web_document in _web_tree(document):
+            products |= _resolve_components(web_document)
+        return products.filtered_domain(domain)[:1]
+    if not request.env.user._is_internal():
+        return request.env["product.product"]
+    return request.env["product.product"].search(domain, limit=1)
+
+
+def webservice(f):
+    @functools.wraps(f)
+    def wrap(*args, **kw):
+        try:
+            return f(*args, **kw)
+        except HTTPException:
+            raise
+        except Exception as e:
+            return Response(response=str(e), status=500)
+
+    return wrap
+
+
+def _plm_document(document_id, route, purpose="view3d"):
+    """The PLM document with that id, or an empty recordset.
+
+    An internal user gets it read as themselves: the access rights, the PLM
+    levels and the plm.access node decide, and a document they may not read
+    answers like a missing one. These routes are auth="user" and used to browse
+    whatever id they were given under sudo, so the ids could be walked for the
+    engineering data, the structure and the part colours of every document of
+    every company and department.
+
+    A portal user -- a customer, a vendor -- has no access to attachments at
+    all, so their scope answers instead: what is on their own order lines, and
+    what the format policy allows of it (see res.users._plm_portal_may). What
+    comes back is then a sudo recordset, since the portal cannot read it.
+
+    A request for a document one may not read is either a stale link or
+    somebody collecting data: it gets a line in the log either way.
+    """
+    attachments = request.env["ir.attachment"]
+    if not document_id or not str(document_id).isdigit():
+        return attachments.browse()
+    document = attachments.search(
+        [("id", "=", int(document_id)), ("is_plm", "=", True)], limit=1
+    )
+    if document:
+        return document
+    shared = attachments.sudo().browse(int(document_id))
+    if shared.exists() and request.env.user._plm_portal_may(shared, purpose):
+        return shared
+    _logger.warning(
+        "%s: user %s (id %s) asked for the document %s, which does not "
+        "exist or is not theirs to read",
+        route,
+        request.env.user.login,
+        request.env.uid,
+        document_id,
+    )
+    return attachments.browse()
+
+
+def _web3d_file(document):
+    """What the viewer gets of a web file: its id, name, checksum and the url to
+    download it; the checksum in the url makes a file written again a new url."""
+    return {
+        "document_id": document.id,
+        "name": document.name,
+        "checksum": document.checksum or "",
+        "url": "/plm/download_treejs_model?document_id=%s&v=%s"
+        % (document.id, document.checksum or ""),
+    }
+
+
+def _web3d_readable(document_ids):
+    """The documents among document_ids the user may view in 3d, as
+    _plm_document reads them but in one search and without a log line per id:
+    the viewer asks for them every few seconds."""
+    attachments = request.env["ir.attachment"]
+    ids = [int(i) for i in document_ids if str(i).isdigit()]
+    if not ids:
+        return attachments.browse()
+    found = attachments.search([("id", "in", ids), ("is_plm", "=", True)])
+    rest = attachments.sudo().browse(sorted(set(ids) - set(found.ids))).exists()
+    user = request.env.user
+    shared = rest.filtered(lambda document: user._plm_portal_may(document, "view3d"))
+    return found | shared
+
+
+def _can_markup(record):
+    """Whether this user may annotate that record from the viewer.
+
+    Reading it is enough for an internal user: a markup is a note beside the
+    drawing, not a change to it. A portal user needs the markup level of their
+    partner, or their own, and the document has to be in their scope.
+    """
+    if not record:
+        return False
+    user = request.env.user
+    # _plm_document hands a sudo recordset to a portal user, and has_access is
+    # always true on one of those: ask in the environment of the request.
+    if record.with_env(request.env).has_access("read"):
+        return True
+    return (
+        record._name == "ir.attachment"
+        and user._plm_portal_can_markup()
+        and user._plm_portal_may(record, "view3d")
+    )
+
+
+def _markup_log(markup_id, route):
+    """The markup with that id, when its target is one this user may reach.
+
+    The four markup routes browsed the id under sudo: the snapshots and the
+    comments drawn on any document of any company came back to anybody with an
+    account, and markup/load listed them all when the caller left the model out
+    of its filter.
+    """
+    logs = request.env["plm.markup.log"].sudo()
+    if not markup_id or not str(markup_id).isdigit():
+        return logs.browse()
+    log = logs.browse(int(markup_id))
+    if log.exists() and _markup_target(log.res_model, log.res_id, route):
+        return log
+    _logger.warning(
+        "%s: user %s (id %s) asked for the markup %s, which does not exist or "
+        "is not theirs to see",
+        route,
+        request.env.user.login,
+        request.env.uid,
+        markup_id,
+    )
+    return logs.browse()
+
+
+def _activity_user(activity_user_id, record):
+    """Who the markup activity is for: whoever the caller named, as long as
+    they are an internal user; the author when they are one themselves; else
+    whoever created the record, so that a customer's markup lands on a desk."""
+    users = request.env["res.users"].sudo()
+    named = users.browse(int(activity_user_id)) if activity_user_id else users.browse()
+    if named.exists() and not named.share:
+        return named.id
+    if not request.env.user.share:
+        return request.env.uid
+    return record.sudo().create_uid.id or request.env.uid
+
+
+def _markup_target(res_model, res_id, route="save_markup"):
+    """The record a markup may be filed against.
+
+    save_markup took the model and the id from the caller and browsed them
+    under sudo: any record of any model of the database could be given an
+    attachment, a chatter message and an activity that way. These four models
+    are what the viewer works on, and the record still has to be one this user
+    may reach.
+    """
+    if not res_id or not str(res_id).isdigit() or res_model not in MARKUP_MODELS:
+        _logger.warning(
+            "%s: user %s (id %s) asked to annotate %r %r, which is not a model "
+            "the viewer works on",
+            route,
+            request.env.user.login,
+            request.env.uid,
+            res_model,
+            res_id,
+        )
+        return request.env["ir.attachment"].browse()
+    if res_model == "ir.attachment":
+        return _plm_document(res_id, route)
+    record = request.env[res_model].browse(int(res_id))
+    if record.exists() and record.has_access("read"):
+        return record
+    # A portal user reaches no product or bill of materials of their own: their
+    # markup is filed against the document, which is what the viewer sends.
+    _logger.warning(
+        "%s: user %s (id %s) asked to annotate the %s %s, which is not theirs "
+        "to read",
+        route,
+        request.env.user.login,
+        request.env.uid,
+        res_model,
+        res_id,
+    )
+    return request.env[res_model].browse()
+
+
+class Web3DView(Controller):
+    @route("/plm/show_treejs_model", type="http", auth="user")
+    @webservice
+    def show_treejs_model(self, document_id, document_name):
+        # The viewer used to open on any id: the data came from the other
+        # routes, but the page itself said what the document was called.
+        document = _plm_document(document_id, "show_treejs_model")
+        if not document:
+            raise request.not_found()
+        return request.render(
+            "plm_web_3d.main_treejs_view",
+            {
+                "document_id": document_id,
+                "document_name": document_name,
+                # the live update compares it with /plm/web3d_changes
+                "document_checksum": document[:1].checksum or "",
+                "can_markup": _can_markup(document),
+                # Odoo's debug mode (?debug=1, kept in the session): the
+                # viewer shows the CAD dimensions of a feature only then.
+                "debug": bool(request.session.debug),
+                # Read in sudo: a background is no secret, and the portal
+                # cannot read the table.
+                "backgrounds": request.env["plm.web3d.background"].sudo().search([]),
+            },
+        )
+
+    @route("/plm/download_treejs_model", type="http", auth="user")
+    @webservice
+    def download_treejs_model(self, document_id, **kw):
+        # kw: v, the checksum web3d_component puts in the url, so a file
+        # written again is a new url and no cache answers the old one
+        # No sudo for an internal user: the record rules decide. A portal user
+        # holds no PLM group and cannot read attachments, so their scope
+        # answers, and only for the file the viewer shows.
+        for ir_attachment in _plm_document(
+            document_id, "download_treejs_model", purpose="view3d"
+        ):
+            if ir_attachment.has_web3d:
+                headers = []
+                content = bytes(ir_attachment.raw)
+                headers.append(("Content-Length", len(content)))
+                headers.append(("file_name", ir_attachment.name))
+                response = request.make_response(content, headers)
+                return response
+        return Response(response="Document Not Found %r " % document_id, status=500)
+
+    def document_extra(self, document):
+        """
+        this function id for customising the documents attributes
+        """
+        return document
+
+    def component_extra(self, components):
+        """
+        this function id for customising the component attributes
+        """
+        return components
+
+    @route("/plm/get_product_info", type="http", auth="user")
+    @webservice
+    def getProductInfo(self, document_id=None):
+        if not document_id:
+            return json.dumps({})
+        out = {}
+        ir_attachment = _plm_document(document_id, "get_product_info")
+        if not ir_attachment:
+            return json.dumps(out)
+        if ir_attachment.has_web3d:
+            # For 3mf conversions, follow source document for PLM metadata and linked product
+            info_doc = ir_attachment
+            if (
+                ir_attachment.name
+                and ir_attachment.name.lower().endswith(".3mf")
+                and ir_attachment.source_convert_document
+            ):
+                info_doc = ir_attachment.source_convert_document
+            doc_name = info_doc.engineering_code or info_doc.name
+            document = Markup("""
+            <li class="attribute_info"><b>Name:</b> <span class="plm_link" data-doc-id="%s">%s</span></li>
+            <li class="attribute_info"><b>Revision:</b> %s</li>
+            <li class="attribute_info"><b>Description:</b> %s</li>
+            <li class="attribute_info"><b>State:</b> %s</li>
+            """) % (
+                info_doc.id,
+                doc_name,
+                info_doc.engineering_revision,
+                info_doc.description or "",
+                info_doc.engineering_state,
+            )
+            document = self.document_extra(document)
+            out["document"] = document
+            # every linked product, not only the last one
+            components = Markup()
+            for component in info_doc.linkedcomponents:
+                components += self.component_extra(Markup("""
+                <li class="attribute_info" id="linked_component_id" data-id="%s"><b>Product Name:</b> <span class="plm_link" data-prod-id="%s">%s</span></li>
+                <li class="attribute_info"><b>Product Revision:</b> %s</li>
+                <li class="attribute_info"><b>Description:</b> %s</li>
+                """) % (
+                    component.id,
+                    component.id,
+                    component.engineering_code or component.name,
+                    component.engineering_revision,
+                    component.name,
+                ))
+            if components:
+                out["component"] = components
+        return json.dumps(out)
+
+    def _product_by_name(self, src_name, parent_id, route):
+        """The product a tree node of a viewer file names, by code, internal
+        reference or name: first among the products of parent_id, the document
+        shown, then as _viewer_product allows. Not by revision: the node name
+        has none, so a .glb of ours goes through /plm/web3d_product."""
+        parent_doc = request.env["ir.attachment"]
+        if parent_id and str(parent_id).isdigit():
+            parent_doc = _plm_document(parent_id, route)
+        for product in parent_doc.linkedcomponents:
+            if src_name in (product.engineering_code, product.name, product.default_code):
+                return product
+        return _viewer_product(parent_doc, [
+            "|", "|",
+            ("engineering_code", "=", src_name),
+            ("default_code", "=", src_name),
+            ("name", "=", src_name),
+        ])
+
+    @route("/plm/get_product_id", type="http", auth="user")
+    def get_product_id(self, src_name, parent_id=None):
+        """Return JSON {product_id: N} for the product matching src_name."""
+        product = self._product_by_name(src_name, parent_id, "get_product_id")
+        return json.dumps({"product_id": product.id or None})
+
+    @route("/plm/get_3d_web_document_info", type="http", auth="user")
+    def get_3d_web_document_info(self, src_name, parent_id=None):
+        if not parent_id or not str(parent_id).isdigit():
+            return src_name
+        product = self._product_by_name(src_name, parent_id, "get_3d_web_document_info")
+        if not product:
+            return src_name
+        code = product.engineering_code or product.default_code or ''
+        name = product.name or ''
+        if code:
+            return f"{code} - {name}"
+        return name
+
+    @route("/plm/web3d_product", type="http", auth="user")
+    @webservice
+    def web3d_product(self, document_id=None, engineering_code=None, engineering_revision=None):
+        """{id, engineering_code, engineering_revision, name} of the product
+        with that code and revision, what a .glb of ours (schema
+        odooplm.cad3d) says of the part selected; {} when there is none or it
+        may not be named. document_id is the document the viewer shows: a
+        portal user is answered only for the products under it."""
+        try:
+            revision = int(engineering_revision)
+        except (TypeError, ValueError):
+            return request.make_json_response({})
+        if not engineering_code:
+            return request.make_json_response({})
+        document = _plm_document(document_id, "web3d_product")
+        if not document and not request.env.user._is_internal():
+            return request.make_json_response({})
+        product = _viewer_product(document, [
+            ("engineering_code", "=", engineering_code),
+            ("engineering_revision", "=", revision),
+        ])
+        if not product:
+            return request.make_json_response({})
+        return request.make_json_response({
+            "id": product.id,
+            "engineering_code": product.engineering_code,
+            "engineering_revision": product.engineering_revision,
+            "name": product.name,
+        })
+
+    @http.route('/plm/save_preview', type='jsonrpc', auth='user')
+    def save_preview(self, document_id=None, image_data=None):
+        if not document_id or not image_data:
+            return {'success': False}
+        doc = request.env['ir.attachment'].sudo().browse(int(document_id))
+        if not doc.exists():
+            return {'success': False}
+        try:
+            image = BinaryBytes(base64.b64decode(image_data))
+            doc.sudo().write({'preview': image})
+            components = _resolve_components(doc)
+            updated = 0
+            seen_tmpl = set()
+            for comp in components:
+                tmpl = comp.product_tmpl_id
+                if tmpl and tmpl.id not in seen_tmpl:
+                    seen_tmpl.add(tmpl.id)
+                    tmpl.sudo().write({'image_1920': image})
+                    updated += 1
+            return {'success': True, 'products_updated': updated}
+        except Exception as e:
+            _logger.warning("Failed to save preview: %s", e)
+            return {'success': False, 'error': str(e)}
+
+    @route("/plm/material_appearance", type="http", auth="user")
+    @webservice
+    def material_appearance(self, name=None):
+        """The 3D appearance of the plm.material whose designation is name,
+        whatever the case; {} when there is none. A cad3d export names its
+        material and the viewer asks here. Read in sudo: how a material looks
+        is no secret, and a portal user viewing their part cannot read
+        plm.material."""
+        material = request.env["plm.material"]
+        if name:
+            pattern = name.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            material = material.sudo().search([("name", "=ilike", pattern)], limit=1)
+        if not material:
+            return request.make_json_response({})
+        return request.make_json_response({
+            "name": material.name,
+            "color": material.web3d_color or None,
+            "metalness": material.web3d_metalness,
+            "roughness": material.web3d_roughness,
+            "opacity": material.web3d_opacity,
+            "texture": (
+                "/plm/material_texture?material_id=%s" % material.id
+                if material.web3d_texture else None
+            ),
+            "texture_size": material.web3d_texture_size,
+        })
+
+    @route("/plm/web3d_component", type="http", auth="user")
+    @webservice
+    def web3d_component(self, engineering_code=None, engineering_revision=None, suffix=None, name=None,
+                        parent_id=None):
+        """The web export of a component, for a viewer building an assembly.
+
+        First the file named name among the WebHiTree descendants of
+        parent_id, the web file of the assembly shown (the GLB structure
+        import links them): no native CAD document is needed. Descendants,
+        not children only: an assembly .glb may name the parts of its
+        subassemblies directly, its leaves flattened. Else the document with that code and revision
+        (the native CAD file), then its Web3DTree child named name when the
+        assembly names the file (a .glb by references, one file per
+        configuration), else the one whose name ends with suffix, the format
+        of the assembly (a customer may export other formats too); {} when
+        there is none.
+
+        Read as the user: what they may not read is not found."""
+        if name and parent_id and str(parent_id).isdigit():
+            relations = request.env["ir.attachment.relation"]
+            level, seen = [int(parent_id)], {int(parent_id)}
+            while level:
+                children = relations.search([
+                    ("parent_id", "in", level),
+                    ("link_kind", "=", "WebHiTree"),
+                ]).mapped("child_id")
+                for child in children:
+                    if (child.name or "").lower() == name.lower() and child.has_access("read"):
+                        return request.make_json_response(_web3d_file(child))
+                level = [child.id for child in children if child.id not in seen]
+                seen.update(level)
+        if not engineering_code or engineering_revision in (None, "") or not suffix:
+            return request.make_json_response({})
+        try:
+            revision = int(engineering_revision)
+        except ValueError:
+            return request.make_json_response({})
+        attachments = request.env["ir.attachment"]
+        native = attachments.search([
+            ("engineering_code", "=", engineering_code),
+            ("engineering_revision", "=", revision),
+            ("is_plm", "=", True),
+        ], limit=1)
+        if not native:
+            return request.make_json_response({})
+        relations = request.env["ir.attachment.relation"].search([
+            ("parent_id", "=", native.id),
+            ("link_kind", "=", "Web3DTree"),
+        ])
+        suffix = suffix.lower()
+        children = relations.mapped("child_id")
+        if name:
+            # the file the assembly names, else nothing: another
+            # configuration's file would put the wrong part in
+            children = children.filtered(lambda child: (child.name or "").lower() == name.lower())
+        for child in children:
+            if (child.name or "").lower().endswith(suffix) and child.has_access("read"):
+                return request.make_json_response(_web3d_file(child))
+        return request.make_json_response({})
+
+    @route("/plm/web3d_changes", type="http", auth="user")
+    @webservice
+    def web3d_changes(self, ids=""):
+        """The checksum of each web file the viewer shows, ids comma separated:
+        {id: checksum}, null for one the user may not read or that is gone.
+        The viewer reloads what changed (live update of the 3d view)."""
+        asked = [i for i in ids.split(",") if i.strip().isdigit()]
+        readable = _web3d_readable(asked)
+        checksums = {str(document.id): document.checksum or "" for document in readable}
+        return request.make_json_response({i.strip(): checksums.get(i.strip()) for i in asked})
+
+    @route("/plm/web3d_background", type="http", auth="user")
+    def web3d_background(self, background_id=None, part="file"):
+        """The file (or with part=backdrop, the backdrop) of an active
+        background of the viewer, in sudo like the list the page offers."""
+        background = request.env["plm.web3d.background"]
+        if background_id and str(background_id).isdigit():
+            background = background.sudo().browse(int(background_id)).exists()
+        field, name = ("backdrop", "backdrop_name") if part == "backdrop" else ("file", "file_name")
+        if not background or not background.active or not background[field]:
+            raise request.not_found()
+        return request.env["ir.binary"]._get_stream_from(
+            background, field, filename=background[name]
+        ).get_response()
+
+    @route("/plm/material_texture", type="http", auth="user")
+    def material_texture(self, material_id=None):
+        material = request.env["plm.material"]
+        if material_id and str(material_id).isdigit():
+            material = material.sudo().browse(int(material_id)).exists()
+        if not material or not material.web3d_texture:
+            raise request.not_found()
+        return request.env["ir.binary"]._get_image_stream_from(
+            material, "web3d_texture"
+        ).get_response()
+
+    @http.route('/plm/part_colors/load', type='http', auth='user')
+    def part_colors_load(self, document_id=None):
+        doc = _plm_document(document_id, "part_colors/load")
+        if not doc or not doc.web3d_part_colors:
+            return json.dumps({})
+        try:
+            return doc.web3d_part_colors
+        except Exception:
+            return json.dumps({})
+
+    @http.route('/plm/part_colors/save', type='jsonrpc', auth='user')
+    def part_colors_save(self, document_id=None, colors=None):
+        if not colors:
+            return {'success': False}
+        doc = _plm_document(document_id, "part_colors/save")
+        if not doc:
+            return {'success': False}
+        if not doc.with_env(request.env).has_access("write"):
+            # Reading the document is not writing it: the PLM level and the
+            # write groups of the node say who may. Asked in the environment of
+            # the request, because a portal user holds a sudo recordset here.
+            _logger.warning(
+                "part_colors/save: user %s (id %s) may not write the document %s",
+                request.env.user.login,
+                request.env.uid,
+                doc.id,
+            )
+            return {'success': False}
+        try:
+            doc.write({'web3d_part_colors': json.dumps(colors)})
+            return {'success': True}
+        except Exception as e:
+            _logger.warning("Failed to save part colors: %s", e)
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/plm/save_markup', type='jsonrpc', auth='user')
+    def save_markup(self, image=None, base_image=None, filename=None, comment=None,
+                    res_model=None, res_id=None, canvas_json=None,
+                    schedule_activity=False,
+                    activity_summary=None,
+                    activity_due_date=None,
+                    activity_user_id=None):
+
+        target = _markup_target(res_model, res_id)
+        if not target or not _can_markup(target):
+            _logger.warning(
+                "save_markup: user %s (id %s) may not annotate %r %r",
+                request.env.user.login,
+                request.env.uid,
+                res_model,
+                res_id,
+            )
+            return {'success': False}
+
+        image_binary = base64.b64decode(image.split(',')[1])
+        base_binary = base64.b64decode(base_image.split(',')[1]) if base_image else image_binary
+
+        filename = filename or 'markup.jpg'
+        default_note = f"{filename} - Markup Logged"
+
+        Activity = request.env['mail.activity'].sudo()
+        ActivityType = request.env['mail.activity.type'].sudo()
+        IrModel = request.env['ir.model'].sudo()
+
+        activity_type = ActivityType.search([('name', 'ilike', 'to')], limit=1)
+        activity_type_id = activity_type.id if activity_type else 1
+
+        markup_log = request.env['plm.markup.log'].sudo().create({
+            'comment': comment,
+            'snapshot': BinaryBytes(image_binary),
+            'base_image': BinaryBytes(base_binary),
+            'filename': filename,
+            'canvas_data': canvas_json,
+            'res_id': int(res_id) if res_id else 0,
+            'res_model': res_model or '',
+        })
+
+        if res_model and res_id:
+            # Everything below is written with sudo, as before: a portal
+            # customer cannot create an attachment or post a message, and an
+            # internal user may annotate a document they only read. What is new
+            # is that the record was checked above. sudo() keeps the uid, so
+            # each record still carries its real author.
+            record = target.sudo()
+
+            if record.exists():
+                viewer_url = (
+                    f"/plm/show_treejs_model"
+                    f"?document_id={res_id}"
+                    f"&document_name={record.name}"
+                    f"&markup_id={markup_log.id}"
+                )
+                hyperlink = f'<p><a href="{viewer_url}" target="_blank">🔗 click here to View document in 3D Viewer</a></p>'
+
+                components = _resolve_components(record)
+
+                if schedule_activity:
+                    attachment = request.env['ir.attachment'].sudo().create({
+                        'name': filename,
+                        'type': 'binary',
+                        'raw': image_binary,
+                        'res_model': res_model,
+                        'res_id': int(res_id),
+                        'mimetype': 'image/jpeg',
+                    })
+
+                    note_html = f'<p>{comment if comment else default_note}</p>'
+                    note_html += hyperlink
+                    note_html += (
+                        f'<p><img src="/web/image/ir.attachment/{attachment.id}/raw" '
+                        f'style="max-width:500px; border-radius:4px; margin-top:6px;" '
+                        f'alt="Markup"/></p>'
+                    )
+
+                    created_targets = set()
+
+                    def create_activity(target):
+                        key = (target._name, target.id)
+                        if key in created_targets:
+                            return
+                        created_targets.add(key)
+                        model_rec = IrModel.search([('model', '=', target._name)], limit=1)
+                        if model_rec:
+                            Activity.create({
+                                'res_model_id': model_rec.id,
+                                'res_id': target.id,
+                                'activity_type_id': activity_type_id,
+                                'summary': activity_summary or 'Markup Activity',
+                                'note': Markup(note_html),
+                                'user_id': _activity_user(activity_user_id, record),
+                                # date_deadline is required: without one the
+                                # whole markup used to fail on the database.
+                                'date_deadline': activity_due_date or fields.Date.context_today(Activity),
+                            })
+
+                    create_activity(record)
+                    for component in components:
+                        target = component
+                        if component._name == 'product.product' and component.product_tmpl_id:
+                            target = component.product_tmpl_id
+                        create_activity(target)
+
+                else:
+                    chatter_body = f'<p>{comment if comment else default_note}</p>'
+                    chatter_body += hyperlink
+
+                    try:
+                        msg = record.message_post(
+                            body=Markup(chatter_body),
+                            attachments=[(filename, image_binary)]
+                        )
+                        markup_log.sudo().write({'message_id': msg.id})
+                        for component in components:
+                            component.message_post(
+                                body=Markup(chatter_body),
+                                attachments=[(filename, image_binary)],
+                            )
+                    except Exception as e:
+                        _logger.warning("Failed to post markup chatter message: %s", e)
+
+        return {"success": True, "markup_id": markup_log.id}
+
+    @http.route('/plm/markup/load', type='jsonrpc', auth='user')
+    def load_markup(self, res_id=None, res_model=None):
+        # Both are needed now: without the model the search used to walk every
+        # markup of the database whose res_id happened to match.
+        if not _markup_target(res_model, res_id, "markup/load"):
+            return {'markups': []}
+        logs = request.env['plm.markup.log'].sudo().search(
+            [('res_model', '=', res_model), ('res_id', '=', int(res_id))],
+            order='create_date desc',
+        )
+
+        return {
+            'markups': [{
+                'id': l.id,
+                'comment': l.comment,
+                'filename': l.filename or 'markup.jpg',
+                'snapshot': l.snapshot.to_base64() if l.snapshot else False,
+                'base_image': l.base_image.to_base64() if l.base_image else False,
+                'canvas_data': l.canvas_data,
+                'create_date': str(l.create_date),
+            } for l in logs]
+        }
+
+    @http.route('/plm/markup/delete', type='jsonrpc', auth='user')
+    def delete_markup(self, markup_id=None):
+        if not markup_id:
+            return {'success': False}
+
+        log = _markup_log(markup_id, "markup/delete")
+        if not log:
+            return {'success': False}
+
+        user = request.env.user
+        is_creator = log.create_uid.id == user.id
+        is_admin = user.has_group('plm.group_plm_admin')
+
+        if not (is_creator or is_admin):
+            return {'success': False}
+
+        if log.message_id:
+            log.message_id.sudo().unlink()
+        log.sudo().unlink()
+
+        return {'success': True}
+
+    @http.route('/plm/markup/addon', type='jsonrpc', auth='user')
+    def load_markup_addon(self, markup_id=None):
+        if not markup_id:
+            return {'markup': False}
+
+        log = _markup_log(markup_id, "markup/addon")
+        if not log:
+            return {'markup': False}
+
+        return {
+            'markup': {
+                'id': log.id,
+                'comment': log.comment,
+                'snapshot': log.snapshot.to_base64() if log.snapshot else False,
+                'base_image': log.base_image.to_base64() if log.base_image else False,
+                'canvas_data': log.canvas_data,
+            }
+        }
+
+    @http.route('/plm/markup/update', type='jsonrpc', auth='user')
+    def update_markup(self, markup_id, image, base_image, canvas_json, **kwargs):
+        if not markup_id:
+            return {'success': False}
+
+        log = _markup_log(markup_id, "markup/update")
+        if not log:
+            return {'success': False}
+
+        user = request.env.user
+        is_creator = log.create_uid.id == user.id
+        is_admin = user.has_group('plm.group_plm_admin')
+
+        if not (is_creator or is_admin):
+            return {'success': False, 'error': 'Not allowed'}
+
+        image_binary = base64.b64decode(image.split(',')[1] if ',' in image else image)
+        base_binary = base64.b64decode(base_image.split(',')[1] if base_image and ',' in base_image else base_image)
+
+        log.sudo().write({
+            'snapshot': BinaryBytes(image_binary),
+            'base_image': BinaryBytes(base_binary),
+            'canvas_data': canvas_json,
+        })
+
+        # ── Post updated markup to chatter ──
+        if log.res_model and log.res_id:
+            record = request.env[log.res_model].sudo().browse(log.res_id)
+            if record.exists():
+                filename = log.filename or 'markup.jpg'
+                chatter_body = f'<p>Markup updated by {user.name}</p>'
+
+                viewer_url = (
+                    f"/plm/show_treejs_model"
+                    f"?document_id={log.res_id}"
+                    f"&document_name={record.name}"
+                    f"&markup_id={log.id}"
+                )
+                chatter_body += f'<p><a href="{viewer_url}" target="_blank">🔗 Click here to view updated markup in 3D Viewer</a></p>'
+
+                components = _resolve_components(record)
+
+                try:
+                    record.message_post(
+                        body=Markup(chatter_body),
+                        attachments=[(filename, image_binary)],
+                    )
+                    for component in components:
+                        component.message_post(
+                            body=Markup(chatter_body),
+                            attachments=[(filename, image_binary)],
+                        )
+                except Exception as e:
+                    _logger.warning("Failed to post update_markup chatter message: %s", e)
+
+        return {'success': True}
