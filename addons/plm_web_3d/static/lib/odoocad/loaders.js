@@ -1,0 +1,453 @@
+// treejs main import
+import * as THREE from '../three.js/build/three.module.js';
+import { addHoleTextures, applyAppearance, assemblyNodes, isAssembly, loadAssemblyComponents, prepareGlbFaces } from '../../src/js/cad3d_features.js';
+// loaders
+import { GLTFLoader } from '../three.js/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from '../three.js/examples/jsm/loaders/DRACOLoader.js';
+import { MeshoptDecoder } from '../three.js/examples/jsm/libs/meshopt_decoder.module.js';
+import { FBXLoader } from '../three.js/examples/jsm/loaders/FBXLoader.js';
+import { OBJLoader } from '../three.js/examples/jsm/loaders/OBJLoader.js';
+import { VRMLLoader } from '../three.js/examples/jsm/loaders/VRMLLoader.js';
+import { STLLoader } from '../three.js/examples/jsm/loaders/STLLoader.js';
+import { SVGLoader } from '../three.js/examples/jsm/loaders/SVGLoader.js';
+import { ThreeMFLoader } from '../three.js/examples/jsm/loaders/3MFLoader.js';
+import { DXFLoader } from "./DXFLoader.js"
+
+
+// decoders for compressed glTF (KHR_draco_mesh_compression, EXT_meshopt_compression)
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(new URL('../three.js/examples/jsm/libs/draco/gltf/', import.meta.url).href);
+const gLTFLoader = new GLTFLoader();
+gLTFLoader.setDRACOLoader(dracoLoader);
+gLTFLoader.setMeshoptDecoder(MeshoptDecoder);
+const fBXLoader = new FBXLoader();
+const oBJLoader = new OBJLoader();
+const vRMLLoader = new VRMLLoader();
+const stlLoader = new STLLoader();
+const svgloader = new SVGLoader();
+const dxfLoader = new DXFLoader();
+const threeMFLoader = new ThreeMFLoader();
+// glTF is in metres (as the standard says), the viewer in millimetres: the
+// measure, the crate, the snap and the cad3d values all print mm
+const GLTF_TO_MM = 1000;
+
+/** The roots of a glTF scene that are model, cameras and lights left out. */
+function gltfRoots(gltf) {
+	return [...gltf.scene.children].filter((child) => !child.isCamera && !child.isLight);
+}
+
+/** A glTF part of an assembly by references, in mm (as loadGltx brings a
+ * document), to clone under each component: its root, or its roots in a
+ * group when it has several. Each file is read once: the copies are clones. */
+const gltfParts = new Map();
+export function loadGltfPart(url) {
+	if (!gltfParts.has(url)) gltfParts.set(url, readGltfPart(url));
+	return gltfParts.get(url);
+}
+
+/** Drop from the cache the parts no copy in the scene uses any more (their
+ * url is not in usedUrls) and free their geometry: the copies are clones
+ * sharing it, so it goes only with the last of them. */
+export function evictGltfParts(usedUrls) {
+	for (const [url, promise] of gltfParts) {
+		if (usedUrls.has(url)) continue;
+		gltfParts.delete(url);
+		promise.then((part) => part.traverse((child) => {
+			if (child.isMesh && child.geometry) child.geometry.dispose();
+		}), () => { });
+	}
+}
+
+/** The roots of a .glb document, in mm: the model the viewer shows. */
+export function loadGltfRoots(url) {
+	return new Promise((resolve, reject) => gLTFLoader.load(url, (gltf) => {
+		const roots = gltfRoots(gltf);
+		for (const root of roots) {
+			root.position.multiplyScalar(GLTF_TO_MM);
+			root.scale.multiplyScalar(GLTF_TO_MM);
+		}
+		resolve(roots);
+	}, undefined, reject));
+}
+
+/** Place a part loaded by reference under its component: a material of its
+ * own per copy, as addItemToScene gives every part, and the .glb it comes
+ * from in userData.plm_glb, which the live update follows; a subassembly by
+ * references loads its own parts, found among its file's WebHiTree children.
+ * Resolves when the subassembly is filled. */
+export function placeGltfPart(part, found) {
+	part.traverse((child) => {
+		if (child.isMesh && child.material) child.material = child.material.clone();
+	});
+	part.userData.plm_glb = {
+		document_id: found.document_id,
+		name: found.name,
+		checksum: found.checksum || '',
+		url: found.url,
+	};
+	prepareGltfPart(part);
+	if (isAssembly(part)) {
+		return loadAssemblyComponents(part, found.name, placeGltfPart, loadGltfPart, found.document_id);
+	}
+	return null;
+}
+
+function readGltfPart(url) {
+	return new Promise((resolve, reject) => gLTFLoader.load(url, (gltf) => {
+		const roots = gltfRoots(gltf);
+		for (const root of roots) {
+			root.position.multiplyScalar(GLTF_TO_MM);
+			root.scale.multiplyScalar(GLTF_TO_MM);
+		}
+		if (roots.length === 1) {
+			resolve(roots[0]);
+			return;
+		}
+		const group = new THREE.Group();
+		group.name = roots.map((root) => root.name).join(" + ");
+		roots.forEach((root) => group.add(root));
+		resolve(group);
+	}, undefined, reject));
+}
+
+/** What every glTF part gets once placed (cad3d_export): its CAD faces, look
+ * and holes, as the JSON gets them; after addItemToScene, which replaces
+ * every mesh material. */
+export function prepareGltfPart(part) {
+	prepareGlbFaces(part);
+	applyAppearance(part);
+	addHoleTextures(part);
+}
+const loader = new THREE.ObjectLoader();
+
+
+
+const transparent_material = new THREE.MeshPhysicalMaterial({
+	color: 0xb2ffc8,
+	// envMap: envTexture,
+	metalness: 0.25,
+	roughness: 0.1,
+	opacity: 1.0,
+	transparent: true,
+	transmission: 0.50,
+	clearcoat: 1.0,
+	clearcoatRoughness: 0.25
+})
+
+class Loader {
+	constructor(odooCad) {
+		this.odooCad = odooCad;
+		this.overlay = document.querySelector('#loading_overlay');
+	}
+
+	_showProgress(document_name) {
+		if (!this.overlay) return;
+		this.overlay.style.display = 'flex';
+		// Reset bar to 0 for each new load
+		const bar = document.getElementById('loading_progress_bar');
+		const pct = document.getElementById('loading_percent');
+		if (bar) bar.style.width = '0%';
+		if (pct) pct.textContent = '0%';
+	}
+
+	_updateProgress(xhr) {
+		const bar = document.getElementById('loading_progress_bar');
+		const pct = document.getElementById('loading_percent');
+		if (!bar || !pct) return;
+		if (xhr && xhr.lengthComputable && xhr.total > 0) {
+			// Real percentage — Content-Length is set by download_treejs_model
+			const percent = Math.min(100, Math.round((xhr.loaded / xhr.total) * 100));
+			bar.style.width = percent + '%';
+			pct.textContent = percent + '%';
+		} else if (xhr && xhr.loaded > 0) {
+			// Content-Length unknown — show bytes received as fallback
+			const mb = (xhr.loaded / (1024 * 1024)).toFixed(1);
+			pct.textContent = mb + ' MB received';
+		}
+	}
+
+	_hideProgress() {
+		if (!this.overlay) return;
+		// Snap bar to 100% before hiding so the user sees completion
+		const bar = document.getElementById('loading_progress_bar');
+		const pct = document.getElementById('loading_percent');
+		if (bar) bar.style.width = '100%';
+		if (pct) pct.textContent = '100%';
+		this.overlay.style.display = 'none';
+		const canvas = document.getElementById('odoo_canvas');
+		if (canvas) canvas.dispatchEvent(new Event('OdooCAD_fit_items'));
+	}
+
+	/*
+	 * Load document from odoo
+	 */
+	load_document(document_id, document_name) {
+		this._showProgress(document_name);
+		var url = '../plm/download_treejs_model?document_id=' + document_id
+		var exte = document_name.split('.').pop();
+		exte = exte.toLowerCase()
+		if (['glb', 'gltf'].includes(exte)) {
+			this.loadGltx(document_name, url, document_id);
+		}
+		if (['fbx'].includes(exte)) {
+			this.loadfBXLoader(document_name, url);
+		}
+		if (['obj'].includes(exte)) {
+			this.loadoBJLoader(document_name, url);
+		}
+		if (['wrl'].includes(exte)) {
+			this.loadvRMLLoader(document_name, url);
+		}
+		if (['json'].includes(exte)) {
+			this.loadoloader(document_name, url);
+		}
+		if (['stl'].includes(exte)) {
+			this.loadStlLoader(document_name, url);
+		}
+		if (['svg'].includes(exte)) {
+			this.loadSvgLoader(document_name, url);
+		}
+		if (['dxf'].includes(exte)) {
+			this.loadDxf(document_name, url);
+		}
+		if (['3mf'].includes(exte)) {
+			this.load3mf(document_name, url);
+		}
+	}
+	loadDxf(document_name, url) {
+		var self = this;
+		dxfLoader.load(url,
+			function (objects, textEntities, origin) {
+				for (const obj of objects) {
+					self.odooCad.addItemToScene(obj);
+				}
+				if (textEntities && textEntities.length > 0) {
+					self.odooCad.addDxfTextLabels(textEntities, origin);
+				}
+				self.odooCad.create_tree_structure("");
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+	loadGltx(document_name, url, document_id = null) {
+		var self = this;
+		gLTFLoader.load(url,
+			function (gltf) {
+				// scene.add() takes each object out of gltf.scene.children, so walk a copy;
+				// cameras and lights exported by the CAD are not parts of the model
+				const children = gltfRoots(gltf);
+				const assemblies = [];
+				var out_html_structure = "";
+				for (var i = 0; i < children.length; i++) {
+					// in mm before it is added: addItemToScene fits the camera on it
+					children[i].position.multiplyScalar(GLTF_TO_MM);
+					children[i].scale.multiplyScalar(GLTF_TO_MM);
+					// the parts of a glTF are meshes: the tree starts from the node
+					// the document shown, a root of the scene: the live update
+					// reloads it when its file changes
+					children[i].userData.plm_glb = { document_id: document_id, name: document_name, root: true };
+					out_html_structure += self.odooCad.addItemToScene(children[i], true, true);
+					prepareGltfPart(children[i]);
+					if (isAssembly(children[i])) assemblies.push(children[i]);
+				}
+				self.odooCad.create_tree_structure(out_html_structure);
+				self._hideProgress();
+				// An assembly by references holds no mesh of its parts: each
+				// component names its part's .glb, loaded once and placed in
+				// every component that uses it (placeGltfPart)
+				const filled = [];
+				for (const assembly of assemblies) {
+					filled.push(loadAssemblyComponents(assembly, document_name, placeGltfPart, loadGltfPart, document_id).then(() => {
+						self.odooCad.create_tree_structure(children.map(
+							(child) => self.odooCad.get_li_structure({ children: [child] })[0]).join(""));
+						const canvas = document.getElementById('odoo_canvas');
+						canvas.dispatchEvent(new CustomEvent("OdooCAD_fit_items"));
+						canvas.dispatchEvent(new CustomEvent("OdooCAD_render"));
+					}));
+				}
+				// the whole model is in the scene: the live update starts
+				Promise.all(filled).then(() => {
+					document.getElementById('odoo_canvas')?.dispatchEvent(new CustomEvent("OdooCAD_model_loaded"));
+				});
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+
+	load3mf(document_name, url) {
+		var self = this;
+		threeMFLoader.load(url,
+			function (mfArgs) {
+				mfArgs.traverse(function (child) { child.castShadow = true; });
+				const out_html_structure = self.odooCad.addItemToScene(mfArgs, false);
+				self.odooCad.create_tree_structure(out_html_structure);
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+
+	loadfBXLoader(document_name, url) {
+		var self = this;
+		fBXLoader.load(url,
+			function (gltf) {
+				var out_html_structure = "";
+				// scene.add() takes each object out of its parent, so walk a copy
+				const children = [...gltf.children];
+				for (var i = 0; i < children.length; i++) {
+					out_html_structure += self.odooCad.addItemToScene(children[i]);
+				}
+				self.odooCad.create_tree_structure(out_html_structure);
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+
+	loadoBJLoader(document_name, file_path) {
+		var self = this;
+		oBJLoader.load(file_path,
+			function (objArgs) {
+				var out_html_structure = "";
+				// scene.add() takes each object out of its parent, so walk a copy
+				const children = [...objArgs.children];
+				for (var i = 0; i < children.length; i++) {
+					out_html_structure += self.odooCad.addItemToScene(children[i]);
+				}
+				self.odooCad.create_tree_structure(out_html_structure);
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+
+
+	loadoloader(document_name, url) {
+		var self = this;
+		loader.load(url,
+			function (obj) {
+				const out_html_structure = self.odooCad.addItemToScene(obj);
+				// After addItemToScene: it replaces every mesh material.
+				if (isAssembly(obj)) {
+					// Each component its own look: the changed ones now, the
+					// others as their parts arrive.
+					for (const node of assemblyNodes(obj)) {
+						applyAppearance(node);
+						addHoleTextures(node);
+					}
+					loadAssemblyComponents(obj, document_name, (part) => {
+						applyAppearance(part);
+						addHoleTextures(part);
+					}).then(() => {
+						self.odooCad.create_tree_structure(self.odooCad.create_relation_structure(obj));
+						const canvas = document.getElementById('odoo_canvas');
+						canvas.dispatchEvent(new CustomEvent("OdooCAD_fit_items"));
+						canvas.dispatchEvent(new CustomEvent("OdooCAD_render"));
+					});
+				} else {
+					applyAppearance(obj);
+					addHoleTextures(obj);
+				}
+				self.odooCad.create_tree_structure(out_html_structure);
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+	loadvRMLLoader(document_name, url) {
+		var self = this;
+		vRMLLoader.load(url,
+			function (gltf) {
+				var out_html_structure = "";
+				// scene.add() takes each object out of its parent, so walk a copy
+				const children = [...gltf.children];
+				for (var i = 0; i < children.length; i++) {
+					out_html_structure += self.odooCad.addItemToScene(children[i]);
+				}
+				self.odooCad.create_tree_structure(out_html_structure);
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+	loadStlLoader(document_name, url) {
+		var self = this;
+		stlLoader.load(url,
+			function (geometry) {
+				const mesh = new THREE.Mesh(geometry, transparent_material);
+				self.odooCad.addItemToScene(mesh);
+				self.odooCad.create_tree_structure("");
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+
+
+	loadSvgLoader(document_name, url) {
+		var self = this;
+		svgloader.load(url,
+			function (data) {
+				const paths = data.paths;
+				const group = new THREE.Group();
+				for (let i = 0; i < paths.length; i++) {
+					const path = paths[i];
+					const material = new THREE.MeshBasicMaterial({
+						color: path.color,
+						side: THREE.DoubleSide,
+						depthWrite: false
+					});
+					const shapes = SVGLoader.createShapes(path);
+					for (let j = 0; j < shapes.length; j++) {
+						const shape = shapes[j];
+						const geometry = new THREE.ShapeGeometry(shape);
+						const mesh = new THREE.Mesh(geometry, material);
+						group.add(mesh);
+					}
+				}
+				self.odooCad.addItemToScene(group);
+				self.odooCad.create_tree_structure("");
+				self._hideProgress();
+			},
+			(xhr) => { self._updateProgress(xhr); },
+			(err) => {
+				self._hideProgress();
+				alert("Unable to load the " + document_name + " err: " + err);
+			}
+		);
+	}
+}
+export { Loader }

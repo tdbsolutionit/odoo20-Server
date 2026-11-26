@@ -14,3 +14,6 @@ from . import balance_sheet_wizard
 from . import cash_flow_wizard
 from . import vat_listing_wizard
 from . import vat_declaration_wizard
+from . import currency_ledger_wizard
+from . import fx_revaluation_wizard
+from . import period_closing_wizard

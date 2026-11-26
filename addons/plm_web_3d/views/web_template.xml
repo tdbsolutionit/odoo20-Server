@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="plm_web_3d.main_treejs_view">
+        <html>
+            <head>
+                <meta charset="utf-8"></meta>
+                <meta name="viewport"
+                      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"></meta>
+                <title>OdooPLM WebGl View</title>
+                <script type="importmap">
+                    {"imports": {
+                    "three": "../plm_web_3d/static/lib/three.js/build/three.module.js"
+                    }
+                    }
+                </script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+                <script type="text/javascript" src="/plm_web_3d/static/src/js/markup_system.js"/>
+                <script type="module">
+                    import { tweenCamera,camera } from "../plm_web_3d/static/src/js/OdooCADApplication.js";
+                    window.tweenCamera = tweenCamera;
+                    window.camera = camera;
+                </script>
+
+                <link rel="stylesheet" type="text/css"
+                      href="../plm_web_3d/static/src/css/OdooCADApplication.css"></link>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+            </head>
+
+            <body style="margin: 0;">
+                <div id="main_3d_web"
+                     class="viewer_container"
+                     t-att-data-res-id="document_id"
+                     data-res-model="ir.attachment"
+                     t-att-data-file-name="document_name"
+                     t-att-data-debug="'1' if debug else ''">
+
+                    <span id="active_model" t-att-active_model="document_id" t-att-document_name="document_name" t-att-document_checksum="document_checksum"></span>
+                    <div id="odoo_plm_title">
+                        <a href="https://odooplm.omniasolutions.website/" id="hiper_odooplm">
+                            <img src="../plm_web_3d/static/src/img/odoo_plm_2019x300.png" alt="OdooPLM"
+                                 class="header_image"/>
+                        </a>
+                        <a href="https://threejs.org/" id="hiper_treejs">
+                            <img src="../plm_web_3d/static/src/img/threejs_logo.png" alt="ThreeJs"
+                                 class="header_image"/>
+                        </a>
+                        <div id="loading_overlay" style="display:none;">
+                            <div id="loading_spinner_wrap">
+                                <div id="loading_spinner"></div>
+                                <div id="loading_text">Loading data from Odoo<span class="ldot">.</span><span class="ldot">.</span><span class="ldot">.</span></div>
+                                <div id="loading_progress_container">
+                                    <div id="loading_progress_bar"></div>
+                                </div>
+                                <div id="loading_percent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dropdown_menu_left_permenant">
+                        <div class="plm_button_per" id="fit_view_perm" title="Fit View">
+                            <i class="fa fa-home"></i>
+                        </div>
+
+                        <div class="plm_button_per" id="save_view_perm" title="Save Screenshot">
+                            <i class="fa fa-save"></i>
+                        </div>
+                        <!-- Not rendered at all without the right, rather than
+                             hidden: a viewer shared with a customer who may
+                             only look has no markup in its page. -->
+                        <t t-if="can_markup">
+                            <div class="plm_button_per" id="markup_button_perm" title="Markup">
+                                <i class="fa fa-edit"></i>
+                            </div>
+                            <div class="plm_button_per" id="markup_logs_perm" title="Markup Logs">
+                                <i class="fa fa-history"></i>
+                            </div>
+                        </t>
+                        <div class="plm_button_per" id="show_all_perm" title="Show All">
+                            <i class="fa fa-lightbulb-o"></i>
+                        </div>
+                        <div class="plm_button_per" id="measure_btn_perm" title="Measure">
+                            <i class="fa fa-arrows-h"></i>
+                        </div>
+                        <div class="plm_button_per" id="zoom_window_btn" title="Zoom Window (W)">
+                            <i class="fa fa-search-plus"></i>
+                        </div>
+                        <div class="plm_button_per" id="save_part_colors_btn" title="Save Part Colors">
+                            <i class="fa fa-paint-brush"></i>
+                        </div>
+                        <div class="plm_button_per" id="save_preview_btn" title="Save Preview Image">
+                            <i class="fa fa-camera"></i>
+                        </div>
+                        <div class="plm_button_per" id="transparency_btn_perm" title="Part Transparency (T)">
+                            <i class="fa fa-adjust"></i>
+                        </div>
+                        <div class="plm_button_per" id="display_mode_btn" title="Display: Material (M)">
+                            <i class="fa fa-cube"></i>
+                        </div>
+                        <div id="display_mode_menu" class="unfold_menu">
+                            <div class="unfold_item" data-mode="color" title="Color"><i class="fa fa-tint"></i></div>
+                            <div class="unfold_item" data-mode="material" title="Material"><i class="fa fa-diamond"></i></div>
+                            <div class="unfold_item" data-mode="wireframe" title="Wireframe"><i class="fa fa-th"></i></div>
+                        </div>
+                        <div class="plm_button_per" id="crate_btn_perm" title="Packing Crate of the Selection (B)">
+                            <i class="fa fa-archive"></i>
+                        </div>
+                        <div class="plm_button_per" id="section_plane_btn" title="Section Plane">
+                            <i class="fa fa-scissors"></i>
+                        </div>
+                        <div class="plm_button_per" id="section_plane_mode_btn" title="Section: Move" style="display:none;">
+                            <i class="fa fa-arrows"></i>
+                        </div>
+                        <div class="plm_button_per" id="activatorClick" title="Settings">
+                            <i class="fa fa-cog"></i>
+                        </div>
+                    </div>
+
+                    <!-- Settings: icons unfolding from the gear, each opening its own panel. -->
+                    <div id="settings_menu" class="unfold_menu">
+                        <div class="unfold_item" data-panel="settings_background" title="Background"><i class="fa fa-picture-o"></i></div>
+                        <div class="unfold_item" data-panel="settings_lights" title="Lights"><i class="fa fa-sun-o"></i></div>
+                        <div class="unfold_item" data-panel="settings_transparency" title="Transparency"><i class="fa fa-eye-slash"></i></div>
+                        <div class="unfold_item" data-panel="settings_explosion" title="Explosion"><i class="fa fa-expand"></i></div>
+                    </div>
+                    <div id="settings_background" class="settings_panel">
+                        <label for="webgl_background">Background</label>
+                        <select name="webgl_background" id="webgl_background">
+                            <option value="tecnical">Tecnical</option>
+                            <option value="clean">Clean</option>
+                            <t t-foreach="backgrounds" t-as="background">
+                                <option t-att-value="'bg_%s' % background.id"
+                                        t-att-data-url="'/plm/web3d_background?background_id=%s' % background.id"
+                                        t-att-data-type="background.file_type"
+                                        t-att-data-backdrop="background.backdrop and '/plm/web3d_background?background_id=%s&amp;part=backdrop' % background.id or None"
+                                        t-out="background.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div id="settings_lights" class="settings_panel">
+                        <label>Light Distance</label>
+                        <input id="object_distance" type="range" min="1" max="1000" value="15"/>
+                        <label>Light 1</label>
+                        <input id="object_light1" type="range" min="1" max="100" value="50"/>
+                        <label>Light 2</label>
+                        <input id="object_light2" type="range" min="1" max="100" value="50"/>
+                        <label>Light 3</label>
+                        <input id="object_light3" type="range" min="1" max="100" value="50"/>
+                        <label>Camera Light</label>
+                        <input id="object_light_camera" type="range" min="1" max="100" value="50"/>
+                        <label>Ambient Light</label>
+                        <input id="object_light_ambient" type="range" min="1" max="100" value="50"/>
+                    </div>
+                    <div id="settings_transparency" class="settings_panel">
+                        <label for="object_transparency">Transparency</label>
+                        <input name="transparency_slider" id="object_transparency" type="range" min="0" max="100" value="90"/>
+                    </div>
+                    <div id="settings_explosion" class="settings_panel">
+                        <label for="object_explosion">Explosion</label>
+                        <input name="explosion_slider" id="object_explosion" type="range" min="0" max="100" value="0"/>
+                    </div>
+                        <div class="activatorDiv d-none" id="markup_logs_panel">
+                            <div id="dropdown_menu_left">
+                                <div class="info_header">
+                                    <b>Markup Logs</b>
+                                </div>
+                                <hr class="datacard_line"/>
+                                <div id="markup_logs_list" style="direction:ltr; text-align:left; padding:4px;">
+                                    <small style="color:gray;">No logs yet.</small>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="viewer_container">
+                        <canvas id="odoo_canvas"></canvas>
+
+                        <div id="markup_editor" t-if="can_markup">
+                            <div id="markup_toolbar">
+                                <button id="draw_btn">✏️ Draw</button>
+                                <button id="rect_btn">▭ Rect</button>
+                                <button id="circle_btn">◯ Circle</button>
+                                <button id="arrow_btn">➤ Arrow</button>
+                                <button id="text_btn">T Text</button>
+                                <button id="delete_btn">🗑️ Remove</button>
+                                <button id="clear_btn">🧹 Clear</button>
+                                <button id="undo_btn">↩️ Undo</button>
+                                <button id="redo_btn">↪️ Redo</button>
+                                <button id="close_btn">✖ Close</button>
+                            </div>
+                            <canvas id="markup_canvas"></canvas>
+                            <div id="markup_comment_box">
+                                <div id="activity_form_panel"
+                                     style="display:none; padding:8px; border-top:1px solid #555; margin-top:4px;">
+                                    <div style="margin-bottom:6px;">
+                                        <label style="display:block; font-size:11px; margin-bottom:2px; color:black;">
+                                            Due
+                                            Date
+                                        </label>
+                                        <input type="date" id="activity_due_date"
+                                               style="width:100%; padding:4px; box-sizing:border-box; background:#2d2d2d; color:#fff; border:1px solid #555; border-radius:3px;"/>
+                                    </div>
+                                    <div style="margin-bottom:6px;">
+                                        <label style="display:block; font-size:11px; margin-bottom:2px; color:black;">
+                                            Summary
+                                        </label>
+                                        <input type="text" id="activity_summary" placeholder="Summary"
+                                               style="width:100%; padding:4px; box-sizing:border-box; background:#2d2d2d; color:#fff; border:1px solid #555; border-radius:3px;"/>
+                                    </div>
+                                    <div style="margin-bottom:6px;">
+                                        <label style="display:block; font-size:11px; margin-bottom:2px; color:black;">
+                                            Assigned To
+                                        </label>
+                                        <select id="activity_user_id"
+                                                style="width:100%; padding:4px; box-sizing:border-box; background:#2d2d2d; color:#fff; border:1px solid #555; border-radius:3px;">
+                                            <option value="">Loading users...</option>
+                                        </select>
+                                    </div>
+                                    <div id="activity_msg"
+                                         style="display:none; margin-top:6px; font-size:11px; text-align:center;">
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <textarea id="markup_comment" placeholder="Write Message..."></textarea>
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                        <label>
+                                            <input type="checkbox" id="activity_view"/>
+                                            Activity
+                                        </label>
+                                        <button id="submit_markup">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="datasheet">
+                        <div id="click_show" class="click_show">
+                            <hr class="hover_line"/>
+                            <hr class="hover_line"/>
+                            <hr class="hover_line"/>
+                        </div>
+                        <div id="main_div">
+                            <div id="main_div_hidden">
+                                <div class="info_header">
+                                    <b>Product Information</b>
+                                </div>
+                                <hr class="datacard_line"/>
+                                <lu id="product_info">
+                                </lu>
+
+
+                                <div class="info_header">
+                                    <b>Document Information</b>
+                                </div>
+                                <hr class="datacard_line"/>
+                                <lu id="document_info">
+                                </lu>
+
+                                <div class="info_header">
+                                    <b>Document Structure</b>
+                                </div>
+                                <hr class="datacard_line"/>
+                                <div class="search_document_list">
+                                    <input type="color" id="global_object_color" title="Change Whole Product Color" style="display: none;"/>
+                                    <button type="button" id="show_all_parts" title="Un-Hide"
+                                            class="fa fa-lightbulb-o"></button>
+                                    <button type="button" id="hide_all_parts" title="Hide"
+                                            class="fa fa-moon-o"></button>
+                                    <input type="text" id="input_search_document_list" placeholder="Search Here !!"/>
+                                </div>
+                                <lu id="document_tree">
+                                </lu>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="help_btn" title="Keyboard Shortcuts">
+                        <i class="fa fa-question-circle"></i>
+                    </div>
+
+                    <div id="viewer_notice"></div>
+                    <div id="shortcut_modal">
+                        <div id="shortcut_modal_inner">
+                            <span id="shortcut_modal_close">✖</span>
+                            <h3 style="margin-top:0; color:#714B67;">Keyboard Shortcuts</h3>
+                            <table id="shortcut_table">
+                                <thead>
+                                    <tr>
+                                        <th>Key</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><kbd>F</kbd></td>
+                                        <td>Fit all objects to screen</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>H</kbd></td>
+                                        <td>Toggle hide / show hovered object</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>A</kbd></td>
+                                        <td>Show all hidden objects</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>Shift</kbd> + <kbd>A</kbd></td>
+                                        <td>Select every part shown</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>W</kbd></td>
+                                        <td>Zoom window — drag to zoom into a region</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>C</kbd></td>
+                                        <td>Pick color for hovered part</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>T</kbd></td>
+                                        <td>Pick transparency for hovered part</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>V</kbd></td>
+                                        <td>Next display mode: color, material, wireframe</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>M</kbd></td>
+                                        <td>Move the hovered part (on screen only)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>R</kbd></td>
+                                        <td>While moving a part: switch between move and rotate</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>Shift</kbd> + <kbd>M</kbd></td>
+                                        <td>Put back every part moved</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>Shift</kbd> + click</td>
+                                        <td>Add a part to the selection, or take it out (in the view or in the tree)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>B</kbd></td>
+                                        <td>Show / hide the packing crate of the selected parts</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>Ctrl</kbd></td>
+                                        <td>Toggle measure mode on / off</td>
+                                    </tr>
+                                    <tr>
+                                        <td><kbd>Esc</kbd></td>
+                                        <td>Cancel active tool (move / measure / zoom window / color picker), else clear the selection</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&#xf07e; Ruler button</td>
+                                        <td>Toggle measure mode on / off</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <ViewCubeContainer>
+                        <div class='cube'>
+                            <div
+                                class='cube__face cube__face--front'
+                                onClick="window.tweenCamera('FRONT')"
+                            >
+                                front
+                            </div>
+                            <div
+                                class='cube__face cube__face--back'
+                                onClick="window.tweenCamera('BACK')"
+                            >
+                                back
+                            </div>
+                            <div
+                                class='cube__face cube__face--right'
+                                onClick="window.tweenCamera('RIGHT')"
+                            >
+                                right
+                            </div>
+                            <div
+                                class='cube__face cube__face--left'
+                                onClick="window.tweenCamera('LEFT')"
+                            >
+                                left
+                            </div>
+                            <div
+                                class='cube__face cube__face--top'
+                                onClick="window.tweenCamera('TOP')"
+                            >
+                                top
+                            </div>
+                            <div
+                                class='cube__face cube__face--bottom'
+                                onClick="window.tweenCamera('BOTTOM')"
+                            >
+                                bottom
+                            </div>
+                        </div>
+                    </ViewCubeContainer>
+               
+                <div id="markup_log_modal">
+                    <div id="markup_log_modal_inner">
+                        <span id="markup_log_modal_close">✖</span>
+                        <div id="markup_log_modal_date" style="font-weight:bold; color:#714B67;"></div>
+                        <img id="markup_log_modal_img" src="" alt="Markup Screenshot"/>
+                        <div id="markup_log_modal_comment"></div>
+                    </div>
+                </div>
+
+                <!-- ESC Confirm Modal -->
+                <div id="markup_esc_modal"
+                     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
+                    <div
+                        style="background:white; border-radius:10px; border:2px solid #714B67; padding:24px 28px; min-width:280px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+                        <span id="markup_log_modal_close2">✖</span>
+                        <div style="font-size:15px; font-weight:bold; color:#572649; margin-bottom:18px;">Are you sure
+                            you want to close?
+                        </div>
+                        <div style="display:flex; justify-content:center; gap:12px;">
+                            <button id="markup_esc_save" class="mcr-submit" style="min-width:80px;">Save</button>
+                            <button id="markup_esc_close" class="mcr-btn" style="min-width:80px;">Close</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Zoom window selection rectangle -->
+                <div id="zoom_window_rect"
+                     style="display:none; position:fixed; border:2px dashed #714B67; background:rgba(113,75,103,0.08); pointer-events:none; z-index:9000;"></div>
+
+                <!-- Part transparency picker (shown on T key hover) -->
+                <div id="part_transparency_popup"
+                     style="display:none; position:fixed; z-index:9999; background:#2a2a2a; border:1px solid #555; border-radius:8px; padding:10px 14px; box-shadow:0 4px 18px rgba(0,0,0,0.55); user-select:none; min-width:180px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <label style="color:#ccc; font-size:12px;">Transparency</label>
+                        <span id="part_transparency_label" style="color:#fff; font-size:12px; font-weight:bold;">100%</span>
+                    </div>
+                    <input type="range" id="part_transparency_slider"
+                           min="0" max="100" value="100"
+                           style="width:100%; accent-color:#714B67; cursor:pointer;"/>
+                </div>
+
+                <!-- Part color picker (shown on C key hover) -->
+                <div id="part_color_popup"
+                     style="display:none; position:fixed; z-index:9999; background:#2a2a2a; border:1px solid #555; border-radius:8px; padding:10px 14px; box-shadow:0 4px 18px rgba(0,0,0,0.55); user-select:none;">
+                    <label for="part_color_input"
+                           style="color:#ccc; font-size:12px; display:block; margin-bottom:6px;">Part Color</label>
+                    <input type="color" id="part_color_input"
+                           style="width:80px; height:32px; border:none; cursor:pointer; background:none; padding:0;"/>
+                    <div id="part_color_recents"
+                         style="display:none; gap:6px; margin-top:8px; flex-wrap:wrap;"></div>
+                </div>
+
+                <div id="part_tooltip"
+                     style="display:none; position:fixed; background:rgba(0,0,0,0.85); color:white; padding:6px 12px; border-radius:5px; z-index:2000; pointer-events:none; font-size:13px; border: 1px solid #714B67; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-weight: 600; white-space: nowrap;"></div>
+
+                </div>
+            </body>
+        </html>
+    </template>
+</odoo>
