@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="selective_reject_wizard" model="ir.ui.view">
+        <field name="name">tdb.plm.recursive.reject</field>
+        <field name="model">tdb.plm.task.wizard</field>
+        <field name="inherit_id" ref="tdb_custom_plm.view_task_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/group" position="before">
+                <div class="alert alert-info mb-3" role="status" invisible="operation != 'reject'">
+                    Return this record and its reviewed children to Draft for redo.
+                    Part rejection includes linked files; document rejection does not change Parts.
+                    Released references remain unchanged.
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

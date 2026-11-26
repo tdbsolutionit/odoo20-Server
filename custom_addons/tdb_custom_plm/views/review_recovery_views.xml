@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="search_recovery_documents" model="ir.ui.view">
+        <field name="name">tdb.plm.documents.needing.recovery</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="plm.ir_attachment_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="tdb_needs_recovery" string="Review Needs Recovery"
+                        domain="[('tdb_needs_recovery', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="search_recovery_parts" model="ir.ui.view">
+        <field name="name">tdb.plm.parts.needing.recovery</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="plm.plm_component_base_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="tdb_needs_recovery" string="Review Needs Recovery"
+                        domain="[('tdb_needs_recovery', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="recover_document_reviews" model="ir.actions.server">
+        <field name="name">Recover Unassigned Review</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="binding_model_id" ref="base.model_ir_attachment"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[(4, ref('tdb_custom_plm.group_review_admin'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_tdb_recover_review()</field>
+    </record>
+    <record id="recover_part_reviews" model="ir.actions.server">
+        <field name="name">Recover Unassigned Review</field>
+        <field name="model_id" ref="product.model_product_product"/>
+        <field name="binding_model_id" ref="product.model_product_product"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[(4, ref('tdb_custom_plm.group_review_admin'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_tdb_recover_review()</field>
+    </record>
+</odoo>
