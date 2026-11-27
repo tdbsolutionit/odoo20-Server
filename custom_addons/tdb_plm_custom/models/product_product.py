@@ -5,12 +5,8 @@ Mở rộng model product.product cho phân hệ Engineering Parts (PLM).
 Tuân thủ Layer 2: Quản lý schema dữ liệu và business logic cốt lõi.
 Bảo vệ tầng ORM: Chặn đứng lưu/sửa linh kiện khi token 180 ngày hết hạn hoặc bị thu hồi.
 """
-import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-
-_logger = logging.getLogger(__name__)
-
 
 class ProductProduct(models.Model):
     """
@@ -20,7 +16,6 @@ class ProductProduct(models.Model):
     """
     _inherit = "product.product"
 
-    engineering_revision = fields.Integer(string="Revision")
     engineering_material = fields.Char(string="CAD Raw Material")
     engineering_surface = fields.Char(string="CAD Surface Finishing")
 
@@ -54,36 +49,36 @@ class ProductProduct(models.Model):
                 if not active:
                     raise UserError(_("Phiên làm việc CAD 180 ngày đã hết hạn. Vui lòng bấm 'Execute New Login' từ SolidWorks để tiếp tục."))
 
-    def _get_comp_effective_state(self, comp):
-        """Xác định trạng thái hiệu lực thực tế của linh kiện:
-        Nếu linh kiện ở trạng thái 'confirmed' hoặc 'draft' nhưng bản vẽ CAD / tài liệu PLM liên kết
-        đã ở trạng thái 'released' (Đã ban hành), thì ưu tiên trạng thái 'released' để thông báo chính xác cho người dùng.
-        """
-        state = comp.engineering_state
-        if state != 'released':
-            # 1. Kiểm tra qua quan hệ linkeddocuments
-            if hasattr(comp, 'linkeddocuments') and comp.linkeddocuments:
-                if any(d.engineering_state == 'released' for d in comp.linkeddocuments):
-                    try:
-                        comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': 'released'})
-                    except Exception:
-                        pass
-                    return 'released'
-            # 2. Tìm kiếm tài liệu PLM theo mã linh kiện (engineering_code hoặc tên tệp)
-            if comp.engineering_code:
-                rel_docs = self.env['ir.attachment'].sudo().search([
-                    ('is_plm', '=', True),
-                    '|',
-                    ('engineering_code', 'ilike', comp.engineering_code),
-                    ('name', 'ilike', comp.engineering_code)
-                ], order='engineering_revision desc, id desc', limit=10)
-                if any(d.engineering_state == 'released' for d in rel_docs):
-                    try:
-                        comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': 'released'})
-                    except Exception:
-                        pass
-                    return 'released'
-        return state
+    @api.model
+    def _resolve_cad_part_revision(self, attributes):
+        """Use the exact revision for existing codes, and Rev 0 for new codes."""
+        values = dict(attributes)
+        code = values.get("engineering_code")
+        if not code or code == "-":
+            return values, self.browse()
+
+        revision = values.get("engineering_revision")
+        if revision is None or revision is False or revision in ("", "False"):
+            revision = 0
+        elif type(revision) is not int:
+            try:
+                if not isinstance(revision, str):
+                    raise ValueError
+                revision = int(revision)
+            except ValueError:
+                raise UserError(_("Invalid revision for Part %(code)s.", code=code)) from None
+
+        code_domain = [("engineering_code", "=", code)]
+        part = self.search(code_domain + [("engineering_revision", "=", revision)], limit=1)
+        if not part and self.env["product.template"].sudo().with_context(active_test=False).search_count(
+            code_domain + [("active", "=", True)], limit=1,
+        ):
+            raise UserError(_(
+                "Could not find Part %(code)s at revision %(revision)s. Open the correct revision in the CAD Client.",
+                code=code, revision=revision,
+            ))
+        values["engineering_revision"] = part.engineering_revision if part else 0
+        return values, part
 
     @api.model
     def SaveOrUpdate(self, vals):
@@ -94,33 +89,13 @@ class ProductProduct(models.Model):
         self._check_cad_access_token()
         writable_vals = []
         readonly_vals = []
-        for partVals in (vals or []):
-            eng_code = partVals.get("engineering_code")
-            eng_rev = partVals.get("engineering_revision", 0)
-            try:
-                eng_rev_int = int(eng_rev) if eng_rev is not None else 0
-            except (ValueError, TypeError):
-                eng_rev_int = 0
-            comp = False
-            if eng_code:
-                comp = self.search([
-                    ("engineering_code", "=", eng_code),
-                    ("engineering_revision", "=", eng_rev_int)
-                ], limit=1)
-                if not comp:
-                    comp = self.search([
-                        ("engineering_code", "=", eng_code)
-                    ], order="engineering_revision desc, id desc", limit=1)
-            if comp:
-                state = self._get_comp_effective_state(comp)
-                if state in ['confirmed', 'released', 'obsoleted']:
-                    part_copy = dict(partVals)
-                    part_copy['componentID'] = comp.id
-                    part_copy['name'] = comp.name
-                    part_copy['hasSaved'] = False
-                    readonly_vals.append(part_copy)
-                    continue
-            writable_vals.append(partVals)
+        for part_values in vals or []:
+            values, part = self._resolve_cad_part_revision(part_values)
+            if part and part.engineering_state != 'draft':
+                values.update(componentID=part.id, name=part.name, hasSaved=False)
+                readonly_vals.append(values)
+                continue
+            writable_vals.append(values)
 
         res = []
         if writable_vals:
@@ -132,40 +107,21 @@ class ProductProduct(models.Model):
     def ConvertToPlmProduct(self, attributes_list=[]):
         """Chặn chuyển đổi linh kiện PLM nếu token hết hạn hoặc bị thu hồi."""
         self._check_cad_access_token()
-        return super().ConvertToPlmProduct(attributes_list)
+        return super().ConvertToPlmProduct([
+            self._resolve_cad_part_revision(values)[0] for values in attributes_list
+        ])
 
     @api.model
     def createFromProps(self, productAttribute):
         """Chặn tạo/sửa linh kiện từ hộp thoại Component Properties của SolidWorks Add-in nếu đã Ban hành/Chờ duyệt."""
         self._check_cad_access_token()
-        eng_code = productAttribute.get("engineering_code")
-        eng_rev = productAttribute.get("engineering_revision", 0)
-        try:
-            eng_rev_int = int(eng_rev) if eng_rev is not None else 0
-        except (ValueError, TypeError):
-            eng_rev_int = 0
-
-        comp = False
-        if eng_code:
-            comp = self.search([
-                ("engineering_code", "=", eng_code),
-                ("engineering_revision", "=", eng_rev_int)
-            ], limit=1)
-            if not comp:
-                comp = self.search([
-                    ("engineering_code", "=", eng_code)
-                ], order="engineering_revision desc, id desc", limit=1)
-
-        if comp:
-            state = self._get_comp_effective_state(comp)
-            if state in ['confirmed', 'released', 'obsoleted']:
-                state_desc = "Đã ban hành" if state == 'released' else ("Đang chờ duyệt" if state == 'confirmed' else "Lỗi thời")
-                raise UserError(_(
-                    "Linh kiện '%s' đang ở trạng thái %s (%s). "
-                    "Không được phép chỉnh sửa thông tin từ SolidWorks!"
-                ) % (comp.engineering_code or comp.name, state_desc, state))
-
-        return super().createFromProps(productAttribute)
+        values, part = self._resolve_cad_part_revision(productAttribute)
+        if part and part.engineering_state != 'draft':
+            raise UserError(_(
+                "Cannot edit Part %(code)s revision %(revision)s. Open a Draft revision in the CAD Client.",
+                code=part.engineering_code, revision=part.engineering_revision,
+            ))
+        return super().createFromProps(values)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -182,7 +138,7 @@ class ProductProduct(models.Model):
             data_fields = set(vals.keys()) - system_fields
             if data_fields:
                 for comp in self:
-                    state = self._get_comp_effective_state(comp)
+                    state = comp.engineering_state
                     if state in ['confirmed', 'released', 'obsoleted']:
                         state_desc = "Đã ban hành" if state == 'released' else ("Đang chờ duyệt" if state == 'confirmed' else "Lỗi thời")
                         raise UserError(_(

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Keep the full variant form and its installed extensions for Engineering Parts. -->
+    <record id="engineering_part_form" model="ir.ui.view">
+        <field name="name">Engineering Part</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="mode">primary</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="string">Engineering Part</attribute>
+            </form>
+        </field>
+    </record>
+    <record id="plm.action_plm_component_base" model="ir.actions.act_window">
+        <field name="context">{'search_default_latest': 1, 'odooPLM': True, 'form_view_ref': 'tdb_custom_plm.engineering_part_form'}</field>
+    </record>
+</odoo>

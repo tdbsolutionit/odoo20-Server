@@ -5,3 +5,5 @@ from . import res_users
 from . import live_updates
 from . import workflow_activity
 from . import selective_review
+from . import eco_revision
+from . import plm_view_translations

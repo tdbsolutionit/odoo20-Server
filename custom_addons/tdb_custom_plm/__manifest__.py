@@ -1,10 +1,14 @@
 {
     'name': 'TDB Custom PLM',
-    'version': '20.0.4.0.5',
+    'version': '20.0.4.0.8',
     'summary': 'Omnia CAD, live PLM views and level-based review / redo activities',
     'author': 'TDB',
     'category': 'Manufacturing/Product Lifecycle Management (PLM)',
-    'depends': ['rpc', 'plm', 'bus', 'web', 'activity_validation'],
+    'depends': [
+        'rpc', 'plm', 'bus', 'web', 'activity_validation',
+        'plm_web_3d',
+        'plm_automated_convertion',
+    ],
     'assets': {
         'web.assets_backend': [
             'tdb_custom_plm/static/src/live_refresh_queue.js',
@@ -12,16 +16,20 @@
             'tdb_custom_plm/static/src/plm_activity_menu.js',
             'tdb_custom_plm/static/src/plm_chatter_target.js',
             'tdb_custom_plm/static/src/plm_chatter.js',
+            'tdb_custom_plm/static/src/plm_chatter.xml',
         ],
     },
     'data': [
         'security/review_security.xml',
+        'security/eco_revision_access.xml',
         'data/workflow_activity_types.xml',
         'views/ir_attachment_views.xml',
         'views/review_workflow_views.xml',
         'views/workflow_activity_views.xml',
+        'views/eco_revision_views.xml',
         'views/review_recovery_views.xml',
         'views/selective_review_views.xml',
+        'views/component_form.xml',
     ],
     'installable': True,
     'application': False,

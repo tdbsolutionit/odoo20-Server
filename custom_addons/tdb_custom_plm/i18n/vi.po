@@ -1,0 +1,1713 @@
+# Translation of Odoo Server.
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 20.0\n"
+"Language: vi\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.eco_affected_revisions_form
+msgid "Add a line"
+msgstr "Thêm một dòng"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"%(kind)s: %(name)s | Engineering code: %(code)s | Revision: %(revision)s"
+msgstr "%(kind)s: %(name)s | Mã kỹ thuật: %(code)s | Phiên bản: %(revision)s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__kind__document
+msgid "CAD Document"
+msgstr "Tài liệu CAD"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity_schedule__tdb_plm_part_id
+msgid "Engineering Part"
+msgstr "Linh kiện kỹ thuật"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Open PLM record"
+msgstr "Mở bản ghi PLM"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Status: %s"
+msgstr "Trạng thái: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Assigned by: %s"
+msgstr "Người giao: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Assigned to: %s"
+msgstr "Người được giao: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Returned by: %s"
+msgstr "Người trả lại: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Due date: %s"
+msgstr "Hạn xử lý: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Reason / instructions: %s"
+msgstr "Lý do / hướng dẫn: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Next step: %s"
+msgstr "Bước tiếp theo: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Open the revision and approve it or return it with a reason."
+msgstr "Mở phiên bản để duyệt hoặc trả lại kèm lý do."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"Make the requested changes, check in any edited CAD file, and return the "
+"work from the PLM form."
+msgstr ""
+"Sửa theo yêu cầu, check-in file CAD đã sửa, rồi trả lại công việc từ form "
+"PLM."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Open the revision and choose a reviewer for final approval."
+msgstr "Mở phiên bản và chọn người duyệt cuối."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"Verify the returned work before completing or returning your redo task."
+msgstr ""
+"Kiểm tra phần việc được trả lại trước khi hoàn tất hoặc trả lại tác vụ của "
+"bạn."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Approved and released: %s"
+msgstr "Đã duyệt và phát hành: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Review rejected: %s"
+msgstr "Đã từ chối duyệt: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Decided by: %s"
+msgstr "Người quyết định: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "This revision is now Released."
+msgstr "Phiên bản này đã được phát hành."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "This revision returned to Draft for redo."
+msgstr "Phiên bản đã về Bản thảo để sửa lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Unassigned"
+msgstr "Chưa gán"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "%(decision)s · Round %(round)s"
+msgstr "%(decision)s · Vòng %(round)s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "By: %s"
+msgstr "Người thực hiện: %s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Submitted for review"
+msgstr "Đã gửi duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Approved and released"
+msgstr "Đã duyệt và phát hành"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Released directly from Draft"
+msgstr "Đã phát hành trực tiếp từ Bản thảo"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Approved by Manager"
+msgstr "Trưởng phòng đã duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Rejected and assigned for redo"
+msgstr "Đã từ chối và giao sửa lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Redo delegated"
+msgstr "Đã chuyển giao việc sửa lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Redo completed"
+msgstr "Đã hoàn tất sửa lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Redo returned for verification"
+msgstr "Đã trả lại để kiểm tra"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Redo completed and waiting for final review"
+msgstr "Đã sửa xong và đang chờ duyệt cuối"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Review reassigned"
+msgstr "Đã giao lại yêu cầu duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Reviewer copied from the parent Part"
+msgstr "Đã lấy người duyệt từ linh kiện cha"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Verify returned work"
+msgstr "Kiểm tra phần đã sửa"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "%(code)s rev %(revision)s: %(state)s."
+msgstr "%(code)s, phiên bản %(revision)s: %(state)s."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "%(code)s rev %(revision)s: select a replacement revision."
+msgstr "%(code)s, phiên bản %(revision)s: hãy chọn phiên bản thay thế."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "%(actor)s · %(task)s · %(kind)s %(name)s (Rev %(revision)s)"
+msgstr "%(actor)s · %(task)s · %(kind)s %(name)s (phiên bản %(revision)s)"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Review revision"
+msgstr "Duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Submit for final review"
+msgstr "Trình duyệt cuối"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Redo"
+msgstr "Làm lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "A recovery reason is required."
+msgstr "Hãy nhập lý do khôi phục lượt duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "A rejection reason is required."
+msgstr "Hãy nhập lý do từ chối."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_navigation
+msgid "Activity Type"
+msgstr "Loại hoạt động"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.ecr_activity_assignees_form
+msgid "Actual Assignee"
+msgstr "Người thực hiện"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Add the affected revisions before completing the ECO."
+msgstr "Hãy thêm các phiên bản bị ảnh hưởng trước khi hoàn tất ECO."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Admin Confirm"
+msgstr "Quản trị viên xác nhận"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity__tdb_eco_revision_ids
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.eco_affected_revisions_form
+msgid "Affected Revisions"
+msgstr "Các phiên bản bị ảnh hưởng"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Affected revisions can only be edited on an open ECO."
+msgstr "Chỉ có thể sửa danh sách phiên bản bị ảnh hưởng khi ECO còn mở."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__allowed_user_ids
+msgid "Allowed User"
+msgstr "Người dùng được phép"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "An ECO must retain its activity type and remain a standalone order."
+msgstr "ECO phải giữ nguyên loại hoạt động và là một lệnh thay đổi độc lập."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "An engineering code is required to create a Part revision."
+msgstr "Hãy nhập mã kỹ thuật trước khi tạo phiên bản linh kiện."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "An onward review must be assigned to Level 3."
+msgstr "Hãy chuyển yêu cầu duyệt lên người duyệt cấp 3."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Approve and Release"
+msgstr "Duyệt và phát hành"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_task_wizard
+msgid "Approve and Submit"
+msgstr "Duyệt và chuyển tiếp"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__operation__approve_forward
+msgid "Approve and Submit to Level 3"
+msgstr "Duyệt và trình duyệt cuối"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_task_wizard
+msgid "Assign"
+msgstr "Giao việc"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__user_id
+msgid "Assign To"
+msgstr "Giao cho"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Assign redo to yourself or to a lower-level user."
+msgstr "Hãy tự nhận việc làm lại hoặc giao cho người ở cấp thấp hơn."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_reject_wizard__assignee_id
+msgid "Assignee"
+msgstr "Người được giao"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_reject_wizard
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_task_wizard
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"Cannot edit %(code)s revision %(revision)s (%(state)s). Open the Draft "
+"revision to edit it."
+msgstr ""
+"Không thể sửa %(code)s ở phiên bản %(revision)s (%(state)s). Hãy mở phiên "
+"bản Bản thảo để chỉnh sửa."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid ""
+"Cannot submit: these shared Parts/files are already in Review. Finish or return their existing reviews first:\n"
+"%s"
+msgstr ""
+"Các linh kiện hoặc tệp dùng chung sau đang chờ duyệt. Hãy hoàn tất lượt duyệt hiện tại hoặc trả lại để chỉnh sửa trước khi gửi:\n"
+"%s"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Choose an LV1/LV2 request owner and a higher-level reviewer."
+msgstr ""
+"Hãy chọn người yêu cầu ở cấp 1 hoặc cấp 2 và người duyệt ở cấp cao hơn."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid "Circular PLM dependency: %s"
+msgstr "Phát hiện liên kết vòng trong cấu trúc PLM: %s"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Complete / Return Redo"
+msgstr "Hoàn tất và trả lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Complete or return the active redo task before release."
+msgstr ""
+"Hãy hoàn tất hoặc trả lại công việc làm lại đang mở trước khi phát hành."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Complete redo tasks before submitting for review."
+msgstr "Hãy hoàn tất các công việc làm lại trước khi gửi duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/ir_attachment.py:0
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Complete the redo activity before confirming."
+msgstr "Hãy hoàn tất hoạt động làm lại trước khi xác nhận."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_search
+msgid "Completed"
+msgstr "Đã hoàn tất"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Completed or canceled ECO activities are read-only."
+msgstr "Hoạt động ECO đã hoàn tất hoặc đã hủy chỉ có thể xem."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_reject_wizard__target_model__product_template
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__target_model__product_template
+msgid "Component"
+msgstr "Linh kiện"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Confirm Redo and Release"
+msgstr "Xác nhận kết quả làm lại và phát hành"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Create a new line to add the revision to a different ECO."
+msgstr "Hãy tạo dòng mới để thêm phiên bản vào một ECO khác."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Created new revision %s."
+msgstr "Đã tạo phiên bản %s."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_redo_user_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_redo_user_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_redo_user_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_redo_user_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_redo_user_id
+msgid "Current Redo Assignee"
+msgstr "Người đang phụ trách làm lại"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_requester_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_requester_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_requester_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_requester_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_requester_id
+msgid "Current Requester"
+msgstr "Người yêu cầu hiện tại"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__date_deadline
+msgid "Date Deadline"
+msgstr "Hạn hoàn thành"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__operation__delegate
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Delegate Redo"
+msgstr "Giao lại việc chỉnh sửa"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Delegate only to a lower-level user."
+msgstr "Hãy giao việc cho người ở cấp thấp hơn."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Delegation instructions are required."
+msgstr "Hãy nhập hướng dẫn khi giao lại việc chỉnh sửa."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__mail_activity__tdb_plm_target_model__ir_attachment
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_reject_wizard__target_model__ir_attachment
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__target_model__ir_attachment
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Document"
+msgstr "Tài liệu"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__replacement_status__draft
+msgid "Draft"
+msgstr "Bản thảo"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity__eco_child_ids
+msgid "ECO Activities"
+msgstr "Hoạt động ECO"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "ECO activities can only be added to an open Change Order."
+msgstr "Chỉ có thể thêm hoạt động ECO khi lệnh thay đổi còn mở."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__eco_id
+msgid "Eco"
+msgstr "ECO"
+
+#. module: tdb_custom_plm
+#: model:ir.model,name:tdb_custom_plm.model_tdb_plm_eco_revision
+msgid "Engineering Change Order Affected Revision"
+msgstr "Phiên bản bị ảnh hưởng bởi lệnh thay đổi kỹ thuật"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__engineering_state
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__engineering_state
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__engineering_state
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__engineering_state
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__engineering_state
+msgid "Engineering Status"
+msgstr "Trạng thái kỹ thuật"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid ""
+"Enter a name and select a planned assignee for every ECR activity before "
+"starting review."
+msgstr ""
+"Hãy nhập tên và chọn người dự kiến thực hiện cho từng hoạt động ECR trước "
+"khi bắt đầu duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Finish or reject the previous review before creating a new revision."
+msgstr "Hãy hoàn tất hoặc từ chối lượt duyệt trước khi tạo phiên bản mới."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_search
+msgid "Future"
+msgstr "Sắp tới"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__kind
+msgid "Kind"
+msgstr "Loại"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_search
+msgid "Late"
+msgstr "Quá hạn"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__admin
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__admin
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__admin
+msgid "Legacy Admin Review"
+msgstr "Quản trị viên duyệt (quy trình cũ)"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__manager
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__manager
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__manager
+msgid "Legacy Manager Review"
+msgstr "Trưởng phòng duyệt (quy trình cũ)"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_admin_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_admin_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_admin_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_admin_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_admin_id
+msgid "Legacy Release Admin"
+msgstr "Quản trị viên phát hành (quy trình cũ)"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_manager_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_manager_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_manager_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_manager_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_manager_id
+msgid "Legacy Review Manager"
+msgstr "Trưởng phòng phụ trách duyệt (quy trình cũ)"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Level 2 approved; submit to Level 3"
+msgstr "Cấp 2 đã duyệt, cần trình duyệt cuối"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Level 2 must select a Level 3 reviewer before approving."
+msgstr "Người duyệt cấp 2 phải chọn người duyệt cấp 3 trước khi phê duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"Level 3 can recover only an orphaned review, not replace a valid active "
+"review."
+msgstr ""
+"Cấp 3 chỉ có thể khôi phục lượt duyệt đang thiếu người duyệt hoặc thiếu công"
+" việc hợp lệ."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Level 3 confirms directly to Released; use Confirm."
+msgstr "Cấp 3 có thể phát hành trực tiếp. Hãy dùng nút xác nhận."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Level 3 must recover this unassigned or invalid review first."
+msgstr ""
+"Người dùng cấp 3 cần khôi phục lượt duyệt đang thiếu người phụ trách hoặc "
+"không hợp lệ này trước."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Level 3 must reset legacy reviews with a reason."
+msgstr ""
+"Người dùng cấp 3 phải nêu lý do khi đặt lại lượt duyệt theo quy trình cũ."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Link the Change Order to a Part before adding ECO activities."
+msgstr ""
+"Hãy liên kết lệnh thay đổi với một linh kiện trước khi thêm hoạt động ECO."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/ir_attachment.py:0
+msgid ""
+"Linked Parts have different reviewers. Select this Document reviewer "
+"explicitly."
+msgstr ""
+"Các linh kiện liên kết có người duyệt khác nhau. Hãy chọn người duyệt cho "
+"tài liệu này."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_search
+msgid "My PLM Activities"
+msgstr "Hoạt động PLM của tôi"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.eco_affected_revisions_form
+msgid "New Rev."
+msgstr "Phiên bản mới"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.eco_affected_revisions_form
+msgid "New Status"
+msgstr "Trạng thái mới"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "New records must start in Draft."
+msgstr "Bản ghi mới phải ở trạng thái Bản thảo."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "No active redo task."
+msgstr "Không có công việc làm lại nào đang mở."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid "No reviewer"
+msgstr "Chưa có người duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__replacement_status__obsoleted
+msgid "Obsolete"
+msgstr "Đã lỗi thời"
+
+#. module: tdb_custom_plm
+#: model:res.groups,name:tdb_custom_plm.group_review_admin
+msgid "OdooPLM - Confirm and Release"
+msgstr "OdooPLM - Xác nhận và phát hành"
+
+#. module: tdb_custom_plm
+#: model:res.groups,name:tdb_custom_plm.group_review_manager
+msgid "OdooPLM - Reviewer"
+msgstr "OdooPLM - Người duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only Draft or reviewed records can be released."
+msgstr ""
+"Chỉ có thể phát hành bản ghi đang ở trạng thái Bản thảo hoặc đã được duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only Level 1 or Level 2 can submit a review request."
+msgstr "Chỉ người dùng cấp 1 hoặc cấp 2 mới có thể gửi yêu cầu duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid "Only Level 3 can confirm and release."
+msgstr "Chỉ người dùng cấp 3 mới có thể xác nhận và phát hành."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only Level 3 can obsolete a record."
+msgstr "Chỉ người dùng cấp 3 mới có thể đánh dấu bản ghi là Đã lỗi thời."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only Level 3 can recover orphaned reviews."
+msgstr ""
+"Chỉ người dùng cấp 3 mới có thể khôi phục lượt duyệt thiếu người duyệt hoặc "
+"công việc hợp lệ."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only a PLM user can submit for review."
+msgstr "Chỉ người dùng PLM mới có thể gửi duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only a PLM user can submit."
+msgstr "Chỉ người dùng PLM mới có thể gửi yêu cầu."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only a draft without review history can be discarded."
+msgstr "Chỉ có thể hủy bỏ bản thảo chưa có lịch sử duyệt."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only a released revision can become Obsolete."
+msgstr ""
+"Chỉ phiên bản đã ban hành mới có thể chuyển sang trạng thái Đã lỗi thời."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only the active redo assignee can edit or complete this work."
+msgstr ""
+"Chỉ người đang được giao việc làm lại mới có thể chỉnh sửa hoặc hoàn tất "
+"công việc này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Only the activity creator or its coordinator can manage this activity."
+msgstr ""
+"Chỉ người tạo hoạt động hoặc người điều phối mới có thể quản lý hoạt động "
+"này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid ""
+"Only the activity creator or the coordinator of its parent request can "
+"cancel this activity."
+msgstr ""
+"Chỉ người tạo hoạt động hoặc người điều phối yêu cầu cha mới có thể hủy hoạt"
+" động này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only the assigned Level 2 reviewer can approve and submit to Level 3."
+msgstr "Chỉ người duyệt cấp 2 được giao mới có thể duyệt và trình lên cấp 3."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only the assigned reviewer may decide this review."
+msgstr "Chỉ người được giao duyệt mới có thể phê duyệt hoặc từ chối."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid ""
+"Only the assigned user with completion rights can complete this ECR or ECO "
+"activity."
+msgstr ""
+"Chỉ người được giao và có quyền hoàn tất mới có thể hoàn tất hoạt động ECR "
+"hoặc ECO này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Only the assigned worker or coordinator can edit the activity note."
+msgstr ""
+"Chỉ người được giao hoặc người điều phối mới có thể sửa ghi chú của hoạt "
+"động."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Only the assigned worker or coordinator can start this activity."
+msgstr ""
+"Chỉ người được giao hoặc người điều phối mới có thể bắt đầu hoạt động này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Only the original Change Request can be converted to an ECO."
+msgstr "Chỉ yêu cầu thay đổi gốc mới có thể chuyển thành ECO."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Only the responsible Level 2 user can submit this onward review."
+msgstr "Chỉ người phụ trách cấp 2 mới có thể trình duyệt tiếp."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_form
+msgid "Open Review / Redo"
+msgstr "Mở phần duyệt và làm lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Open the ECR or ECO activity form and use its Done button."
+msgstr "Hãy mở biểu mẫu hoạt động ECR hoặc ECO và nhấn Hoàn tất."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid ""
+"Open the PLM workflow to approve, reject, submit onward or return redo work."
+msgstr ""
+"Hãy mở quy trình PLM để duyệt, từ chối, trình duyệt tiếp hoặc trả lại kết "
+"quả làm lại."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__operation
+msgid "Operation"
+msgstr "Thao tác"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__original_code
+msgid "Original Code"
+msgstr "Mã gốc"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__original_document_id
+msgid "Original Document"
+msgstr "Tài liệu gốc"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__original_part_id
+msgid "Original Part"
+msgstr "Linh kiện gốc"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.eco_affected_revisions_form
+msgid "Original Rev."
+msgstr "Phiên bản gốc"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__original_revision
+msgid "Original Revision"
+msgstr "Phiên bản gốc"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/res_users.py:0
+msgid "PLM Activities"
+msgstr "Hoạt động PLM"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__mail_activity__tdb_plm_kind__redo
+msgid "PLM Redo"
+msgstr "Làm lại (PLM)"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__mail_activity__tdb_plm_kind__review
+msgid "PLM Review"
+msgstr "Duyệt (PLM)"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "PLM Review / Redo"
+msgstr "Duyệt và làm lại (PLM)"
+
+#. module: tdb_custom_plm
+#: model:ir.model,name:tdb_custom_plm.model_tdb_plm_task_wizard
+msgid "PLM Review / Redo Assignment"
+msgstr "Giao việc duyệt và làm lại (PLM)"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "PLM workflow tasks are created by workflow actions only."
+msgstr "Hãy dùng các thao tác trong quy trình PLM để tạo công việc."
+
+#. module: tdb_custom_plm
+#: model:mail.activity.type,name:tdb_custom_plm.activity_type_redo
+msgid "PLM: Redo / verify returned work"
+msgstr "PLM: Làm lại / kiểm tra kết quả trả về"
+
+#. module: tdb_custom_plm
+#: model:mail.activity.type,name:tdb_custom_plm.activity_type_review
+msgid "PLM: Review requested"
+msgstr "PLM: Yêu cầu duyệt"
+
+#. module: tdb_custom_plm
+#: model:mail.activity.type,name:tdb_custom_plm.activity_type_forward
+msgid "PLM: Submit for final review"
+msgstr "PLM: Trình duyệt cuối"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"Parent assemblies have different reviewers. Select this Part reviewer "
+"explicitly."
+msgstr ""
+"Các cụm lắp ráp cha có người duyệt khác nhau. Hãy chọn người duyệt cho linh "
+"kiện này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__mail_activity__tdb_plm_target_model__product_template
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__kind__part
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Part"
+msgstr "Linh kiện"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_navigation
+msgid "Part / Document"
+msgstr "Linh kiện / Tài liệu"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.ecr_activity_assignees_form
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.ecr_activity_schedule_assignee
+msgid "Planned Assignee"
+msgstr "Người dự kiến thực hiện"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_reject_wizard__reason
+msgid "Reason"
+msgstr "Lý do"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__reason
+msgid "Reason / Instructions"
+msgstr "Lý do / Hướng dẫn"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Records with workflow history cannot be deleted."
+msgstr "Không thể xóa bản ghi đã có lịch sử xử lý."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__operation__recover
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Recover Review"
+msgstr "Khôi phục lượt duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: model:ir.actions.server,name:tdb_custom_plm.recover_document_reviews
+#: model:ir.actions.server,name:tdb_custom_plm.recover_part_reviews
+msgid "Recover Unassigned Review"
+msgstr "Khôi phục lượt duyệt chưa được giao"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "Recover review with no valid assigned reviewer or task."
+msgstr "Khôi phục lượt duyệt đang thiếu người duyệt hoặc công việc hợp lệ."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__redo
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__redo
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__redo
+msgid "Redo in Progress"
+msgstr "Đang làm lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Redo work completed and returned"
+msgstr "Đã hoàn tất và trả lại kết quả làm lại"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_reject_wizard
+msgid "Reject / Assign Redo"
+msgstr "Từ chối và giao làm lại"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__operation__reject
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_reject_wizard
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_task_wizard
+msgid "Reject and Assign Redo"
+msgstr "Từ chối và giao làm lại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Reject one assembly at a time."
+msgstr "Hãy từ chối từng cụm lắp ráp một."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__rejected
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__rejected
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__rejected
+msgid "Rejected"
+msgstr "Đã từ chối"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Rejected: %s"
+msgstr "Đã từ chối: %s"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__release_required
+msgid "Release Required"
+msgstr "Bắt buộc phát hành"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__engineering_release_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__engineering_release_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__engineering_release_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__engineering_release_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__engineering_release_date
+msgid "Release date"
+msgstr "Ngày phát hành"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Release the latest Part revision before creating a new revision."
+msgstr ""
+"Hãy phát hành phiên bản mới nhất của linh kiện trước khi tạo phiên bản tiếp "
+"theo."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid ""
+"Release the required replacement revisions before completing the ECO:\n"
+"%s"
+msgstr ""
+"Hãy phát hành các phiên bản thay thế bắt buộc sau trước khi hoàn tất ECO:\n"
+"%s"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__released
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__released
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__released
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__replacement_status__released
+msgid "Released"
+msgstr "Đã ban hành"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Replaced by administrative review recovery"
+msgstr "Đã thay thế khi quản trị viên khôi phục lượt duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__replacement_document_id
+msgid "Replacement Document"
+msgstr "Tài liệu thay thế"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__replacement_part_id
+msgid "Replacement Part"
+msgstr "Linh kiện thay thế"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__replacement_revision
+msgid "Replacement Revision"
+msgstr "Phiên bản thay thế"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_eco_revision__replacement_status
+msgid "Replacement Status"
+msgstr "Trạng thái phiên bản thay thế"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Restored after discarding the draft revision."
+msgstr "Đã khôi phục sau khi hủy bỏ phiên bản Bản thảo."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.selective_reject_wizard
+msgid ""
+"Return this record and its reviewed children to Draft for redo.\n"
+"                    Part rejection includes linked files; document rejection does not change Parts.\n"
+"                    Released references remain unchanged."
+msgstr ""
+"Bản ghi này và các bản ghi con đang chờ duyệt sẽ trở về Bản thảo để làm lại."
+" Khi từ chối linh kiện, các tệp liên kết cũng được trả lại. Khi từ chối tài "
+"liệu, các linh kiện liên kết giữ nguyên trạng thái. Các phiên bản tham chiếu"
+" đã ban hành giữ nguyên trạng thái."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__engineering_state__confirmed
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__engineering_state__confirmed
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__engineering_state__confirmed
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__replacement_status__confirmed
+msgid "Review"
+msgstr "Chờ duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_search
+msgid "Review / Redo"
+msgstr "Duyệt và làm lại"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_task_wizard
+msgid "Review / Redo Assignment"
+msgstr "Giao việc duyệt và làm lại"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_review_deadline
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_review_deadline
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_review_deadline
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_review_deadline
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_review_deadline
+msgid "Review Deadline"
+msgstr "Hạn duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_needs_recovery
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_needs_recovery
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_needs_recovery
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_needs_recovery
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_needs_recovery
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.search_recovery_documents
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.search_recovery_parts
+msgid "Review Needs Recovery"
+msgstr "Lượt duyệt cần khôi phục"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_review_stage
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_review_stage
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_review_stage
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_review_stage
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_review_stage
+msgid "Review Progress"
+msgstr "Tiến độ duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__requester_id
+msgid "Review Request Owner"
+msgstr "Người phụ trách yêu cầu duyệt"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Review and Redo"
+msgstr "Duyệt và làm lại"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_reviewer_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_reviewer_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_reviewer_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_reviewer_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_reviewer_id
+msgid "Reviewer"
+msgstr "Người duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Reviewer assignments are locked during an active review or redo."
+msgstr "Không thể đổi người duyệt khi đang duyệt hoặc làm lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Save the affected revisions before completing the ECO."
+msgstr "Hãy lưu danh sách phiên bản bị ảnh hưởng trước khi hoàn tất ECO."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Select an active internal PLM user."
+msgstr "Hãy chọn người dùng PLM nội bộ đang hoạt động."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Select an engineering Part or a PLM document."
+msgstr "Hãy chọn một linh kiện kỹ thuật hoặc tài liệu PLM."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "Select an original revision and use only fields for its record type."
+msgstr ""
+"Hãy chọn phiên bản gốc và chỉ điền các trường phù hợp với loại bản ghi."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Select one reviewer at a higher level than the submitter."
+msgstr "Hãy chọn một người duyệt ở cấp cao hơn người gửi."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid ""
+"Select only records marked Review Needs Recovery. Valid active reviews are "
+"not replaced."
+msgstr ""
+"Hãy chọn các bản ghi có đánh dấu Lượt duyệt cần khôi phục. Các lượt duyệt "
+"hợp lệ đang mở sẽ được giữ nguyên."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "Select the Engineering Part for this activity."
+msgstr "Hãy chọn linh kiện kỹ thuật cho hoạt động này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Set the engineering code before confirming."
+msgstr "Hãy nhập mã kỹ thuật trước khi xác nhận."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Set the engineering code before submitting."
+msgstr "Hãy nhập mã kỹ thuật trước khi gửi."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid ""
+"Shared Part %s is used by another assembly in Review. Coordinate its "
+"rejection before including this shared Part in redo."
+msgstr ""
+"Linh kiện dùng chung %s đang được sử dụng trong một cụm lắp ráp khác đang "
+"chờ duyệt. Hãy trao đổi với người phụ trách cụm đó trước khi trả linh kiện "
+"về làm lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid ""
+"Shared file %s is used by another record in Review. Coordinate its rejection"
+" before including it in redo."
+msgstr ""
+"Tệp dùng chung %s đang được sử dụng trong một bản ghi khác đang chờ duyệt. "
+"Hãy trao đổi với người phụ trách bản ghi đó trước khi trả tệp về làm lại."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__mail_activity__tdb_plm_kind__forward
+msgid "Submit PLM Review to Higher Level"
+msgstr "Trình duyệt PLM lên cấp cao hơn"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__operation__submit
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.view_task_wizard
+msgid "Submit Review"
+msgstr "Gửi duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Submit only Draft work without an active redo task."
+msgstr "Chỉ có thể gửi duyệt bản thảo khi đã hoàn tất các công việc làm lại."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__forward
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__forward
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__forward
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_task_wizard__operation__forward
+msgid "Submit to Higher Level"
+msgstr "Trình duyệt cấp cao hơn"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.component_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_cad_review
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.document_review
+msgid "Submit to Level 3"
+msgstr "Trình duyệt cuối"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Submitted to higher level"
+msgstr "Đã trình duyệt cấp cao hơn"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_reject_wizard__target_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__target_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__target_ids
+msgid "Target"
+msgstr "Đối tượng"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_reject_wizard__target_model
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_tdb_plm_task_wizard__target_model
+msgid "Target Model"
+msgstr "Loại đối tượng"
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_navigation
+msgid "Task Status"
+msgstr "Trạng thái công việc"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_admin_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_admin_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_admin_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_admin_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_admin_approved_at
+msgid "Tdb Admin Approved At"
+msgstr "Thời điểm duyệt cuối"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_admin_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_admin_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_admin_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_admin_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_admin_approved_by
+msgid "Tdb Admin Approved By"
+msgstr "Người duyệt cuối"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_forwarder_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_forwarder_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_forwarder_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_forwarder_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_forwarder_id
+msgid "Tdb Forwarder"
+msgstr "Người trình duyệt tiếp"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_manager_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_manager_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_manager_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_manager_approved_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_manager_approved_at
+msgid "Tdb Manager Approved At"
+msgstr "Thời điểm trưởng phòng duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_manager_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_manager_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_manager_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_manager_approved_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_manager_approved_by
+msgid "Tdb Manager Approved By"
+msgstr "Trưởng phòng đã duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity__tdb_plm_kind
+msgid "Tdb Plm Kind"
+msgstr "Loại công việc PLM"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity_schedule__tdb_plm_part_ids
+msgid "Tdb Plm Part"
+msgstr "Linh kiện"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity__tdb_plm_target_id
+msgid "Tdb Plm Target"
+msgstr "Đối tượng được giao"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_mail_activity__tdb_plm_target_model
+msgid "Tdb Plm Target Model"
+msgstr "Loại đối tượng được giao"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_redo_chain
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_redo_chain
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_redo_chain
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_redo_chain
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_redo_chain
+msgid "Tdb Redo Chain"
+msgstr "Chuỗi giao việc làm lại"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_request_level
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_request_level
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_request_level
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_request_level
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_request_level
+msgid "Tdb Request Level"
+msgstr "Cấp của người yêu cầu"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_review_history
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_review_history
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_review_history
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_review_history
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_review_history
+msgid "Tdb Review History"
+msgstr "Lịch sử duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_submitted_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_submitted_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_submitted_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_submitted_at
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_submitted_at
+msgid "Tdb Submitted At"
+msgstr "Thời điểm gửi duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_submitted_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_submitted_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_submitted_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_submitted_by
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_submitted_by
+msgid "Tdb Submitted By"
+msgstr "Người gửi duyệt"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__tdb_task_activity_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__tdb_task_activity_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__tdb_task_activity_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__tdb_task_activity_id
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__tdb_task_activity_id
+msgid "Tdb Task Activity"
+msgstr "Công việc hiện tại"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid "The assembly structure changed. Refresh and retry rejection."
+msgstr "Cấu trúc cụm lắp ráp đã thay đổi. Hãy tải lại rồi từ chối lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid "The assembly structure changed. Refresh and retry release."
+msgstr "Cấu trúc cụm lắp ráp đã thay đổi. Hãy tải lại rồi phát hành lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/selective_review.py:0
+msgid "The assembly structure changed. Refresh and retry submission."
+msgstr "Cấu trúc cụm lắp ráp đã thay đổi. Hãy tải lại rồi gửi duyệt lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "The assignee must have access to the record company."
+msgstr "Người được giao phải có quyền truy cập vào công ty của bản ghi này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid "The parent ECO no longer exists."
+msgstr "Lệnh ECO cha không còn tồn tại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "The previous revision can only be restored while discarding a draft."
+msgstr "Chỉ có thể khôi phục phiên bản trước khi hủy bỏ bản thảo."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "The related Part variant no longer exists."
+msgstr "Biến thể linh kiện liên kết không còn tồn tại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "The related record no longer exists."
+msgstr "Bản ghi liên kết không còn tồn tại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/eco_revision.py:0
+msgid ""
+"The replacement must be a later revision of the same engineering record."
+msgstr ""
+"Phiên bản thay thế phải là phiên bản sau của cùng linh kiện hoặc tài liệu."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "The reviewer must still have a higher level than the requester."
+msgstr "Người duyệt phải ở cấp cao hơn người yêu cầu."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "The workflow record no longer exists."
+msgstr "Bản ghi của quy trình này không còn tồn tại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "This is not a managed PLM workflow task."
+msgstr "Công việc này không thuộc quy trình duyệt và làm lại của PLM."
+
+#. module: tdb_custom_plm
+#: model:ir.model.constraint,message:tdb_custom_plm.constraint_tdb_plm_eco_revision_unique_original_part
+msgid "This original Part revision is already on the ECO."
+msgstr "Phiên bản gốc của linh kiện này đã có trong ECO."
+
+#. module: tdb_custom_plm
+#: model:ir.model.constraint,message:tdb_custom_plm.constraint_tdb_plm_eco_revision_unique_original_document
+msgid "This original document revision is already on the ECO."
+msgstr "Phiên bản gốc của tài liệu này đã có trong ECO."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "This record is not waiting for a reviewer decision."
+msgstr "Bản ghi này hiện không chờ quyết định của người duyệt."
+
+#. module: tdb_custom_plm
+#: model_terms:ir.ui.view,arch_db:tdb_custom_plm.workflow_activity_search
+msgid "Today"
+msgstr "Hôm nay"
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__tdb_plm_eco_revision__replacement_status__undermodify
+msgid "Under Modify"
+msgstr "Đang sửa đổi"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Under Modify is reserved for the revision chain."
+msgstr ""
+"Trạng thái Đang sửa đổi dành riêng cho quy trình tạo phiên bản kế tiếp."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Unsupported workflow operation."
+msgstr "Quy trình không hỗ trợ thao tác này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Unsupported workflow transition."
+msgstr "Quy trình không hỗ trợ việc chuyển trạng thái này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Use New Revision to change the revision of an Engineering Part."
+msgstr ""
+"Hãy dùng chức năng Tạo phiên bản mới để đổi phiên bản của linh kiện kỹ "
+"thuật."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Use Reject and assign a redo task with a reason."
+msgstr "Hãy chọn Từ chối và giao làm lại, sau đó nhập lý do."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "Use Submit Review or Assign Redo to create this activity."
+msgstr "Hãy dùng thao tác gửi duyệt hoặc giao làm lại để tạo hoạt động này."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "Use the PLM workflow actions to create a review or redo assignment."
+msgstr ""
+"Hãy dùng các thao tác trong quy trình PLM để giao việc duyệt hoặc làm lại."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "Use the PLM workflow actions to reassign or finish this task."
+msgstr ""
+"Hãy dùng các thao tác trong quy trình PLM để giao lại hoặc hoàn tất công "
+"việc này."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__ir_attachment__tdb_review_stage__review
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__product_template__tdb_review_stage__review
+#: model:ir.model.fields.selection,name:tdb_custom_plm.selection__revision_plm_mixin__tdb_review_stage__review
+msgid "Waiting for Reviewer"
+msgstr "Đang chờ người duyệt"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Workflow data can only be changed by workflow actions."
+msgstr ""
+"Chỉ có thể thay đổi dữ liệu quy trình bằng các thao tác trong quy trình."
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/review_workflow.py:0
+msgid "Workflow data can only be set by workflow actions."
+msgstr ""
+"Chỉ có thể thiết lập dữ liệu quy trình bằng các thao tác trong quy trình."
+
+#. module: tdb_custom_plm
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_ir_attachment__engineering_workflow_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_document__engineering_workflow_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_product__engineering_workflow_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_product_template__engineering_workflow_date
+#: model:ir.model.fields,field_description:tdb_custom_plm.field_revision_plm_mixin__engineering_workflow_date
+msgid "Workflow date"
+msgstr "Ngày chuyển trạng thái"
+
+#. module: tdb_custom_plm
+#. odoo-python
+#: code:addons/tdb_custom_plm/models/workflow_activity.py:0
+msgid "Workflow task history cannot be deleted manually."
+msgstr "Không thể xóa thủ công lịch sử công việc của quy trình."

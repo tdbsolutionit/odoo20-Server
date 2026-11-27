@@ -1,7 +1,8 @@
 """Level-based review and delegated redo, enforced at the ORM boundary."""
 from copy import deepcopy
 from uuid import uuid4
-from markupsafe import escape
+from markupsafe import Markup
+from odoo.tools.misc import format_date
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
@@ -230,6 +231,56 @@ class ReviewWorkflow(models.AbstractModel):
                     self.write({'tdb_reviewer_id': user.id})
                     break
 
+    def _tdb_record_details(self):
+        self.ensure_one()
+        return _('%(kind)s: %(name)s | Engineering code: %(code)s | Revision: %(revision)s',
+                 kind=_('CAD Document') if self._name == 'ir.attachment' else _('Engineering Part'),
+                 name=self.name, code=self.engineering_code or _('Unassigned'), revision=self.engineering_revision)
+
+    def _tdb_status_details(self):
+        states = dict(self._fields['engineering_state']._description_selection(self.env))
+        return _('Status: %s', states.get(self.engineering_state, ''))
+
+    def _tdb_detail_body(self, lines):
+        model = 'product.product' if self._name == 'product.template' and self.product_variant_id else self._name
+        record_id = self.product_variant_id.id if model == 'product.product' else self.id
+        return (Markup('<p>%s</p>') % Markup('<br/>').join(lines)
+                + Markup('<p><a href="/odoo/%s/%s">%s</a></p>') % (model, record_id, _('Open PLM record')))
+
+    def _tdb_task_summary(self, kind, returned=False):
+        self.ensure_one()
+        tasks = {
+            'review': self.env._('Review revision'),
+            'forward': self.env._('Submit for final review'),
+            'redo': self.env._('Redo'),
+        }
+        return self.env._(
+            '%(actor)s · %(task)s · %(kind)s %(name)s (Rev %(revision)s)',
+            actor=self.env.user.display_name,
+            task=self.env._('Verify returned work') if returned else tasks[kind],
+            kind=self.env._('Document') if self._name == 'ir.attachment' else self.env._('Part'),
+            name=self.name,
+            revision=self.engineering_revision,
+        )
+
+    def _tdb_task_details(self, kind, user, deadline, reason=None, returned=False):
+        self = self.with_context(lang=user.lang or self.env.lang)
+        actions = {
+            'review': _('Open the revision and approve it or return it with a reason.'),
+            'redo': _('Make the requested changes, check in any edited CAD file, and return the work from the PLM form.'),
+            'forward': _('Open the revision and choose a reviewer for final approval.'),
+        }
+        lines = [self._tdb_record_details(), self._tdb_status_details(),
+                 _('Returned by: %s', self.env.user.display_name) if returned
+                 else _('Assigned by: %s', self.env.user.display_name),
+                 _('Assigned to: %s', user.display_name),
+                 _('Due date: %s', format_date(self.env, deadline))]
+        if reason:
+            lines.append(_('Reason / instructions: %s', reason))
+        lines.append(_('Next step: %s', _('Verify the returned work before completing or returning your redo task.')
+                       if returned else actions[kind]))
+        return lines
+
     def _tdb_history_event(self, decision, reason=None, extra=None, new_round=False):
         self.ensure_one()
         history = deepcopy(self.tdb_review_history or [])
@@ -238,17 +289,36 @@ class ReviewWorkflow(models.AbstractModel):
                             'reviewer_id': self.tdb_reviewer_id.id, 'events': []})
         event = {'decision': decision, 'user_id': self.env.uid,
                  'level': review_level(self.env.user), 'date': fields.Datetime.to_string(fields.Datetime.now()),
-                 'reason': reason or ''}
+                 'reason': reason or '', 'revision': self.engineering_revision,
+                 'engineering_code': self.engineering_code, 'engineering_state': self.engineering_state}
         event.update(extra or {})
+        if self.tdb_task_activity_id.date_deadline:
+            event['deadline'] = fields.Date.to_string(self.tdb_task_activity_id.date_deadline)
         history[-1]['events'].append(event)
         self._tdb_internal_write({'tdb_review_history': history})
-        body = _('%(decision)s - round %(round)s - %(user)s',
-                 decision=decision.replace('_', ' ').capitalize(), round=len(history), user=self.env.user.display_name)
-        if decision == 'admin_direct_confirm':
-            body = _('Released this revision directly from Draft.')
+        labels = {
+            'submitted_for_review': _('Submitted for review'),
+            'approved_and_released': _('Approved and released'),
+            'admin_direct_confirm': _('Released directly from Draft'),
+            'level_2_approved': _('Approved by Manager'),
+            'rejected_redo_assigned': _('Rejected and assigned for redo'),
+            'redo_delegated': _('Redo delegated'),
+            'redo_completed': _('Redo completed'),
+            'redo_returned_to_assigner': _('Redo returned for verification'),
+            'self_redo_requires_level_3': _('Redo completed and waiting for final review'),
+            'legacy_review_recovered': _('Review reassigned'),
+            'reviewer_inherited_from_parent': _('Reviewer copied from the parent Part'),
+        }
+        lines = [_('%(decision)s · Round %(round)s', decision=labels.get(decision, decision), round=len(history)),
+                 self._tdb_record_details(), _('By: %s', self.env.user.display_name), self._tdb_status_details()]
+        assignee_id = event.get('returned_to') or event.get('reviewer_id') or event.get('worker_id')
+        if assignee_id:
+            lines.append(_('Assigned to: %s', self.env['res.users'].browse(assignee_id).display_name))
+        if event.get('deadline'):
+            lines.append(_('Due date: %s', format_date(self.env, event['deadline'])))
         if reason:
-            body += '\n' + _('Reason: %s', reason)
-        self.message_post(body=body, subtype_xmlid='mail.mt_note')
+            lines.append(_('Reason / instructions: %s', reason))
+        self.message_post(body=self._tdb_detail_body(lines), subtype_xmlid='mail.mt_note')
 
     def _tdb_close_activity(self, feedback):
         activity = self.tdb_task_activity_id
@@ -258,40 +328,62 @@ class ReviewWorkflow(models.AbstractModel):
             activity._action_done(feedback=feedback)
         self._tdb_internal_write({'tdb_task_activity_id': False})
 
-    def _tdb_notify_task_user(self, user, subject, text):
+    def _tdb_notify_task_user(self, user, subject, lines):
         """Durable inbox + live alert; independent of SMTP and global preferences."""
         self.ensure_one()
-        self._tdb_check_user_access(user)
+        if (not review_level(user) or (self.company_id and self.company_id not in user.company_ids)
+                or not self.with_user(user).with_context(allowed_company_ids=user.company_ids.ids).has_access('read')):
+            return
+        self = self.with_context(lang=user.lang or self.env.lang)
         message = self._message_log(
-            subject=subject, body=escape(text), partner_ids=user.partner_id.ids,
+            subject=subject, body=self._tdb_detail_body(lines), partner_ids=user.partner_id.ids,
         )
         self._notify_thread_by_inbox(message, [{
             'id': user.partner_id.id, 'uid': user.id, 'notif': 'inbox',
         }])
         user._bus_send('simple_notification', {
-            'title': subject, 'message': text, 'type': 'info', 'sticky': True,
+            'title': subject, 'message': '\n'.join(lines), 'type': 'info', 'sticky': False,
         })
         return message
+
+    def _tdb_notify_review_outcome(self, recipients, released, reason=None, assignee=None):
+        for recipient in recipients - self.env.user:
+            record = self.with_context(lang=recipient.lang or self.env.lang)
+            translate = record.env._
+            subject = (translate('Approved and released: %s', record.name) if released
+                       else translate('Review rejected: %s', record.name))
+            lines = [record._tdb_record_details(),
+                     translate('Decided by: %s', record.env.user.display_name)]
+            if released:
+                lines.append(translate('This revision is now Released.'))
+            else:
+                lines.extend([translate('This revision returned to Draft for redo.'),
+                              translate('Assigned to: %s', assignee.display_name),
+                              translate('Reason / instructions: %s', reason)])
+                if record.tdb_task_activity_id:
+                    lines.append(translate('Due date: %s', format_date(record.env, record.tdb_task_activity_id.date_deadline)))
+            record._tdb_notify_task_user(recipient, subject, lines)
 
     def _tdb_open_activity(self, kind, user, reason=None, deadline=None):
         self.ensure_one()
         self._tdb_check_user_access(user)
         activity_type = self.env.ref('tdb_custom_plm.activity_type_' + kind)
+        deadline = deadline or self.tdb_review_deadline or fields.Date.context_today(self)
+        lines = self._tdb_task_details(kind, user, deadline, reason)
+        localized = self.with_context(lang=user.lang or self.env.lang)
+        subject = localized._tdb_task_summary(kind)
         activity = self.env['mail.activity'].with_context(
             _tdb_task_action=_TASK_ACTION, mail_activity_quick_update=True,
         ).create({
             'res_model_id': self.env['ir.model']._get(self._name).id, 'res_id': self.id,
             'activity_type_id': activity_type.id, 'user_id': user.id,
-            'date_deadline': deadline or self.tdb_review_deadline or fields.Date.context_today(self),
-            'summary': activity_type.name, 'note': reason or '',
+            'date_deadline': deadline,
+            'summary': subject, 'note': localized._tdb_detail_body(lines),
             'tdb_plm_kind': kind, 'tdb_plm_target_model': self._name, 'tdb_plm_target_id': self.id,
         })
         self._tdb_internal_write({'tdb_task_activity_id': activity.id})
         if user != self.env.user:
-            self._tdb_notify_task_user(user, _('%(task)s: %(record)s',
-                task=activity_type.name, record=self.display_name),
-                _('%(sender)s assigned you a task on %(record)s: %(task)s.',
-                  sender=self.env.user.display_name, record=self.display_name, task=activity_type.name))
+            self._tdb_notify_task_user(user, subject, lines)
             # Opt-in email complements the guaranteed inbox alert. With no
             # configured SMTP the workflow remains usable without email failures.
             if (self.env['ir.config_parameter'].sudo().get_bool('tdb_plm.email_notifications', False)
@@ -357,6 +449,10 @@ class ReviewWorkflow(models.AbstractModel):
         if PROTECTED.intersection(vals):
             raise AccessError(_('Workflow data can only be changed by workflow actions.'))
         self._tdb_lock()
+        if self._name == 'product.template' and 'engineering_revision' in vals:
+            revision = self._fields['engineering_revision'].convert_to_cache(vals['engineering_revision'], self)
+            if any(part.engineering_code and part.engineering_revision != revision for part in self):
+                raise UserError(_('Use New Revision to change the revision of an Engineering Part.'))
         state = vals.get('engineering_state')
         if 'engineering_state' in vals and state not in ('draft', 'confirmed', 'released', 'obsoleted', 'undermodify'):
             raise UserError(_('Unsupported workflow transition.'))
@@ -419,6 +515,13 @@ class ReviewWorkflow(models.AbstractModel):
                 })
                 record._tdb_history_event('admin_direct_confirm' if previous == 'draft' else 'approved_and_released',
                                           new_round=previous == 'draft')
+                if previous == 'confirmed':
+                    round_events = record.tdb_review_history[-1]['events']
+                    requesters = self.env['res.users'].browse([
+                        event['user_id'] for event in round_events
+                        if event.get('decision') == 'submitted_for_review' and event.get('user_id')
+                    ]).exists()
+                    record._tdb_notify_review_outcome(requesters | record.tdb_requester_id, released=True)
         self._tdb_notify_live()
         return result
 
@@ -575,6 +678,7 @@ class ReviewWorkflow(models.AbstractModel):
         frame['activity_id'] = activity.id
         self._tdb_internal_write({'tdb_redo_chain': [frame]})
         self._tdb_history_event('rejected_redo_assigned', reason, extra=frame)
+        self._tdb_notify_review_outcome(self.tdb_requester_id - assignee, released=False, reason=reason, assignee=assignee)
         return True
 
     def _tdb_discard_invalid_activity_link(self):
@@ -689,15 +793,17 @@ class ReviewWorkflow(models.AbstractModel):
                 record._tdb_internal_write({'tdb_redo_chain': chain,
                     'tdb_redo_user_id': parent['worker_id'],
                     'tdb_task_activity_id': parent['activity_id']})
-                record.tdb_task_activity_id.with_context(_tdb_task_action=_TASK_ACTION).write({'plm_state': 'draft',
-                    'summary': _('Delegated redo completed - please verify returned work')})
+                user = record.tdb_redo_user_id
+                localized = record.with_context(lang=user.lang or record.env.lang)
+                lines = localized._tdb_task_details('redo', user, record.tdb_task_activity_id.date_deadline,
+                                                    parent.get('reason'), returned=True)
+                subject = localized._tdb_task_summary('redo', returned=True)
+                record.tdb_task_activity_id.with_context(_tdb_task_action=_TASK_ACTION).write({
+                    'plm_state': 'draft', 'summary': subject, 'note': localized._tdb_detail_body(lines),
+                })
                 record._tdb_history_event('redo_returned_to_assigner', extra={'user_id': self.env.uid,
                     'returned_to': parent['worker_id'], 'task_id': parent['id']})
-                record._tdb_notify_task_user(record.tdb_redo_user_id,
-                    _('Delegated redo returned: %s', record.display_name),
-                    _('Delegated redo completed—please verify the returned work. '
-                      '%(worker)s returned %(record)s to you.',
-                      worker=self.env.user.display_name, record=record.display_name))
+                record._tdb_notify_task_user(user, subject, lines)
             else:
                 record._tdb_internal_write({'tdb_redo_chain': False, 'tdb_redo_user_id': False})
                 assigner = self.env['res.users'].browse(frame['assigner_id'])
@@ -875,6 +981,8 @@ class TaskWizard(models.TransientModel):
 
     def action_apply(self):
         self.ensure_one()
+        if self.operation == 'reject' and self.target_ids and self.target_ids != [self.target_id]:
+            raise UserError(_('Reject one assembly at a time.'))
         records = self.env[self.target_model].browse(self.target_ids or [self.target_id]).exists().sorted('id')
         if not records:
             raise UserError(_('The workflow record no longer exists.'))
@@ -890,6 +998,8 @@ class TaskWizard(models.TransientModel):
             record._tdb_approve_and_submit(self.user_id, self.date_deadline)
         elif self.operation == 'forward':
             record._tdb_forward(self.user_id, self.date_deadline)
+        elif self.operation == 'reject':
+            record._tdb_reject_recursive(self.reason, self.user_id, self.date_deadline)
         elif self.operation == 'delegate':
             record._tdb_delegate_redo(self.user_id, self.reason, self.date_deadline)
         else:

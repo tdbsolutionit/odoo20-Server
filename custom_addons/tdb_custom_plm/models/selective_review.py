@@ -155,7 +155,10 @@ class SelectiveReview(models.AbstractModel):
                 ('child_id', '=', doc.id),
             ]).parent_id
             parents = all_parents - docs
-            linked_parts = doc.sudo().linkedcomponents.product_tmpl_id
+            # Historical Part revisions do not make a file shared by active reviews.
+            linked_parts = doc.sudo().linkedcomponents.product_tmpl_id.filtered(
+                lambda part: part.engineering_state not in ('undermodify', 'obsoleted')
+            )
             other_parts = linked_parts - parts
             if ((len(all_parents) > 1 and parents.filtered(lambda d: d.engineering_state == 'confirmed'))
                     or (len(linked_parts) > 1 and other_parts.filtered(lambda p: p.engineering_state == 'confirmed'))):
@@ -197,21 +200,6 @@ class SelectiveDocumentRelease(models.Model):
             return super(SelectiveDocumentRelease, self.with_context(
                 _tdb_submission_scope=_SUBMISSION_SCOPE)).commonWFAction(writable, state, check)
         return super().commonWFAction(writable, state, check)
-
-
-class RecursiveRejectWizard(models.TransientModel):
-    _inherit = 'tdb.plm.task.wizard'
-
-    def action_apply(self):
-        self.ensure_one()
-        if self.operation == 'reject':
-            if self.target_ids and self.target_ids != [self.target_id]:
-                raise UserError(_('Reject one assembly at a time.'))
-            record = self.env[self.target_model].browse(self.target_id).exists()
-            record.ensure_one()
-            record._tdb_reject_recursive(self.reason, self.user_id, self.date_deadline)
-            return {'type': 'ir.actions.act_window_close'}
-        return super().action_apply()
 
 
 class LegacySelectiveRejectWizard(models.TransientModel):

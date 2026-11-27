@@ -5,7 +5,7 @@
         <field name="category">default</field>
     </record>
     <record id="activity_type_forward" model="mail.activity.type">
-        <field name="name">PLM: Submit review to Level 3</field>
+        <field name="name">PLM: Submit for final review</field>
         <field name="category">default</field>
     </record>
     <record id="activity_type_redo" model="mail.activity.type">

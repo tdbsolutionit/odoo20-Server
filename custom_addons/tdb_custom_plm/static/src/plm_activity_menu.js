@@ -1,9 +1,38 @@
 /** @odoo-module **/
 
 import { ActivityMenu } from "@mail/core/web/activity_menu";
+import { onWillDestroy } from "@odoo/owl";
 import { patch } from "@web/core/utils/patch";
+import { useService } from "@web/core/utils/hooks";
+import { LiveRefreshQueue } from "./live_refresh_queue";
 
 patch(ActivityMenu.prototype, {
+    setup() {
+        super.setup(...arguments);
+        const bus = useService("bus_service");
+        const queue = new LiveRefreshQueue({
+            canRefresh: () => true,
+            refresh: () => this.store.fetchStoreData("systray_get_activities"),
+        });
+        const unsubscribe = bus.subscribe("tdb_plm/activity_counter_changed", () => queue.request());
+        const refreshWhenVisible = () => {
+            if (!document.hidden) {
+                queue.request();
+            }
+        };
+        const interval = setInterval(refreshWhenVisible, 10000);
+        document.addEventListener("visibilitychange", refreshWhenVisible);
+        bus.start().catch(() => {
+            // The foreground refresh also covers a disconnected websocket.
+        });
+        onWillDestroy(() => {
+            unsubscribe?.();
+            clearInterval(interval);
+            document.removeEventListener("visibilitychange", refreshWhenVisible);
+            queue.stop();
+        });
+    },
+
     openActivityGroup(group, filter = "all", newWindow) {
         if (!group.tdb_plm_action_id) {
             return super.openActivityGroup(group, filter, newWindow);

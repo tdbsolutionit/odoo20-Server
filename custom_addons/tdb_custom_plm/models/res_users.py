@@ -89,12 +89,21 @@ class ResUsers(models.Model):
                     row.pop(base, None)
         return rows
 
+    def _format_activity_group(self, model_name, activities):
+        group = super()._format_activity_group(model_name, activities)
+        group['total_count'] += group['planned_count']
+        return group
+
     def _divide_activities_in_groups(self, activities):
         plm = activities.filtered(lambda activity: activity.tdb_plm_kind
             or activity.activity_type_id.change_activity_type)
-        groups = super()._divide_activities_in_groups(activities - plm)
-        # Keep core record access/company checks and its most-urgent-per-record rule.
+        ordinary = activities - plm
+        groups = super()._divide_activities_in_groups(ordinary)
+        self._tdb_expand_activity_groups(groups, ordinary)
+        # Keep core record access/company checks before including multiple tasks
+        # attached to the same record in the clock.
         allowed_groups = super()._divide_activities_in_groups(plm)
+        self._tdb_expand_activity_groups(allowed_groups, plm)
         allowed_ids = [activity_id for group in allowed_groups
                        if group['model'] != 'mail.activity'
                        for activity_id in group['activity_ids']]
@@ -108,3 +117,17 @@ class ResUsers(models.Model):
             })
             groups.append(group)
         return groups
+
+    def _tdb_expand_activity_groups(self, groups, activities):
+        def record_key(activity):
+            return (activity.res_model, activity.res_id) if activity.res_id else (False, activity.id)
+
+        by_record = activities.grouped(record_key)
+        Activity = self.env['mail.activity']
+        for group in groups:
+            representatives = Activity.browse(group['activity_ids'])
+            group_activities = Activity.union(by_record[record_key(a)] for a in representatives)
+            formatted = self._format_activity_group(group['model'], group_activities)
+            group.update({key: formatted[key] for key in (
+                'total_count', 'today_count', 'overdue_count', 'planned_count', 'activity_ids',
+            )})

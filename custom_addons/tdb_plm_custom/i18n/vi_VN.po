@@ -301,7 +301,7 @@ msgid "Draft"
 msgstr "Bản thảo"
 
 #. module: plm
-# Trạng thái: Đã xác nhận
+# Trạng thái: Chờ duyệt
 #: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__confirmed
 #: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__confirmed
 #: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__confirmed
@@ -309,7 +309,7 @@ msgstr "Bản thảo"
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
 msgid "Confirmed"
-msgstr "Đã xác nhận"
+msgstr "Chờ duyệt"
 
 #. module: plm
 # Trạng thái: Đã ban hành
@@ -595,7 +595,7 @@ msgstr "Đang Check-out"
 #. module: plm
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 msgid "Confirmed"
-msgstr "Đã xác nhận"
+msgstr "Chờ duyệt"
 
 #. module: plm
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search

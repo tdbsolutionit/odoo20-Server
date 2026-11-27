@@ -41,7 +41,7 @@ function usePlmLiveRefresh(controller) {
                 && !focused.value;
             if (!idleSearch && focused?.closest(
                 ".o_action_manager input, .o_action_manager textarea, .o_action_manager select, " +
-                ".o_action_manager [contenteditable='true'], .modal"
+                ".o_action_manager [contenteditable='true']"
             )) {
                 return false;
             }
@@ -51,6 +51,13 @@ function usePlmLiveRefresh(controller) {
             return mounted && root === controller.model.root && !root.dirty;
         },
         async refresh() {
+            // Odoo reloads the parent before removing an action dialog.
+            // A concurrent model.load() can supersede that reload and leave
+            // the dialog waiting indefinitely, even after the server commits.
+            if (document.querySelector(".modal")) {
+                queue.request();
+                return;
+            }
             // Reuses the model configuration: domain, filters, grouping and
             // pager are retained. No page reload, save or discard is invoked.
             await controller.model.load();
