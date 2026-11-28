@@ -22,6 +22,8 @@ msgstr ""
 #. module: plm
 # Menu chính: Linh kiện
 #: model:ir.ui.menu,name:plm.plm_component_menu_view
+#: model_terms:ir.ui.view,arch_db:mrp.mrp_bom_form_view
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
 msgid "Components"
 msgstr ""
 
@@ -29,6 +31,10 @@ msgstr ""
 # Menu chính: Tài liệu
 #: model:ir.ui.menu,name:plm.ir_attachment_form
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_list
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_access_view_form
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
 msgid "Documents"
 msgstr ""
 
@@ -67,6 +73,9 @@ msgstr ""
 # Cấu hình: Quyền truy cập PLM
 #: model:ir.actions.act_window,name:plm.plm_access_action
 #: model:ir.ui.menu,name:plm.menu_plm_access
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__plm_access_id
+#: model:ir.model.fields,field_description:plm.field_product_document__plm_access_id
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
 msgid "PLM Access"
 msgstr ""
 
@@ -83,6 +92,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:plm.plm_action_finishing_form
 #: model:ir.ui.menu,name:plm.menu_finishing
 #: model_terms:ir.ui.view,arch_db:plm.plm_view_finishing_list
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_treatment_list
 msgid "Finishings"
 msgstr ""
 
@@ -114,6 +124,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:plm.plm_action_res_groups
 #: model:ir.ui.menu,name:plm.plm_groups
 #: model_terms:ir.ui.view,arch_db:plm.plm_view_groups_list
+#: model_terms:ir.ui.view,arch_db:plm.plm_access_view_form
 msgid "Groups"
 msgstr ""
 
@@ -136,6 +147,8 @@ msgstr ""
 # Cấu hình: Desktop Access Tokens
 #: model:ir.actions.act_window,name:tdb_plm_custom.action_plm_desktop_token
 #: model:ir.ui.menu,name:tdb_plm_custom.menu_plm_desktop_token
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
 msgid "Desktop Access Tokens"
 msgstr ""
 
@@ -185,18 +198,24 @@ msgstr ""
 #: model:ir.actions.act_window,name:plm.action_plm_component_base
 #: model:ir.actions.act_window,name:plm.action_plm_component_base_cad_form
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_tree
 msgid "Engineering Parts"
 msgstr ""
 
 #. module: tdb_plm_custom
 # Cột bảng: Hình ảnh
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.attachment_change_impact_report_template
+#: model_terms:ir.ui.view,arch_db:plm.product_change_impact_report_template
 msgid "Image"
 msgstr ""
 
 #. module: tdb_plm_custom
 # Cột bảng: Tên
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.attachment_change_impact_report_template
+#: model:ir.model.fields,field_description:plm.field_plm_access__name
+#: model_terms:ir.ui.view,arch_db:plm.product_change_impact_report_template
 msgid "Name"
 msgstr ""
 
@@ -205,6 +224,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_product_product__configuration_name
 #: model:ir.model.fields,field_description:plm.field_product_template__configuration_name
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__configuration
 msgid "Configuration Name"
 msgstr ""
 
@@ -213,6 +233,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_product_product__engineering_code
 #: model:ir.model.fields,field_description:plm.field_product_template__engineering_code
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_code
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_code
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_code
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
 msgid "Engineering Code"
 msgstr ""
 
@@ -229,6 +257,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__engineering_revision
+#: model_terms:ir.ui.view,arch_db:plm.attachment_change_impact_report_template
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__rel_doc_rev
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__rel_doc_rev
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__rel_doc_rev
+#: model:ir.model.fields,field_description:plm.field_stock_move__engineering_revision
+#: model_terms:ir.ui.view,arch_db:plm.mrp_bom_list_view_where
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_list_structure
+#: model_terms:ir.ui.view,arch_db:plm.product_change_impact_report_template
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__version
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
 msgid "Revision"
 msgstr ""
 
@@ -239,12 +282,22 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_state
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_state
 msgid "Engineering Status"
 msgstr ""
 
 #. module: tdb_plm_custom
 # Cột bảng: Mô tả
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__description
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__description
+#: model_terms:ir.ui.view,arch_db:plm.bom_structure_all
+#: model:ir.model.fields,field_description:plm.field_plm_finishing__description
+#: model:ir.model.fields,field_description:plm.field_plm_material__description
+#: model:ir.model.fields,field_description:plm.field_plm_treatment__description
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_grp_by_parent
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
 msgid "Description"
 msgstr ""
 
@@ -255,6 +308,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_writable
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_writable
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_writable
 msgid "Writable"
 msgstr ""
 
@@ -263,6 +318,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_product_product__engineering_material
 #: model:ir.model.fields,field_description:plm.field_product_template__engineering_material
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_product__engineering_material
 msgid "CAD Raw Material"
 msgstr ""
 
@@ -271,6 +327,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_product_product__engineering_surface
 #: model:ir.model.fields,field_description:plm.field_product_template__engineering_surface
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_product__engineering_surface
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_template__engineering_surface
 msgid "CAD Surface Finishing"
 msgstr ""
 
@@ -279,6 +337,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_product_product__linkeddocuments
 #: model:ir.model.fields,field_description:plm.field_product_template__linkeddocuments
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
 msgid "Linked Documents"
 msgstr ""
 
@@ -287,6 +347,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:plm.field_product_product__document_checkout_user_ids
 #: model:ir.model.fields,field_description:plm.field_product_template__document_checkout_user_ids
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_tree
 msgid "Checked-Out By"
 msgstr ""
 
@@ -297,6 +359,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__draft
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+#: model:ir.model.fields,field_description:plm.field_report_plmcomponent__count_component_draft
 msgid "Draft"
 msgstr ""
 
@@ -319,6 +382,9 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+#: model:ir.model.fields,field_description:plm.field_report_plmcomponent__count_component_released
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
 msgid "Released"
 msgstr ""
 
@@ -329,6 +395,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__undermodify
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+#: model:ir.model.fields,field_description:plm.field_report_plmcomponent__count_component_modified
 msgid "Under Modify"
 msgstr ""
 
@@ -340,6 +407,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+#: model:ir.model.fields,field_description:plm.field_report_plmcomponent__count_component_obsoleted
 msgid "Obsoleted"
 msgstr ""
 
@@ -349,6 +417,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
 msgid "Latest"
 msgstr ""
 
@@ -363,6 +432,7 @@ msgstr ""
 # Bộ lọc: Đã kiểm xuất (Attachment)
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
 msgid "Checked-Out"
 msgstr ""
 
@@ -422,6 +492,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__is_active
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+#: model:ir.model.fields.selection,name:tdb_plm_custom.selection__plm_desktop_token__state__active
 msgid "Active"
 msgstr ""
 
@@ -436,6 +507,8 @@ msgstr ""
 # Desktop Token: Nút khôi phục
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
 msgid "Restore"
 msgstr ""
 
@@ -448,6 +521,7 @@ msgstr ""
 #. module: tdb_plm_custom
 # Desktop Token: Đã thu hồi
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+#: model:ir.model.fields.selection,name:tdb_plm_custom.selection__plm_desktop_token__state__revoked
 msgid "Revoked"
 msgstr ""
 
@@ -455,4 +529,2581 @@ msgstr ""
 # Desktop Token: Kỹ sư
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
 msgid "Engineer"
+msgstr ""
+
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_base_component
+msgid "Search Engineering Components"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_document_files
+msgid "Search CAD Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_document_relations
+msgid "Search Document Relations"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_checkout
+msgid "Checked-Out Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_backupdoc
+msgid "Backup Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_cad_open
+msgid "Open CAD Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_cad_open_bck
+msgid "Open CAD Documents (Backup)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:tdb_plm_custom.menu_plm_desktop_token_top
+#: model:ir.ui.menu,name:tdb_plm_custom.menu_plm_desktop_token
+msgid "CAD Desktop Tokens"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_form_view
+msgid "Related BOM Line"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_form_view
+msgid "Related BOM Revisions"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_form_view
+#: model_terms:ir.ui.view,arch_db:plm.mrp_bom_list_view_where
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_list_structure
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_list_view
+#: model_terms:ir.ui.view,arch_db:plm.plm_mrp_bom_line_view_form
+msgid "Source Relation"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_form_view
+msgid "Info:"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_form_view
+msgid "Open Related Boms"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:mrp.mrp_bom_form_view
+msgid "Sub Assemblies"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields.selection,name:plm.selection__mrp_bom__type__normal
+#: model:ir.model.fields.selection,name:plm.selection__plm_bom_report_wizard__bom_type__normal
+msgid "Normal BoM"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__engineering_state
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__engineering_state
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__engineering_state
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__state
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__weight_net
+#: model_terms:ir.ui.view,arch_db:plm.bom_structure_all
+msgid "Weight"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__weight_net
+msgid "Weight Net"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__itemnum
+msgid "CAD Item Position"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__itemlbl
+msgid "CAD Item Position Label"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__hasChildBoms
+msgid "Has Children Boms"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:mrp.mrp_bom_form_view
+msgid "<span class=\"o_stat_text order-2\">Sub Assemblies</span>"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:mrp.mrp_bom_form_view
+msgid "<span class=\"o_stat_text order-2\">Components</span>"
+msgstr ""
+
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:mrp.mrp_bom_form_view
+msgid "<span>days</span>"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:mrp.field_mrp_bom__days_to_prepare_mo
+msgid "Days to prepare"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:mrp.field_mrp_bom__batch_size
+msgid "Batch Size Value"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:mrp.field_mrp_bom__enable_batch_size
+msgid "Batch Size"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:mrp_account.field_mrp_bom__extra_cost
+msgid "Extra Cost"
+msgstr ""
+
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "2D Drawings"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "2D Drawings (Layout Tree)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "3D Models"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "CAD Structure"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Link 2D Drawing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "PDF Printout"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__related_document_ids
+msgid "Related Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Revision History"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__create_date
+msgid "Saved At"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Upload PDF"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__parent_relation_ids
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__parent_relation_ids
+msgid "Where Used"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "2D Drawing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "Link 2D Drawing (Layout Tree)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Upload Technical PDF Printout"
+msgstr ""
+
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid ""
+"<span>Document Status: </span><span class=\"fw-bold\">No Key Holder</span>\n"
+"                        <span class=\"text-muted ms-2\">(Click 'Lock' on the toolbar to acquire Key)</span>"
+msgstr ""
+
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "PDF Printout (Printout Content)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "PDF Printout Name"
+msgstr ""
+
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.act_restore_all_documents
+msgid "Restore All Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.act_restore_document
+msgid "Restore Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.act_view_doc_related
+msgid "View Document Relations"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.action_plm_backupdoc
+msgid "Backup Data Set"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.action_plm_cad_open
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_list
+msgid "Plm Cad Open"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.action_plm_cad_open_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_form_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_list_bck
+msgid "Plm Cad Open Bck"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.action_plm_component_base
+#: model:ir.actions.act_window,name:plm.action_plm_component_base_cad_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Engineering Components"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.document_kanban_view
+msgid "Component has a save error"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.document_kanban_view
+msgid "Must be updated from CAD"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_date_deadline
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_date_deadline
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_exception_decoration
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_exception_decoration
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_ids
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_ids
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_state
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_state
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_summary
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_summary
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_type_id
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_type_id
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__activity_user_id
+#: model:ir.model.fields,field_description:plm.field_product_template__activity_user_id
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__checkout_user
+#: model:ir.model.fields,field_description:plm.field_product_document__checkout_user
+msgid "Checked-Out to"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__desc_modify
+#: model:ir.model.fields,field_description:plm.field_product_document__desc_modify
+#: model:ir.model.fields,field_description:plm.field_product_product__desc_modify
+msgid "Modification Description"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__document_rel_count
+#: model:ir.model.fields,field_description:plm.field_product_document__document_rel_count
+msgid "Document Rel Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__document_type
+#: model:ir.model.fields,field_description:plm.field_product_document__document_type
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__document_type
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__document_type
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "CAD Document Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_branch_parent_id
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_branch_parent_id
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_branch_parent_id
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_branch_parent_id
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_branch_parent_id
+msgid "Parent branch"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_branch_revision
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_branch_revision
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_branch_revision
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_branch_revision
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_branch_revision
+msgid "Engineering Branch index"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_branch_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_branch_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_branch_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_branch_revision_letter
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_branch_revision_letter
+msgid "Engineering Sub Revision letter"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_code_editable
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_code_editable
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_code_editable
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_code_editable
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_code_editable
+msgid "Engineering Code Editable"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_release_date
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_release_date
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_release_date
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_release_date
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_release_date
+msgid "Release date"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_release_user
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_release_user
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_release_user
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_release_user
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_release_user
+msgid "Release User"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_revision
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__engineering_revision
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__engineering_revision
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_product__engineering_revision
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_template__engineering_revision
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Engineering Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision_count
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__bom_revision_count
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_revision_count
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_revision_count
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_revision_count
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_revision_count
+msgid "Engineering Revision Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision_date
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_revision_date
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_revision_date
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_revision_date
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_revision_date
+msgid "Datetime Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_revision_letter
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_revision_letter
+msgid "Engineering Revision letter"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision_user
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_revision_user
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_revision_user
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_revision_user
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_revision_user
+msgid "User Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_state
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_state
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__engineering_state
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__engineering_state
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Engineering State"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_sub_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_sub_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_sub_revision_letter
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_sub_revision_letter
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_sub_revision_letter
+msgid "Sub revision path"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_workflow_date
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_workflow_date
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_workflow_date
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_workflow_date
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_workflow_date
+msgid "Workflow date"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_workflow_user
+#: model:ir.model.fields,field_description:plm.field_product_document__engineering_workflow_user
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_workflow_user
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_workflow_user
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__engineering_workflow_user
+msgid "Workflow User"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__first_source_path
+#: model:ir.model.fields,field_description:plm.field_product_document__first_source_path
+msgid "Source path of the first time save"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__has_error
+#: model:ir.model.fields,field_description:plm.field_product_document__has_error
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+msgid "Has Error"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__is_checkout
+#: model:ir.model.fields,field_description:plm.field_product_document__is_checkout
+msgid "Is Checked-Out"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__is_library
+#: model:ir.model.fields,field_description:plm.field_product_document__is_library
+msgid "Is Library file"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__is_linkedcomponents
+#: model:ir.model.fields,field_description:plm.field_product_document__is_linkedcomponents
+msgid "Is Linked Components"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__is_plm
+#: model:ir.model.fields,field_description:plm.field_product_document__is_plm
+msgid "Is A Plm Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__library_path
+#: model:ir.model.fields,field_description:plm.field_product_document__library_path
+msgid "File library path"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__linkedcomponents
+#: model:ir.model.fields,field_description:plm.field_product_document__linkedcomponents
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Linked Parts"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__message_attachment_count
+#: model:ir.model.fields,field_description:plm.field_product_template__message_attachment_count
+#: model:ir.model.fields,field_description:plm.field_revision_plm_mixin__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__must_update_from_cad
+#: model:ir.model.fields,field_description:plm.field_product_document__must_update_from_cad
+msgid "Must Update form CAD"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__preview
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__preview
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__preview
+#: model:ir.model.fields,field_description:plm.field_product_document__preview
+msgid "Preview Content"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__printout
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__printout
+#: model:ir.model.fields,field_description:plm.field_product_document__printout
+msgid "Printout Content"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__printout_name
+#: model:ir.model.fields,field_description:plm.field_product_document__printout_name
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__printout_name
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__printout_name
+msgid "Printout Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__raw
+#: model:ir.model.fields,field_description:plm.field_product_document__raw
+msgid "File Content (base64))"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__child_linked
+msgid "Child Linked Components"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__child_preview
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_form_view
+msgid "Child Preview"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__child_revision
+msgid "Child Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__child_state
+msgid "Child Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__child_type
+msgid "Child Document Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_access__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc_wizard__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_client__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_component_document_rel__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_description__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_finishing__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_material__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_temporary__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_temporary_message__create_uid
+#: model:ir.model.fields,field_description:plm.field_plm_treatment__create_uid
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_line__create_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_wizard__create_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__create_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__create_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_link_drawing_wizard__create_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__create_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_upload_printout_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__link_kind
+msgid "Kind of Link"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__parent_linked
+msgid "Parent Linked Components"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__parent_preview
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_form_view
+msgid "Parent Preview"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__parent_revision
+msgid "Parent Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__parent_state
+msgid "Parent Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__parent_type
+msgid "Parent Document Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_access__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc_wizard__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_client__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_component_document_rel__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_description__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_finishing__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_material__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_temporary__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_temporary_message__write_date
+#: model:ir.model.fields,field_description:plm.field_plm_treatment__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_line__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_wizard__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_link_drawing_wizard__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__write_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_upload_printout_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_ir_attachment_relation__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_access__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc_wizard__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_client__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_component_document_rel__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_description__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_finishing__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_material__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_temporary__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_temporary_message__write_uid
+#: model:ir.model.fields,field_description:plm.field_plm_treatment__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_line__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_wizard__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_link_drawing_wizard__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__write_uid
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_upload_printout_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__att_count
+msgid "Att Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__father_complete_ids
+#: model:ir.model.fields,field_description:plm.field_product_product__father_part_ids
+msgid "BoM Hierarchy"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__source_id
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__source_id
+msgid "engineering_code"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom__type
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__bom_type
+msgid "BoM Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__cutted_type
+msgid "Cutted Compute Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_mrp_bom_line__type
+msgid "Line BoM Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__child_ids
+msgid "Children"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc_wizard__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_client__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_component_document_rel__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_description__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_finishing__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_material__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_temporary__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_temporary_message__create_date
+#: model:ir.model.fields,field_description:plm.field_plm_treatment__create_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_line__create_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_bom_diff_wizard__create_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__create_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_link_drawing_wizard__create_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__create_date
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_upload_printout_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__create_group_ids
+msgid "Create groups"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__document_count
+msgid "Document Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__parent_id
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Parent"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__parent_path
+msgid "Parent Path"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__read_group_ids
+msgid "Read groups"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__unlink_group_ids
+msgid "Unlink groups"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_access__write_group_ids
+msgid "Write groups"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__document_name
+msgid "Stored Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__documentid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__document_id
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__document_id
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__documentid
+msgid "Related Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__existingfile
+msgid "Physical Document Location"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__orig_data_fstore
+msgid "Original FStore Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_backupdoc__userid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__userid
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__userid
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__userid
+msgid "Related User"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__available_bom_ids
+msgid "Available BoMs"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_bom_report_wizard__bom_id
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_list_structure
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Bill of Materials"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__dbThread
+msgid "Related Db Thread"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__hostname
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__hostname
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+msgid "Hostname"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__operation_type
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__operation_type
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Operation Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__plm_backup_doc_id
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__plm_backup_doc_id
+msgid "Backup Document Reference"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open__pws_path
+#: model:ir.model.fields,field_description:plm.field_plm_cad_open_bck__pws_path
+msgid "PWS Path"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__hostname
+msgid "hostname"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_checkout__hostpws
+msgid "PWS Directory"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__documement_name_version
+msgid "Document name and version"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__done
+msgid "This thread is done ?"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__error_message
+msgid "Error message"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_dbthread__threadCode
+msgid "Thread Code assigned automatically"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__description
+#: model:ir.model.fields,field_description:plm.field_product_product__std_description
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Standard Description"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__description_en
+msgid "Description English"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__fmt1
+msgid "Format Feature 1"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__fmt2
+msgid "Format Feature 2"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__fmt3
+msgid "Format Feature 3"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__fmtend
+msgid "Format Feature Composed"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__name
+msgid "Note to Description"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__umc1
+#: model:ir.model.fields,field_description:plm.field_product_product__std_umc1
+msgid "UM / Feature 1"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__umc2
+#: model:ir.model.fields,field_description:plm.field_product_product__std_umc2
+msgid "UM / Feature 2"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__umc3
+#: model:ir.model.fields,field_description:plm.field_product_product__std_umc3
+msgid "UM / Feature 3"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_description__unitab
+msgid "Normative Rule"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_finishing__name
+#: model:ir.model.fields,field_description:plm.field_plm_treatment__name
+msgid "Specification"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_material__name
+msgid "Designation"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_temporary__migrate_custom_lines
+msgid "Preserve custom BOM lines from previous Normal BOM revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_temporary__summarize
+msgid "Summarise Bom Lines if needed."
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_plm_temporary_message__name
+msgid "Bom Result"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_category__is_storable
+msgid "Track Inventory"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_category__kit_bom
+#: model:ir.model.fields,field_description:plm.field_product_product__kit_bom
+msgid "KIT Bom Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_treatment
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_treatment
+msgid "Cad Thermal Treatment"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__is_engcode_editable
+#: model:ir.model.fields,field_description:plm.field_product_template__is_engcode_editable
+msgid "Engineering Editable"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__linkeddocuments
+#: model:ir.model.fields,field_description:plm.field_product_template__linkeddocuments
+msgid "Linked Docs"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__sale_ok
+#: model:ir.model.fields,field_description:plm.field_product_template__sale_ok
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Can be Sold"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__tmp_material
+msgid "Raw Material"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__tmp_surface
+msgid "Surface Finishing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_product__tmp_treatment
+msgid "Thermal Treatment"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_material
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_template__engineering_material
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "CAD Material"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_template__kit_bom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_template__kit_bom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "KIT BoM Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_product_template__standard_price
+msgid "Cost"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:plm.field_report_ir_attachment_file__file_size
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__file_size_display
+msgid "File Size"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+msgid "Must Update from CAD"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+#: model_terms:ir.ui.view,arch_db:plm.view_mrp_bom_filter_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+msgid "Last Week"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Changed by"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+#: model_terms:ir.ui.view,arch_db:plm.view_mrp_bom_filter_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+msgid "Last Month"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+#: model_terms:ir.ui.view,arch_db:plm.view_mrp_bom_filter_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+msgid "Last Year"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Created in"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+msgid "Type Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Changed By Me"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Changed in"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.ir_attachment_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Create By Me"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_description
+msgid "Standard Descriptions"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_finishing
+msgid "Finishing / Surface"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_material
+msgid "Engineering Materials"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.menu_treatment
+msgid "Treatment / Heat Treatment"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.mrp_bom_list_view_where
+#: model_terms:ir.ui.view,arch_db:plm.plm_bom_list_structure
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Component Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_access_view_form
+msgid "Own"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_access_view_form
+msgid "Effective"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_access_view_search
+msgid "Company roots"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.plm_action_document_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "CAD Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.plm_action_normal_form
+msgid "Normal BoMs"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.actions.act_window,name:plm.plm_action_plm_dbthread
+msgid "DB Thread Action"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+msgid "Latest 7 Days"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__document_name
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Document Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+msgid "Creator"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+msgid "Create by Month"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_backupdoc_search
+msgid "Backup Document Set"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_cad_open_search_bck
+#: model_terms:ir.ui.view,arch_db:plm.plm_checkout_search
+msgid "Checked-Out Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:plm.view_product_client_workflow
+msgid "Correct Component"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Material / Surface / Treatment"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Category"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:plm.view_product_client_workflow
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Confirm Component"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+msgid "Standard Description Parameters"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.view_product_client_workflow
+msgid "Engineering Product"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:plm.view_product_client_workflow
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Release Component"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Technical Information"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Workflow"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_create_normal_bom
+msgid "Are you sure you want to create a new Normal Bom?"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_create_normal_bom
+#: model_terms:ir.ui.view,arch_db:plm.restore_all_documents_button_view
+#: model_terms:ir.ui.view,arch_db:plm.restore_document_button_view
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_bom_report_wizard_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_create_normal_bom
+msgid "Creation of Normal Bom"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_create_normal_bom
+msgid "Create Normal Bom"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_form_view
+msgid "Show Document Relation"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Latest Child"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Latest Parent"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Child Released"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Document Relation Kind"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Child"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Search on Document Relations"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_docbom_search
+msgid "Parent Released"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.plm_groups
+msgid "Engineering Groups"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_grp_by_parent
+msgid "Product line search"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_grp_by_parent
+msgid "Group By Parent"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.ui.menu,name:plm.plm_product_cad_search
+msgid "Search Product CAD"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_bom_report_wizard_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Print BoM"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Template"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+msgid "OdooPLM Information"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_product_product_normal_form_view_inherit
+msgid "Standard description parameters info"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_partner_form
+msgid "PLM Portal"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.product_change_impact_report_template
+#: model_terms:ir.ui.view,arch_db:plm.report_doc_bom
+#: model_terms:ir.ui.view,arch_db:plm.report_prod_bom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__file_name
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "File Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.product_template_form_view_plm_custom
+msgid "Engineering Information"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.restore_all_documents_button_view
+msgid "Restore All"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.restore_all_documents_button_view
+msgid "Restore Entire Document Tree"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.restore_document_button_view
+msgid "Restore Selected Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.restore_document_button_view
+msgid "Restore Entry"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__obsoleted
+msgid "Obsolete"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_client_workflow
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Release Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_client_workflow
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Confirm Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_client_workflow
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Attachments"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_client_workflow
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Correct Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "File Data:"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Attachments To"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Changes"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Eng. Document Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Creation"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Re Release"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Doc Structure"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__user_id
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "User"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Indexed Content"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Engineering revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Is a Plm Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Related To"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "History"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "PLM Infos:"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "Notes"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Un Release"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Attachment"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_mrp_bom_filter_inherit
+msgid "Source Relationship"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_mrp_bom_filter_inherit
+msgid "Variant Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_mrp_bom_filter_inherit
+msgid "Bom Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+msgid ""
+"If Normative Rule is defined, it will be added at the end of the "
+"description."
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+msgid "Normative reference"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+msgid "Technical feature label and formatting"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+msgid ""
+"Types of Feature Format: %s for Only Value / %s %s for Label Value / %s_%s "
+"for Label_Value / %s/%s for Label/Value"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+msgid ""
+"You can use Normalized features formatting, where the component description "
+"will be Standard Description + Format Feature Composed."
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_description
+msgid "Note to help selection"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_finishing
+msgid "Finishing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_material
+msgid "Material"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_settings
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Purchase"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_settings
+msgid "BOM"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:plm.view_plm_treatment
+msgid "Treatment"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__bom_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__bom_count
+msgid "BOM Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__child_document_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__child_document_count
+msgid "Child Documents Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__child_relation_ids
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__child_relation_ids
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Child Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__drawing_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__drawing_count
+msgid "2D Drawing Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__drawing_relation_ids
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__drawing_relation_ids
+msgid "2D Drawing Relations"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__has_drawing
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__has_drawing
+msgid "Has 2D Drawings"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__has_printout
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__has_printout
+msgid "Has PDF Printout"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__history_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__history_count
+msgid "Version Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__history_ids
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__history_ids
+msgid "Version History"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__is_checked_out_by_me
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__is_checked_out_by_me
+msgid "Checked-out by Me"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__is_key_holder
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__is_key_holder
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Holding Key"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__is_parent_frozen
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__is_parent_frozen
+msgid "Is Parent Frozen"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__key_holder_id
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__key_holder_id
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Key Holder"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__linked_product_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__linked_product_count
+msgid "Linked Products Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__linked_source_3d_ids
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__linked_source_3d_ids
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Source 3D Models"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__lock_state
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__lock_state
+msgid "Lock State"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__locked_hostname
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__locked_hostname
+msgid "Workstation"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__locked_user_id
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__locked_user_id
+msgid "Checked-out User"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__parent_document_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__parent_document_count
+msgid "Where Used Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__parent_released_name
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__parent_released_name
+msgid "Frozen Parent Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__preview_pdf_html
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__preview_pdf_html
+msgid "PDF Preview"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment__source_3d_count
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_product_document__source_3d_count
+msgid "Source 3D Models Count"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__cad_configuration
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "CAD Configuration"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__child_engineering_code
+msgid "Child Engineering Code"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__child_has_printout
+msgid "Has Child PDF Printout"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__child_key_holder_id
+msgid "Child Key Holder"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__child_lock_state
+msgid "Child Lock Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__parent_engineering_code
+msgid "Parent Engineering Code"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__parent_has_printout
+msgid "Has Parent PDF Printout"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__parent_key_holder_id
+msgid "Parent Key Holder"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_ir_attachment_relation__parent_lock_state
+msgid "Parent Lock Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_mrp_bom__code
+msgid "Reference"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_mrp_bom__product_qty
+msgid "Quantity"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__client_ip
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "IP Address"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__expires_at
+msgid "Expires At (180 days)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__is_current_user_admin
+msgid "Is Admin"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__is_revoked
+msgid "Manually Revoked"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__issued_at
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Issued At"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__last_used_date
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Last Used"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__machine_uuid
+msgid "Machine UUID"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__name
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Token Hash"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__session_id
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Session SID"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__datas
+msgid "File Content"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__description
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_form
+msgid "Change Notes"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__file_size
+msgid "File Size (Bytes)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_document_history__version_number
+msgid "Revision Number"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__current_key_holder_id
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Current Key Holder"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_transfer_key_wizard__is_admin
+msgid "Is Administrator"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_checkout_form_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Force Unlock"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+msgid "Component Description"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+msgid "Revision Date"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Revised By"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+msgid "Workflow By"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Draft Component"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Standard Description Attributes"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+msgid "Workflow Date"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+msgid "Release Date"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Released By"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_form_inherit_tdb
+msgid "Product Category"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Created by Me"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Modified by Me"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "CAD Surface"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Test Expiry"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Device & Engineer Information"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Validity & Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Renew 180 Days"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Technical Parameters & Session"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Restore Access"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "CAD Workstation Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Expires At"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Revoke"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "Search Workstation Tokens"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+#: model:ir.model.fields.selection,name:tdb_plm_custom.selection__plm_desktop_token__state__expired
+msgid "Expired"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "CAD Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Source 3D Model File Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "2D Drawing File Name (.slddrw)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "Download snapshot of this version"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Upload technical drawing PDF for this drawing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Child Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Unlock"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Lock Status"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Link a 2D drawing (.slddrw) with this 3D model"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Modification Reason"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Record Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Data Model"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Storage Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Parent Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Website"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Attached to"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Draft Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Where Used List"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Linked to"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Sync BOM to Production"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Is a PLM Document ?"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Upload technical printout PDF for this drawing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Unrelease Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Created By"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Open 3D Model"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Record ID"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Child Parts (References / Assemblies)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_form
+msgid "Audit Log"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Re-release Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_attachment_preview_modal
+msgid "Download PDF"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Lock"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Technical Description"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "Restore document to this version"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Last Updated By"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Workflow History"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Download technical drawing PDF file"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Referenced Documents"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "PLM INFORMATION"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Child Parts List"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "Download"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "CAD DOCUMENT FILE DATA"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Preview PDF"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Open 2D Drawing"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "File Content (base64)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Where Used (Parent Assemblies)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "Size"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Preview technical drawing PDF in popup window"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_form_inherit_tdb
+msgid "Workflow Approver"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "3D Preview"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Last Updated"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Created On"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Document Type"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+#: model:ir.model.fields.selection,name:tdb_plm_custom.selection__ir_attachment__lock_state__locked
+msgid "Locked (Key held)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+msgid "Latest Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+#: model:ir.model.fields.selection,name:tdb_plm_custom.selection__ir_attachment__lock_state__unlocked
+msgid "Unlocked"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "e.g. Spur Gear, Drive Shaft, Hex Bolt M8..."
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Revisions"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Linked Documents by Revision"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "ODOOPLM INFORMATION"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "General Information"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_product_product_normal_form_view_inherit_tdb
+msgid "Inventory"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_attachment_preview_modal
+msgid "Close"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_attachment_preview_modal
+msgid "Technical Drawing Preview"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_form
+msgid "CAD Document History Details"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_form
+msgid "Restore to this version"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_form
+msgid "Version Information"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_document_history_list
+msgid "CAD Document File History"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "2D Drawing to Link"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "Target 3D Model"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "3D Model Name"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "Drawing State"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_link_drawing_wizard_form
+msgid "Confirm Link"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "New Key Holder"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Enter reason for transfer or unlock (optional)..."
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Reason (Optional)"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Confirm"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Action"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Transfer & Force Unlock Key"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_transfer_key_wizard_form
+msgid "Technical Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Target Document"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Confirm Upload"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Technical PDF File"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Select PDF File"
+msgstr ""
+
+#. module: tdb_plm_custom
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.view_plm_upload_printout_wizard_form
+msgid "Saved File Name"
 msgstr ""
