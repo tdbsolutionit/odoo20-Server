@@ -1,0 +1,57 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    OmniaSolutions, ERP-PLM-CAD Open Source Solutions
+#    Copyright (C) 2011-2019 https://OmniaSolutions.website
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this prograIf not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+"""
+Created on Sep 7, 2019
+@author: mboscolo
+"""
+from odoo import fields, models, api
+import os
+
+
+class PlmConvertFormat(models.Model):
+    _name = "plm.convert.format"
+    _description = "Convert Format"
+    _order = "sequence ASC"
+
+    sequence = fields.Integer("Sequence", default="1")
+    name = fields.Char("Format Name", compute="_compute_name", store=True)
+    available = fields.Boolean("Available for conversion")
+    start_format = fields.Char("Start Format", required=True)
+    end_format = fields.Char("End Format", required=True)
+    cad_name = fields.Char("Cad Name", required=True)
+    server_id = fields.Many2one("plm.convert.servers", string="Server", required=True)
+
+    @api.depends('start_format', 'end_format')
+    def _compute_name(self):
+        for plm_convert_format in self:
+            plm_convert_format.name = f"[{plm_convert_format.cad_name}] {plm_convert_format.server_id.name or ''}  {plm_convert_format.end_format}"
+
+    def _register_hook(self):
+        super()._register_hook()
+        self._update_cad_ex_availability()
+
+    def _update_cad_ex_availability(self):
+        cad_ex_path = self.env['ir.config_parameter'].sudo().get_str('Cad Excange Cli')
+        is_cad_ex_available = bool(cad_ex_path and os.path.exists(cad_ex_path))
+
+        self.sudo().search([('cad_name', '=', 'CadExcange')]).write({
+            'available': is_cad_ex_available
+        })

@@ -1041,7 +1041,17 @@ class IrAttachment(models.Model):
             for doc in docs:
                 if doc.engineering_state not in ['draft', False]:
                     item['checkout'] = False
-                    item['err_msg'] = _("Unable to check-Out document %s that is in state %s") % (doc.name or doc.engineering_code, doc.engineering_state)
+                    item['err_msg'] = _(
+                        "Unable to check out %(document)s, revision %(revision)s (%(state)s).",
+                        document=doc.name or doc.engineering_code,
+                        revision=doc.engineering_revision,
+                        state=doc.engineering_state,
+                    )
+                    _logger.info(
+                        "CAD checkout blocked: code=%r requested_revision=%r matched_id=%s matched_revision=%s state=%s",
+                        eng_code, item.get('engineering_revision'), doc.id,
+                        doc.engineering_revision, doc.engineering_state,
+                    )
                     continue
 
                 isCheckoutByMe, _checkoutUser = doc.checkoutByMeWithUser()

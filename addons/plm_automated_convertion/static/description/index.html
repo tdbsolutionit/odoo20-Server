@@ -1,0 +1,147 @@
+<!-- The Apps store rewrites every <a> of a module description into a <span>, so a
+     link here looks clickable and does nothing: addresses are printed as text.
+     Inline styles, the bootstrap grid and the oe_ classes survive. The palette is
+     the company one: #CC0000 for the accents, #000000 for the outlines. -->
+<div class="container">
+    <div class="oe_styling_v8">
+        <div class="container p-3 mb-3">
+            <div class="container pt-0 px-4 pb-5">
+                <div class="row">
+                    <div class="col-12">
+                        <img src="cover.png" style="width:100%; height:auto"/>
+                    </div>
+                </div>
+
+<div class="row">
+                    <div class="col-12 px-4">
+                        <h2 class="font-weight-bold"
+                            style="font-family:'Montserrat', sans-serif !important; font-size:2rem; color:#CC0000">
+                            Overview
+                        </h2>
+                        <hr style="border: 2px solid #000000 !important; background-color: #000000 !important; width: 50px !important; margin-left: 0 !important; margin-top: 8px;">
+                        <h3 class="oe_slogan" style="text-align:left; color:#000000">
+                            Every drawing readable by everyone, without an engineer exporting it.
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 px-4">
+                        <p style="font-size:18px; text-align:justify">
+                            A native CAD file is useful to the three people who own a licence for
+                            that CAD. Everyone else &mdash; purchasing sending a drawing to a supplier,
+                            the shop floor reading a sheet, a customer asking for a model &mdash; needs
+                            a PDF, a STEP or a picture. So somebody in the technical office spends
+                            an afternoon exporting files by hand, and does it again after the next
+                            revision, and forgets one.
+                        </p>
+                        <p style="font-size:18px; text-align:justify">
+                            This module removes that afternoon. You describe once which format has
+                            to become which, and the conversion happens on its own, in the
+                            background, on the revision that is current.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:2rem">
+                    <div class="col-12 px-4">
+                        <h2 class="font-weight-bold"
+                            style="font-family:'Montserrat', sans-serif !important; font-size:2rem; color:#CC0000">
+                            What it does
+                        </h2>
+                        <hr style="border: 2px solid #000000 !important; background-color: #000000 !important; width: 50px !important; margin-left: 0 !important; margin-top: 8px;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 px-4">
+                        <h3 class="oe_slogan" style="color:#000000; text-align:left; font-size:1.3rem">Rules, not clicks</h3>
+                        <p style="font-size:18px; text-align:justify">
+                            A conversion rule says what turns into what &mdash; a starting format, a
+                            resulting format &mdash; and can be limited to a product category, so
+                            castings are treated differently from sheet metal. The name of the
+                            produced file follows a rule of yours, not a default.
+                        </p>
+                        <h3 class="oe_slogan" style="color:#000000; text-align:left; font-size:1.3rem">A queue you can look into</h3>
+                        <p style="font-size:18px; text-align:justify">
+                            Every conversion is a line in a queue, with its source document, the
+                            document it produced, its state and, when something goes wrong, the
+                            error. Nothing is lost silently, and a failed job can be sent back in.
+                        </p>
+                    </div>
+                    <div class="col-6 px-4">
+                        <h3 class="oe_slogan" style="color:#000000; text-align:left; font-size:1.3rem">Conversion servers</h3>
+                        <p style="font-size:18px; text-align:justify">
+                            The heavy work is delegated to the machines that own the CAD licences.
+                            Each server is declared with its address and its timeout, jobs are
+                            distributed to it, and a hung CAD process can be recovered instead of
+                            blocking the queue.
+                        </p>
+                        <h3 class="oe_slogan" style="color:#000000; text-align:left; font-size:1.3rem">It runs by itself</h3>
+                        <p style="font-size:18px; text-align:justify">
+                            A scheduled action empties the queue on its own, so the conversions
+                            happen at night and the results are there in the morning. They can also
+                            be triggered by hand on a selection of documents, when something is
+                            urgent.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:2rem">
+                    <div class="col-12 px-4">
+                        <h3 class="oe_slogan" style="color:#000000; text-align:left; font-size:1.3rem">The formats it produces</h3>
+                        <p style="font-size:18px; text-align:justify">
+                            <b>PDF</b> for the drawing that goes to a supplier, <b>STEP</b> for the
+                            model a customer can open in any CAD, <b>STL</b> and <b>3MF</b> for the
+                            web viewer and for printing, <b>DXF</b> for the 2D sheet, <b>PNG</b> for
+                            the preview that makes a product recognisable in a list. Formats beyond
+                            these are reached through a CAD exchange installation, when one is
+                            available on the conversion server.
+                        </p>
+                        <ul style="padding-left:0; list-style-type:none; margin:0">
+                            <li style="font-size:18px; color:#000000; margin:12px 0">
+                                <span style="color:#CC0000; font-weight:700">&#9642;</span>&nbsp;&nbsp;Conversion rules by format and by product category
+                            </li>
+                            <li style="font-size:18px; color:#000000; margin:12px 0">
+                                <span style="color:#CC0000; font-weight:700">&#9642;</span>&nbsp;&nbsp;A queue with states, results and errors, per document
+                            </li>
+                            <li style="font-size:18px; color:#000000; margin:12px 0">
+                                <span style="color:#CC0000; font-weight:700">&#9642;</span>&nbsp;&nbsp;Work distributed to the machines that hold the CAD licences
+                            </li>
+                            <li style="font-size:18px; color:#000000; margin:12px 0">
+                                <span style="color:#CC0000; font-weight:700">&#9642;</span>&nbsp;&nbsp;Scheduled overnight, or started by hand when it is urgent
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:2rem">
+                    <div class="col-12 px-4">
+                        <p style="font-size:18px; text-align:justify">
+                            Part of <b>OdooPLM</b>, the Product Lifecycle Management suite by
+                            OmniaSolutions. It requires the <b>plm</b> module and a few python
+                            packages for the local conversions &mdash; cadquery, ezdxf, matplotlib,
+                            numpy-stl and to-3mf &mdash; which the OdooPLM Docker image already
+                            carries. Released under AGPL-3.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="oe_centeralign" style="margin-top:24px">
+                    <div class="oe_spaced" style="display:inline-block; min-width:300px; margin:10px 12px; padding:14px 22px; border:2px solid #000000; border-radius:10px; text-align:center; vertical-align:top">
+                        <span style="font-size:15px; color:#000000">Try the whole suite with Docker</span><br/>
+                        <b style="font-size:17px; color:#CC0000">github.com/OmniaGit/DockerOdooPLM</b>
+                    </div>
+                    <div class="oe_spaced" style="display:inline-block; min-width:300px; margin:10px 12px; padding:14px 22px; border:2px solid #000000; border-radius:10px; text-align:center; vertical-align:top">
+                        <span style="font-size:15px; color:#000000">Website</span><br/>
+                        <b style="font-size:17px; color:#CC0000">odooplm.omniasolutions.website</b>
+                    </div>
+                    <div class="oe_spaced" style="display:inline-block; min-width:300px; margin:10px 12px; padding:14px 22px; border:2px solid #000000; border-radius:10px; text-align:center; vertical-align:top">
+                        <span style="font-size:15px; color:#000000">Contact us</span><br/>
+                        <b style="font-size:17px; color:#CC0000">www.omniasolutions.website/#contact</b>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

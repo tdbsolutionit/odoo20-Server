@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="document_review" model="ir.ui.view">
+      <field name="name">tdb.document_review</field><field name="model">ir.attachment</field>
+      <field name="inherit_id" ref="plm.view_attachment_form_plm_hinerit"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <field name="tdb_review_stage" invisible="1"/>
+          <field name="tdb_actor_level" invisible="1"/>
+          <field name="tdb_actor_owns_task" invisible="1"/>
+          <field name="tdb_needs_recovery" invisible="1"/>
+          <button name="action_tdb_recover_review" type="object" string="Recover Review"
+            groups="tdb_custom_plm.group_review_admin" invisible="not tdb_needs_recovery" class="oe_highlight"/>
+          <button name="action_tdb_approve_submit" type="object" string="Approve and Submit"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_forward_review" type="object" string="Submit to Level 3"
+            invisible="tdb_review_stage != 'forward' or not tdb_actor_owns_task" class="oe_highlight"/>
+          <button name="action_tdb_reject" type="object" string="Reject / Assign Redo"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage == 'forward' or not tdb_actor_owns_task or tdb_needs_recovery"/>
+          <button name="action_tdb_delegate_redo" type="object" string="Delegate Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level &lt; 2"/>
+          <button name="action_tdb_complete_redo" type="object" string="Complete / Return Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_complete_redo" type="object" string="Confirm Redo and Release"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level != 3" class="oe_highlight"/>
+        </xpath>
+        <xpath expr="//button[@name='action_confirm']" position="replace">
+          <button name="action_tdb_submit_review" type="object" string="Submit Review" class="oe_highlight"
+            groups="plm.group_plm_integration_user,!tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+          <button name="action_tdb_submit_review" type="object" string="Admin Confirm" class="oe_highlight"
+            groups="tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+        </xpath>
+        <xpath expr="//button[@name='action_release']" position="attributes">
+          <attribute name="string">Approve and Release</attribute>
+          <attribute name="groups">tdb_custom_plm.group_review_admin</attribute>
+          <attribute name="invisible">engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_needs_recovery</attribute>
+        </xpath>
+        <xpath expr="//button[@name='action_draft']" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </xpath>
+        <xpath expr="//field[@name='engineering_state']" position="attributes">
+          <attribute name="statusbar_visible">draft,confirmed,released,obsoleted</attribute>
+        </xpath>
+<xpath expr="//sheet" position="inside"><group string="Review and Redo">
+        <group>
+          <field name="tdb_reviewer_id"
+            readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"
+            invisible="tdb_review_stage == 'redo' or (tdb_actor_level == 3 and engineering_state == 'draft')"
+            options="{'no_create': True}"/>
+          <field name="tdb_review_deadline" readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"/>
+          <field name="tdb_review_stage"/>
+          <field name="tdb_redo_user_id" invisible="tdb_review_stage != 'redo'"/>
+        </group>
+        <group>
+          <field name="tdb_requester_id"/><field name="tdb_submitted_at"/>
+          <field name="tdb_task_activity_id"/>
+          <field name="tdb_admin_approved_by"/><field name="tdb_admin_approved_at"/>
+        </group>
+      </group></xpath>
+<xpath expr="//button[@name='action_un_release']" position="attributes"><attribute name="invisible">True</attribute></xpath>
+<xpath expr="//button[@name='action_un_release_release']" position="attributes"><attribute name="invisible">True</attribute></xpath>
+</field></record>
+<record id="document_cad_review" model="ir.ui.view">
+      <field name="name">tdb.document_cad_review</field><field name="model">ir.attachment</field>
+      <field name="inherit_id" ref="plm.view_attachment_client_workflow"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <field name="tdb_review_stage" invisible="1"/>
+          <field name="tdb_actor_level" invisible="1"/>
+          <field name="tdb_actor_owns_task" invisible="1"/>
+          <field name="tdb_needs_recovery" invisible="1"/>
+          <button name="action_tdb_recover_review" type="object" string="Recover Review"
+            groups="tdb_custom_plm.group_review_admin" invisible="not tdb_needs_recovery" class="oe_highlight"/>
+          <button name="action_tdb_approve_submit" type="object" string="Approve and Submit"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_forward_review" type="object" string="Submit to Level 3"
+            invisible="tdb_review_stage != 'forward' or not tdb_actor_owns_task" class="oe_highlight"/>
+          <button name="action_tdb_reject" type="object" string="Reject / Assign Redo"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage == 'forward' or not tdb_actor_owns_task or tdb_needs_recovery"/>
+          <button name="action_tdb_delegate_redo" type="object" string="Delegate Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level &lt; 2"/>
+          <button name="action_tdb_complete_redo" type="object" string="Complete / Return Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_complete_redo" type="object" string="Confirm Redo and Release"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level != 3" class="oe_highlight"/>
+        </xpath>
+        <xpath expr="//button[@name='action_confirm']" position="replace">
+          <button name="action_tdb_submit_review" type="object" string="Submit Review" class="oe_highlight"
+            groups="plm.group_plm_integration_user,!tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+          <button name="action_tdb_submit_review" type="object" string="Admin Confirm" class="oe_highlight"
+            groups="tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+        </xpath>
+        <xpath expr="//button[@name='action_release']" position="attributes">
+          <attribute name="string">Approve and Release</attribute>
+          <attribute name="groups">tdb_custom_plm.group_review_admin</attribute>
+          <attribute name="invisible">engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_needs_recovery</attribute>
+        </xpath>
+        <xpath expr="//button[@name='action_draft']" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </xpath>
+        <xpath expr="//field[@name='engineering_state']" position="attributes">
+          <attribute name="statusbar_visible">draft,confirmed,released,obsoleted</attribute>
+        </xpath>
+<xpath expr="//form" position="inside"><group string="Review and Redo">
+        <group>
+          <field name="tdb_reviewer_id"
+            readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"
+            invisible="tdb_review_stage == 'redo' or (tdb_actor_level == 3 and engineering_state == 'draft')"
+            options="{'no_create': True}"/>
+          <field name="tdb_review_deadline" readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"/>
+          <field name="tdb_review_stage"/>
+          <field name="tdb_redo_user_id" invisible="tdb_review_stage != 'redo'"/>
+        </group>
+        <group>
+          <field name="tdb_requester_id"/><field name="tdb_submitted_at"/>
+          <field name="tdb_task_activity_id"/>
+          <field name="tdb_admin_approved_by"/><field name="tdb_admin_approved_at"/>
+        </group>
+      </group></xpath>
+</field></record>
+<record id="component_review" model="ir.ui.view">
+      <field name="name">tdb.component_review</field><field name="model">product.product</field>
+      <field name="inherit_id" ref="plm.plm_product_product_normal_form_view_inherit"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <field name="tdb_review_stage" invisible="1"/>
+          <field name="tdb_actor_level" invisible="1"/>
+          <field name="tdb_actor_owns_task" invisible="1"/>
+          <field name="tdb_needs_recovery" invisible="1"/>
+          <button name="action_tdb_recover_review" type="object" string="Recover Review"
+            groups="tdb_custom_plm.group_review_admin" invisible="not tdb_needs_recovery" class="oe_highlight"/>
+          <button name="action_tdb_approve_submit" type="object" string="Approve and Submit"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_forward_review" type="object" string="Submit to Level 3"
+            invisible="tdb_review_stage != 'forward' or not tdb_actor_owns_task" class="oe_highlight"/>
+          <button name="action_tdb_reject" type="object" string="Reject / Assign Redo"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage == 'forward' or not tdb_actor_owns_task or tdb_needs_recovery"/>
+          <button name="action_tdb_delegate_redo" type="object" string="Delegate Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level &lt; 2"/>
+          <button name="action_tdb_complete_redo" type="object" string="Complete / Return Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_complete_redo" type="object" string="Confirm Redo and Release"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level != 3" class="oe_highlight"/>
+        </xpath>
+        <xpath expr="//button[@name='action_confirm']" position="replace">
+          <button name="action_tdb_submit_review" type="object" string="Submit Review" class="oe_highlight"
+            groups="plm.group_plm_integration_user,!tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+          <button name="action_tdb_submit_review" type="object" string="Admin Confirm" class="oe_highlight"
+            groups="tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+        </xpath>
+        <xpath expr="//button[@name='action_release']" position="attributes">
+          <attribute name="string">Approve and Release</attribute>
+          <attribute name="groups">tdb_custom_plm.group_review_admin</attribute>
+          <attribute name="invisible">engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_needs_recovery</attribute>
+        </xpath>
+        <xpath expr="//button[@name='action_draft']" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </xpath>
+        <xpath expr="//field[@name='engineering_state']" position="attributes">
+          <attribute name="statusbar_visible">draft,confirmed,released,obsoleted</attribute>
+        </xpath>
+<xpath expr="//sheet" position="inside"><group string="Review and Redo">
+        <group>
+          <field name="tdb_reviewer_id"
+            readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"
+            invisible="tdb_review_stage == 'redo' or (tdb_actor_level == 3 and engineering_state == 'draft')"
+            options="{'no_create': True}"/>
+          <field name="tdb_review_deadline" readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"/>
+          <field name="tdb_review_stage"/>
+          <field name="tdb_redo_user_id" invisible="tdb_review_stage != 'redo'"/>
+        </group>
+        <group>
+          <field name="tdb_requester_id"/><field name="tdb_submitted_at"/>
+          <field name="tdb_task_activity_id"/>
+          <field name="tdb_admin_approved_by"/><field name="tdb_admin_approved_at"/>
+        </group>
+      </group></xpath>
+</field></record>
+<record id="component_cad_review" model="ir.ui.view">
+      <field name="name">tdb.component_cad_review</field><field name="model">product.product</field>
+      <field name="inherit_id" ref="plm.plm_component_base_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <field name="tdb_review_stage" invisible="1"/>
+          <field name="tdb_actor_level" invisible="1"/>
+          <field name="tdb_actor_owns_task" invisible="1"/>
+          <field name="tdb_needs_recovery" invisible="1"/>
+          <button name="action_tdb_recover_review" type="object" string="Recover Review"
+            groups="tdb_custom_plm.group_review_admin" invisible="not tdb_needs_recovery" class="oe_highlight"/>
+          <button name="action_tdb_approve_submit" type="object" string="Approve and Submit"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_forward_review" type="object" string="Submit to Level 3"
+            invisible="tdb_review_stage != 'forward' or not tdb_actor_owns_task" class="oe_highlight"/>
+          <button name="action_tdb_reject" type="object" string="Reject / Assign Redo"
+            invisible="engineering_state != 'confirmed' or tdb_review_stage == 'forward' or not tdb_actor_owns_task or tdb_needs_recovery"/>
+          <button name="action_tdb_delegate_redo" type="object" string="Delegate Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level &lt; 2"/>
+          <button name="action_tdb_complete_redo" type="object" string="Complete / Return Redo"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level == 3 or tdb_needs_recovery"/>
+          <button name="action_tdb_complete_redo" type="object" string="Confirm Redo and Release"
+            invisible="tdb_review_stage != 'redo' or not tdb_actor_owns_task or tdb_actor_level != 3" class="oe_highlight"/>
+        </xpath>
+        <xpath expr="//button[@name='action_confirm']" position="replace">
+          <button name="action_tdb_submit_review" type="object" string="Submit Review" class="oe_highlight"
+            groups="plm.group_plm_integration_user,!tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+          <button name="action_tdb_submit_review" type="object" string="Admin Confirm" class="oe_highlight"
+            groups="tdb_custom_plm.group_review_admin"
+            invisible="engineering_state != 'draft' or tdb_review_stage == 'redo'"/>
+        </xpath>
+        <xpath expr="//button[@name='action_release']" position="attributes">
+          <attribute name="string">Approve and Release</attribute>
+          <attribute name="groups">tdb_custom_plm.group_review_admin</attribute>
+          <attribute name="invisible">engineering_state != 'confirmed' or tdb_review_stage != 'review' or not tdb_actor_owns_task or tdb_needs_recovery</attribute>
+        </xpath>
+        <xpath expr="//button[@name='action_draft']" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </xpath>
+        <xpath expr="//field[@name='engineering_state']" position="attributes">
+          <attribute name="statusbar_visible">draft,confirmed,released,obsoleted</attribute>
+        </xpath>
+<xpath expr="//sheet" position="inside"><group string="Review and Redo">
+        <group>
+          <field name="tdb_reviewer_id"
+            readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"
+            invisible="tdb_review_stage == 'redo' or (tdb_actor_level == 3 and engineering_state == 'draft')"
+            options="{'no_create': True}"/>
+          <field name="tdb_review_deadline" readonly="engineering_state != 'draft' and tdb_review_stage != 'forward'"/>
+          <field name="tdb_review_stage"/>
+          <field name="tdb_redo_user_id" invisible="tdb_review_stage != 'redo'"/>
+        </group>
+        <group>
+          <field name="tdb_requester_id"/><field name="tdb_submitted_at"/>
+          <field name="tdb_task_activity_id"/>
+          <field name="tdb_admin_approved_by"/><field name="tdb_admin_approved_at"/>
+        </group>
+      </group></xpath>
+</field></record>
+<record id="view_reject_wizard" model="ir.ui.view">
+  <field name="name">tdb.plm.reject.wizard.form</field><field name="model">tdb.plm.reject.wizard</field>
+  <field name="arch" type="xml"><form string="Reject / Assign Redo"><group>
+    <field name="target_model" invisible="1"/><field name="target_id" invisible="1"/>
+    <field name="reason"/><field name="assignee_id" options="{'no_create': True}"/>
+  </group><footer><button name="action_reject" type="object" string="Reject and Assign Redo" class="btn-primary"/>
+  <button special="cancel" string="Cancel"/></footer></form></field>
+</record>
+<record id="view_task_wizard" model="ir.ui.view">
+  <field name="name">tdb.plm.task.wizard.form</field><field name="model">tdb.plm.task.wizard</field>
+  <field name="arch" type="xml"><form string="Review / Redo Assignment"><group>
+    <field name="target_model" invisible="1"/><field name="target_id" invisible="1"/>
+    <field name="target_ids" invisible="1"/>
+    <field name="operation" readonly="1"/><field name="allowed_user_ids" invisible="1"/>
+    <field name="requester_id" invisible="operation != 'recover'"
+      required="operation == 'recover'" options="{'no_create': True}"/>
+    <field name="user_id" domain="[('id', 'in', allowed_user_ids)]" options="{'no_create': True}"/>
+    <field name="reason" invisible="operation == 'submit'" required="operation not in ['submit', 'forward', 'approve_forward']"/>
+    <field name="date_deadline"/>
+  </group><footer><button name="action_apply" type="object" string="Assign" class="btn-primary" invisible="operation in ['submit', 'approve_forward', 'reject']"/>
+  <button name="action_apply" type="object" string="Reject and Assign Redo" class="btn-primary" invisible="operation != 'reject'"/>
+  <button name="action_apply" type="object" string="Submit Review" class="btn-primary" invisible="operation != 'submit'"/>
+  <button name="action_apply" type="object" string="Approve and Submit" class="btn-primary" invisible="operation != 'approve_forward'"/>
+  <button special="cancel" string="Cancel"/></footer></form></field>
+</record></odoo>

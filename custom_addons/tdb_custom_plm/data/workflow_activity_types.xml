@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="activity_type_review" model="mail.activity.type">
+        <field name="name">PLM: Review requested</field>
+        <field name="category">default</field>
+    </record>
+    <record id="activity_type_forward" model="mail.activity.type">
+        <field name="name">PLM: Submit for final review</field>
+        <field name="category">default</field>
+    </record>
+    <record id="activity_type_redo" model="mail.activity.type">
+        <field name="name">PLM: Redo / verify returned work</field>
+        <field name="category">default</field>
+    </record>
+</odoo>

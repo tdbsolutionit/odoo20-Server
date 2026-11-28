@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.Activity" t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o-mail-Activity-markDone')]" position="attributes">
+            <attribute name="t-if">!this.activity().tdb_form_only_done</attribute>
+        </xpath>
+        <xpath expr="//button[hasclass('o-mail-Activity-edit')]" position="attributes">
+            <attribute name="t-if">this.activity().tdb_can_edit_plm_activity !== false</attribute>
+        </xpath>
+        <xpath expr="//button[hasclass('o-mail-Activity-assign')]" position="attributes">
+            <attribute name="t-if" add="this.activity().tdb_can_manage_plm_activity !== false" separator=" &amp;&amp; "/>
+        </xpath>
+    </t>
+    <t t-inherit="mail.Chatter" t-inherit-mode="extension">
+        <xpath expr="//Thread" position="replace">
+            <PlmTimelineThread t-else="" thread="this.state.thread" t-key="this.state.thread.localId"
+                order="'desc'" scrollRef="this.rootRef" jumpPresent="this.state.jumpThreadPresent"/>
+        </xpath>
+    </t>
+    <t t-name="tdb_custom_plm.PlmTimelineThread" t-inherit="mail.Thread" t-inherit-mode="primary">
+        <xpath expr="//t[@name='content']" position="attributes">
+            <attribute name="t-if" add="this.partCompletionMessages.length" separator=" or "/>
+        </xpath>
+        <xpath expr="//Message[@message='msg']" position="attributes">
+            <attribute name="thread">msg.thread or this.props.thread</attribute>
+            <attribute name="hasActions" add="msg.thread?.eq(this.props.thread)" separator=" &amp;&amp; "/>
+        </xpath>
+        <xpath expr="//NotificationMessage[@message='msg']" position="attributes">
+            <attribute name="thread">msg.thread or this.props.thread</attribute>
+        </xpath>
+    </t>
+</templates>
