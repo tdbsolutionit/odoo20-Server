@@ -9,6 +9,13 @@
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
                 <button
+                    name="action_preview_file"
+                    type="object"
+                    string="Xem trước"
+                    class="oe_highlight btn-primary"
+                    icon="fa-eye"
+                />
+                <button
                     name="action_restore_file"
                     type="object"
                     string="Khôi phục tệp tin"
@@ -25,6 +32,8 @@
                 />
             </xpath>
             <xpath expr="//sheet" position="inside">
+                <field name="can_download" invisible="1" />
+                <field name="can_manage_download" invisible="1" />
                 <field name="is_in_recycle_bin" invisible="1" />
                 <widget
                     name="web_ribbon"
@@ -33,8 +42,16 @@
                     invisible="not is_in_recycle_bin"
                 />
             </xpath>
-            <xpath expr="//field[@name='is_downloadable']" position="attributes">
-                <attribute name="invisible">is_in_recycle_bin</attribute>
+            <xpath expr="//field[@name='content']" position="attributes">
+                <attribute name="invisible">not can_download</attribute>
+            </xpath>
+            <xpath expr="//field[@name='content']" position="after">
+                <div class="text-danger fw-bold py-2" invisible="can_download">
+                    <i class="fa fa-lock me-1"/> Tệp tin này đã bị khóa tải về máy.
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='directory_id']" position="after">
+                <field name="is_downloadable" invisible="is_in_recycle_bin" readonly="not can_manage_download" />
             </xpath>
             <xpath expr="//page[@name='page_meta']" position="before">
                 <page name="page_recycle_bin" string="Thông tin xóa" invisible="not is_in_recycle_bin">
@@ -56,13 +73,24 @@
         <field name="model">dms.file</field>
         <field name="inherit_id" ref="dms.view_dms_file_tree" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='create_uid']" position="after">
+            <xpath expr="//field[@name='write_date']" position="after">
                 <field name="is_in_recycle_bin" column_invisible="True" />
+                <field name="can_download" column_invisible="True" />
+                <field name="can_manage_download" column_invisible="True" />
+                <field name="is_downloadable" column_invisible="True" />
                 <field name="deleted_uid" string="Người xóa" optional="show" widget="many2one_avatar_user" invisible="not is_in_recycle_bin" />
                 <field name="deleted_date" string="Thời gian xóa" optional="show" invisible="not is_in_recycle_bin" />
                 <field name="original_directory_id" string="Thư mục ban đầu" optional="show" invisible="not is_in_recycle_bin" />
             </xpath>
-            <xpath expr="//button[@name='action_preview_file']" position="before">
+            <xpath expr="//list" position="inside">
+                <button
+                    name="action_preview_file"
+                    type="object"
+                    string="Xem trước"
+                    icon="fa-eye"
+                    class="btn-primary"
+                    title="Xem trước tài liệu"
+                />
                 <button
                     name="action_restore_file"
                     type="object"
@@ -96,128 +124,179 @@
                 <field name="deleted_user_name" />
                 <field name="deleted_date" />
                 <field name="original_directory_id" />
+                <field name="can_download" />
+                <field name="can_manage_download" />
+                <field name="is_downloadable" />
             </xpath>
-            <xpath expr="//div[hasclass('text-secondary')]" position="after">
-                <div t-if="record.is_in_recycle_bin.raw_value" class="text-danger small d-flex align-items-center text-truncate mt-1" title="Người đã xóa">
-                    <i class="fa fa-trash-o me-1 text-danger" />
-                    <span>Đã xóa bởi: </span>
-                    <strong class="ms-1 text-truncate"><field name="deleted_user_name" /></strong>
-                </div>
-                <div t-if="record.is_in_recycle_bin.raw_value and record.original_directory_id.raw_value" class="text-muted small d-flex align-items-center text-truncate" title="Thư mục ban đầu">
-                    <i class="fa fa-folder-o me-1 text-muted" />
-                    <field name="original_directory_id" class="text-truncate" />
-                </div>
-            </xpath>
-            <!-- Thay thế hoàn toàn footer thẻ Kanban để sắp xếp thứ tự nút chuẩn và đẩy icon avatar sang góc phải -->
-            <xpath expr="//footer" position="replace">
-                <footer class="mt-auto pt-0 ms-1 d-flex align-items-center w-100">
-                    <!-- Nút Xem trước (luôn ở đầu bên trái) -->
-                    <a
-                        type="open"
-                        role="button"
-                        class="btn btn-sm btn-link p-0 text-primary text-decoration-none o_dms_preview_btn text-nowrap"
-                        title="Xem trước tài liệu"
-                    >
-                        <i class="fa fa-eye me-1"/>Xem trước
-                    </a>
+            <xpath expr="//main" position="replace">
+                <main>
+                    <div class="oe_kanban_content row g-0 w-100">
+                        <!-- Cột 1: Icon tài liệu - Nhấp vào gọi action_preview_file (mở Modal Popup) -->
+                        <div class="col-3 d-flex align-items-center justify-content-center p-1">
+                            <a
+                                type="object"
+                                name="action_preview_file"
+                                role="button"
+                                class="h-100 d-flex align-items-center justify-content-center cursor-pointer text-decoration-none"
+                                title="Xem trước tài liệu"
+                            >
+                                <img t-att-src="record.icon_url?.raw_value" style="height:65px; max-width:100%; object-fit: contain;" alt="Icon"/>
+                            </a>
+                        </div>
 
-                    <!-- KHI TRONG THÙNG RÁC: Hiện nút Khôi phục & Xóa vĩnh viễn (TUYỆT ĐỐI KHÔNG hiện nút Cho tải / Khóa tải) -->
-                    <t t-if="record.is_in_recycle_bin.raw_value">
-                        <button
-                            name="action_restore_file"
-                            type="object"
-                            class="btn btn-sm btn-outline-success p-0 px-2 ms-2 text-decoration-none text-nowrap"
-                            title="Khôi phục tệp tin về thư mục ban đầu"
-                        >
-                            <i class="fa fa-undo me-1"/>Khôi phục
-                        </button>
-                        <button
-                            name="action_permanent_delete"
-                            type="object"
-                            class="btn btn-sm btn-outline-danger p-0 px-2 ms-2 text-decoration-none text-nowrap"
-                            title="Xóa vĩnh viễn khỏi CSDL"
-                            confirm="Bạn có chắc muốn xóa vĩnh viễn tệp này?"
-                        >
-                            <i class="fa fa-trash me-1"/>Xóa vĩnh viễn
-                        </button>
-                    </t>
+                        <!-- Cột 2: Tên tài liệu & Thông tin -->
+                        <div class="col-9 ps-2 pe-1 d-flex flex-column justify-content-between">
+                            <div>
+                                <!-- Tên tài liệu: Nhấp vào gọi action_preview_file (mở Modal Popup) -->
+                                <a
+                                    type="object"
+                                    name="action_preview_file"
+                                    role="button"
+                                    class="fw-bold d-block text-truncate text-decoration-none text-dark cursor-pointer mb-1"
+                                    title="Xem trước tài liệu"
+                                >
+                                    <field name="name"/>
+                                </a>
+                                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                <div class="text-muted small">
+                                    <field name="write_date" options="{'show_time': false}"/>
+                                </div>
+                                <div t-if="record.is_in_recycle_bin?.raw_value" class="text-danger small d-flex align-items-center text-truncate mt-1" title="Người đã xóa">
+                                    <i class="fa fa-trash-o me-1 text-danger" />
+                                    <span>Đã xóa bởi: </span>
+                                    <strong class="ms-1 text-truncate"><field name="deleted_user_name" /></strong>
+                                </div>
+                                <div t-if="record.is_in_recycle_bin?.raw_value and record.original_directory_id?.raw_value" class="text-muted small d-flex align-items-center text-truncate" title="Thư mục ban đầu">
+                                    <i class="fa fa-folder-o me-1 text-muted" />
+                                    <field name="original_directory_id" class="text-truncate" />
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- KHI Ở PHÒNG BAN THƯỜNG: Hiện nút Cho tải / Khóa tải -->
-                    <t t-if="!record.is_in_recycle_bin.raw_value">
-                        <button
-                            name="action_toggle_downloadable"
-                            type="object"
-                            t-if="record.can_manage_download.raw_value and record.is_downloadable.raw_value"
-                            class="btn btn-sm btn-outline-success p-0 px-2 ms-2 text-decoration-none text-nowrap"
-                            title="Đang cho phép tải về. Nhấp để khóa tải về."
-                        >
-                            <i class="fa fa-check-circle me-1"/>Cho tải
-                        </button>
-                        <button
-                            name="action_toggle_downloadable"
-                            type="object"
-                            t-if="record.can_manage_download.raw_value and !record.is_downloadable.raw_value"
-                            class="btn btn-sm btn-outline-danger p-0 px-2 ms-2 text-decoration-none text-nowrap"
-                            title="Đang khóa tải về. Nhấp để cho phép tải về."
-                        >
-                            <i class="fa fa-lock me-1"/>Khóa tải
-                        </button>
-                        <span
-                            t-if="!record.can_manage_download.raw_value and record.is_downloadable.raw_value"
-                            class="badge text-bg-success ms-2 text-nowrap"
-                            title="Tệp này được phép tải về"
-                        >
-                            <i class="fa fa-check-circle me-1"/>Cho tải
-                        </span>
-                        <span
-                            t-if="!record.can_manage_download.raw_value and !record.is_downloadable.raw_value"
-                            class="badge text-bg-danger ms-2 text-nowrap"
-                            title="Tệp này bị khóa tải về"
-                        >
-                            <i class="fa fa-lock me-1"/>Khóa tải
-                        </span>
-                    </t>
+                        <!-- Footer: Nút Xem trước, Cho tải / Khóa tải, Avatar -->
+                        <footer class="mt-auto pt-2 ps-1 pe-1 d-flex align-items-center w-100">
+                            <!-- Nút Xem trước: Gọi action_preview_file (mở Modal Popup) -->
+                            <a
+                                type="object"
+                                name="action_preview_file"
+                                role="button"
+                                class="btn btn-sm btn-link p-0 text-primary text-decoration-none o_dms_preview_btn text-nowrap cursor-pointer"
+                                title="Xem trước tài liệu"
+                            >
+                                <i class="fa fa-eye me-1"/>Xem trước
+                            </a>
 
-                    <!-- Icon Avatar Admin / Người đăng tải: Luôn nằm ở góc bên phải ngoài cùng nhờ ms-auto -->
-                    <div class="d-flex ms-auto oe_kanban_bottom_right align-items-center justify-content-end">
-                        <span
-                            t-if="record.is_locked.raw_value"
-                            class="o_dms_file_kanban_lock me-1"
-                        >
-                            <i
-                                t-attf-class="fa #{(record.is_locked.raw_value and !record.is_lock_editor.raw_value) ? 'fa-lock' : ''} #{((record.is_locked.raw_value and record.is_lock_editor.raw_value)) ? 'fa-unlock-alt' : ''}"
-                                t-att-title="record.locked_by.value"
-                            />
-                        </span>
-                        <img
-                            t-attf-src="/web/image/res.users/#{record.create_uid.raw_value}/avatar_128"
-                            t-att-alt="record.create_uid.value"
-                            class="oe_kanban_avatar rounded-circle"
-                            width="22"
-                            height="22"
-                            style="width: 22px; height: 22px; object-fit: cover; aspect-ratio: 1/1;"
-                            t-att-title="record.create_uid.value"
-                        />
+                            <!-- KHI TRONG THÙNG RÁC: Hiện nút Khôi phục & Xóa vĩnh viễn -->
+                            <t t-if="record.is_in_recycle_bin?.raw_value">
+                                <button
+                                    name="action_restore_file"
+                                    type="object"
+                                    class="btn btn-sm btn-outline-success p-0 px-2 ms-2 text-decoration-none text-nowrap"
+                                    title="Khôi phục tệp tin về thư mục ban đầu"
+                                >
+                                    <i class="fa fa-undo me-1"/>Khôi phục
+                                </button>
+                                <button
+                                    name="action_permanent_delete"
+                                    type="object"
+                                    class="btn btn-sm btn-outline-danger p-0 px-2 ms-2 text-decoration-none text-nowrap"
+                                    title="Xóa vĩnh viễn khỏi CSDL"
+                                    confirm="Bạn có chắc muốn xóa vĩnh viễn tệp này?"
+                                >
+                                    <i class="fa fa-trash me-1"/>Xóa vĩnh viễn
+                                </button>
+                            </t>
+
+                            <!-- KHI Ở PHÒNG BAN THƯỜNG: Hiện nút Cho tải / Khóa tải -->
+                            <t t-if="!record.is_in_recycle_bin?.raw_value">
+                                <button
+                                    name="action_toggle_downloadable"
+                                    type="object"
+                                    t-if="record.can_manage_download?.raw_value and record.is_downloadable?.raw_value"
+                                    class="btn btn-sm btn-outline-success p-0 px-2 ms-2 text-decoration-none text-nowrap"
+                                    title="Đang cho phép tải về. Nhấp để khóa tải về."
+                                >
+                                    <i class="fa fa-check-circle me-1"/>Cho tải
+                                </button>
+                                <button
+                                    name="action_toggle_downloadable"
+                                    type="object"
+                                    t-if="record.can_manage_download?.raw_value and !record.is_downloadable?.raw_value"
+                                    class="btn btn-sm btn-outline-danger p-0 px-2 ms-2 text-decoration-none text-nowrap"
+                                    title="Đang khóa tải về. Nhấp để cho phép tải về."
+                                >
+                                    <i class="fa fa-lock me-1"/>Khóa tải
+                                </button>
+                                <span
+                                    t-if="!record.can_manage_download?.raw_value and record.is_downloadable?.raw_value"
+                                    class="badge text-bg-success ms-2 text-nowrap"
+                                    title="Tệp này được phép tải về"
+                                >
+                                    <i class="fa fa-check-circle me-1"/>Cho tải
+                                </span>
+                                <span
+                                    t-if="!record.can_manage_download?.raw_value and !record.is_downloadable?.raw_value"
+                                    class="badge text-bg-danger ms-2 text-nowrap"
+                                    title="Tệp này bị khóa tải về"
+                                >
+                                    <i class="fa fa-lock me-1"/>Khóa tải
+                                </span>
+                            </t>
+
+                            <!-- Icon Avatar Admin / Người đăng tải -->
+                            <div class="d-flex ms-auto oe_kanban_bottom_right align-items-center justify-content-end">
+                                <span
+                                    t-if="record.is_locked?.raw_value"
+                                    class="o_dms_file_kanban_lock me-1"
+                                >
+                                    <i
+                                        t-attf-class="fa #{(record.is_locked?.raw_value and !record.is_lock_editor?.raw_value) ? 'fa-lock' : ''} #{((record.is_locked?.raw_value and record.is_lock_editor?.raw_value)) ? 'fa-unlock-alt' : ''}"
+                                        t-att-title="record.locked_by?.value"
+                                    />
+                                </span>
+                                <img
+                                    t-attf-src="/web/image/res.users/#{record.create_uid?.raw_value}/avatar_128"
+                                    t-att-alt="record.create_uid?.value"
+                                    class="oe_kanban_avatar rounded-circle"
+                                    width="22"
+                                    height="22"
+                                    style="width: 22px; height: 22px; object-fit: cover; aspect-ratio: 1/1;"
+                                    t-att-title="record.create_uid?.value"
+                                />
+                            </div>
+                        </footer>
                     </div>
-                </footer>
+                </main>
             </xpath>
-            <xpath expr="//div[@name='card_menu_Operations']//div[a[@name='action_toggle_downloadable']][1]" position="attributes">
-                <attribute name="t-if">!record.is_in_recycle_bin.raw_value and record.can_manage_download.raw_value and record.is_downloadable.raw_value</attribute>
-            </xpath>
-            <xpath expr="//div[@name='card_menu_Operations']//div[a[@name='action_toggle_downloadable']][2]" position="attributes">
-                <attribute name="t-if">!record.is_in_recycle_bin.raw_value and record.can_manage_download.raw_value and !record.is_downloadable.raw_value</attribute>
-            </xpath>
-            <xpath expr="//div[@name='card_menu_Operations']//div[a[contains(@t-attf-href, '/download')]]" position="attributes">
-                <attribute name="t-if">!record.is_in_recycle_bin.raw_value and record.can_download.raw_value</attribute>
+            <xpath expr="//div[@name='card_menu_Operations']//div[a[contains(@t-attf-href, '/web/content')]]" position="attributes">
+                <attribute name="t-if">!record.is_in_recycle_bin?.raw_value and record.can_download?.raw_value</attribute>
             </xpath>
             <xpath expr="//div[@name='card_menu_Operations']" position="inside">
-                <div role="menuitem" t-if="record.is_in_recycle_bin.raw_value" class="text-nowrap mb-1">
+                <div role="menuitem" t-if="!record.is_in_recycle_bin?.raw_value and record.can_manage_download?.raw_value and record.is_downloadable?.raw_value" class="text-nowrap mb-1">
+                    <a name="action_toggle_downloadable" type="object" class="text-danger text-nowrap text-decoration-none">
+                        <i class="fa fa-lock me-1" />
+                        Khóa tải về
+                    </a>
+                </div>
+                <div role="menuitem" t-if="!record.is_in_recycle_bin?.raw_value and record.can_manage_download?.raw_value and !record.is_downloadable?.raw_value" class="text-nowrap mb-1">
+                    <a name="action_toggle_downloadable" type="object" class="text-success text-nowrap text-decoration-none">
+                        <i class="fa fa-unlock me-1" />
+                        Cho phép tải về
+                    </a>
+                </div>
+                <div role="menuitem" class="text-nowrap mb-1">
+                    <a name="action_preview_file" type="object" class="text-primary text-nowrap text-decoration-none">
+                        <i class="fa fa-eye me-1" />
+                        Xem trước tài liệu
+                    </a>
+                </div>
+                <div role="menuitem" t-if="record.is_in_recycle_bin?.raw_value" class="text-nowrap mb-1">
                     <a name="action_restore_file" type="object" class="text-success text-nowrap text-decoration-none">
                         <i class="fa fa-undo me-1" />
                         Khôi phục
                     </a>
                 </div>
-                <div role="menuitem" t-if="record.is_in_recycle_bin.raw_value" class="text-nowrap mb-1">
+                <div role="menuitem" t-if="record.is_in_recycle_bin?.raw_value" class="text-nowrap mb-1">
                     <a name="action_permanent_delete" type="object" class="text-danger text-nowrap text-decoration-none">
                         <i class="fa fa-trash me-1" />
                         Xóa vĩnh viễn
@@ -352,5 +431,31 @@
                 <filter name="group_deleted_date" string="Thời gian xóa" domain="[]" context="{'group_by':'deleted_date'}" />
             </xpath>
         </field>
+    </record>
+
+    <!-- POPUP XEM TRƯỚC TÀI LIỆU INTERACTIVE (EXCEL, WORD, PPT, PDF, IMAGE, VIDEO) -->
+    <record id="view_dms_file_preview_modal" model="ir.ui.view">
+        <field name="name">dms.file.preview.modal</field>
+        <field name="model">dms.file</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Xem trước tài liệu" class="o_dms_preview_box">
+                <field name="can_download" invisible="1"/>
+                <field name="preview_html" widget="html" nolabel="1" readonly="1" class="d-block w-100 m-0 p-0"/>
+                <footer>
+                    <button name="action_download_file" type="object" string="Tải về" class="btn-outline-primary" invisible="not can_download"/>
+                    <button string="Đóng" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- SERVER ACTION XEM TRƯỚC TÀI LIỆU TRONG MENU ACTION -->
+    <record id="action_dms_file_preview_server" model="ir.actions.server">
+        <field name="name">Xem trước tài liệu</field>
+        <field name="model_id" ref="dms.model_dms_file"/>
+        <field name="binding_model_id" ref="dms.model_dms_file"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_preview_file()</field>
     </record>
 </odoo>

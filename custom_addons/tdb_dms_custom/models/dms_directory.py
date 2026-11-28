@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
-from odoo.osv import expression
+try:
+    from odoo.orm.domains import Domain as expression
+except ImportError:
+    from odoo.osv import expression
 
 
 class DmsDirectory(models.Model):
@@ -13,6 +16,93 @@ class DmsDirectory(models.Model):
         index=True,
         help="Thư mục đặc biệt lưu trữ các tệp tin đã bị xóa, chỉ dành cho Sếp/Admin quản lý và khôi phục.",
     )
+    default_allow_download = fields.Boolean(
+        string="Mặc định cho phép tải về",
+        default=True,
+        help="Nếu bỏ chọn, mọi tệp tin tải lên thư mục này sẽ mặc định không cho phép nhân viên tải về máy.",
+    )
+    is_sharing = fields.Boolean(
+        string="Phòng ban Chia sẻ (Dùng chung)",
+        default=False,
+        compute="_compute_is_sharing",
+        store=True,
+        readonly=False,
+        recursive=True,
+        tracking=True,
+        help="Nếu bật, tất cả nhân viên trong công ty đều được xem thư mục này.",
+    )
+    available_leader_ids = fields.Many2many(
+        comodel_name="res.users",
+        compute="_compute_available_leader_ids",
+        string="Nhân viên thuộc phòng ban",
+        help="Danh sách nhân viên thuộc các nhóm truy cập của phòng ban này.",
+    )
+    leader_ids = fields.Many2many(
+        comodel_name="res.users",
+        relation="dms_directory_leader_rel",
+        column1="directory_id",
+        column2="user_id",
+        string="Trưởng phòng / Quản lý",
+        domain="[('id', 'in', available_leader_ids)]",
+        tracking=True,
+        help="Trưởng phòng hoặc người được Sếp/Admin giao quyền quản lý thư mục này.",
+    )
+    can_manage_directory = fields.Boolean(
+        string="Có quyền quản lý thư mục",
+        compute="_compute_can_manage_directory",
+        help="Xác định người dùng hiện tại có quyền quản lý cấu hình thư mục này hay không.",
+    )
+
+    @api.depends("parent_id.is_sharing")
+    def _compute_is_sharing(self):
+        for record in self:
+            if record.parent_id and getattr(record.parent_id, 'is_sharing', False):
+                record.is_sharing = True
+            elif not record.is_sharing:
+                record.is_sharing = False
+
+    def _is_sharing_directory(self):
+        curr = self.sudo()
+        while curr:
+            if getattr(curr, 'is_sharing', False):
+                return True
+            curr = curr.parent_id
+        return False
+
+    def _is_user_leader(self, user=None):
+        user = user or self.env.user
+        if not user:
+            return False
+        if user._is_superuser() or user.has_group("base.group_system"):
+            return True
+        curr = self.sudo()
+        user_id = user.id
+        while curr:
+            if user_id in curr.leader_ids.ids:
+                return True
+            curr = curr.parent_id
+        return False
+
+    @api.depends("leader_ids", "parent_id")
+    def _compute_available_leader_ids(self):
+        root_user = self.env.ref("base.user_root", raise_if_not_found=False)
+        root_id = root_user.id if root_user else 1
+        for record in self:
+            groups = getattr(record, 'complete_group_ids', False) or getattr(record, 'group_ids', False)
+            if groups:
+                users = groups.mapped("users")
+                if hasattr(groups, 'explicit_user_ids'):
+                    users = users | groups.mapped("explicit_user_ids")
+                record.available_leader_ids = users.filtered(lambda u: u.active and u.id != root_id)
+            else:
+                record.available_leader_ids = self.env["res.users"].search([("share", "=", False), ("id", "!=", root_id)])
+
+    @api.depends("leader_ids", "parent_id")
+    def _compute_can_manage_directory(self):
+        user = self.env.user
+        is_admin = user._is_superuser() or user.has_group("base.group_system")
+        for record in self:
+            record.can_manage_directory = is_admin or record._is_user_leader(user)
 
     @api.model
     def default_get(self, fields_list):

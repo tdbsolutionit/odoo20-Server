@@ -43,7 +43,7 @@ msgstr "Quan hệ linh kiện"
 #: model:ir.ui.menu,name:plm.menu_relation_normal
 #: model:ir.actions.act_window,name:plm.plm_action_normal_form
 msgid "Search on Normal Bill of Materials"
-msgstr "Tìm kiếm theo BOM tiêu chuẩn"
+msgstr "Tìm kiếm Định mức BOM"
 
 #. module: plm
 # View Where Used BOM
@@ -107,7 +107,7 @@ msgstr "Vật liệu chế tạo"
 #: model:ir.actions.act_window,name:plm.plm_action_plm_dbthread
 #: model:ir.ui.menu,name:plm.plm_dbthread_id
 msgid "DbThread"
-msgstr "Tiến trình CSDL (DbThread)"
+msgstr "Luồng CSDL (DbThread)"
 
 #. module: plm
 # Cấu hình: Nhóm quyền người dùng
@@ -130,14 +130,14 @@ msgstr "Tìm kiếm linh kiện CAD"
 #: model:ir.actions.act_window,name:plm.plm_action_settings_form
 #: model:ir.ui.menu,name:plm.plm_settings
 msgid "Settings"
-msgstr "Cài đặt"
+msgstr "Cấu hình & Cài đặt"
 
 #. module: tdb_plm_custom
 # Cấu hình: Desktop Access Tokens
 #: model:ir.actions.act_window,name:tdb_plm_custom.action_plm_desktop_token
 #: model:ir.ui.menu,name:tdb_plm_custom.menu_plm_desktop_token
 msgid "Desktop Access Tokens"
-msgstr "Desktop Access Tokens (Quản lý thiết bị CAD)"
+msgstr "Mã truy cập CAD Desktop"
 
 #. module: plm
 # Hồ sơ người dùng: Quyền truy cập PLM mặc định
@@ -220,7 +220,7 @@ msgstr "Mã kỹ thuật"
 # Cột bảng: Tham chiếu nội bộ
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 msgid "Internal Reference"
-msgstr "Tham chiếu nội bộ"
+msgstr "Mã nội bộ"
 
 #. module: plm
 # Cột bảng: Phiên bản kỹ thuật
@@ -256,7 +256,7 @@ msgstr "Mô tả"
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
 msgid "Writable"
-msgstr "Có thể chỉnh sửa"
+msgstr "Được phép sửa"
 
 #. module: plm
 # Cột bảng: Vật liệu CAD
@@ -272,7 +272,7 @@ msgstr "Vật liệu CAD"
 #: model:ir.model.fields,field_description:plm.field_product_template__engineering_surface
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 msgid "CAD Surface Finishing"
-msgstr "Bề mặt CAD"
+msgstr "Bề mặt hoàn thiện CAD"
 
 #. module: plm
 # Cột bảng: Tài liệu liên kết
@@ -288,7 +288,7 @@ msgstr "Tài liệu liên kết"
 #: model:ir.model.fields,field_description:plm.field_product_template__document_checkout_user_ids
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
 msgid "Checked-Out By"
-msgstr "Được kiểm xuất bởi"
+msgstr "Người Check-out"
 
 #. module: plm
 # Trạng thái: Bản thảo
@@ -364,7 +364,7 @@ msgstr "Đã kiểm xuất"
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
 #: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
 msgid "Checked-Out"
-msgstr "Đã kiểm xuất"
+msgstr "Đang Check-Out"
 
 #. module: tdb_plm_custom
 # Desktop Token: Kỹ sư CAD
@@ -423,14 +423,14 @@ msgstr "Lần truy cập cuối"
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
 msgid "Active"
-msgstr "Hiệu lực"
+msgstr "Đang hoạt động"
 
 #. module: tdb_plm_custom
 # Desktop Token: Nút thu hồi
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
 #: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
 msgid "Revoke Access"
-msgstr "Thu hồi quyền (Revoke)"
+msgstr "Thu hồi quyền truy cập"
 
 #. module: tdb_plm_custom
 # Desktop Token: Nút khôi phục
@@ -580,12 +580,12 @@ msgstr "Thông tin kỹ thuật"
 #. module: plm
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
 msgid "Material / Surface / Treatment"
-msgstr "Vật liệu / Bề mặt / Nhiệt luyện"
+msgstr "Vật liệu / Bề mặt / Xử lý nhiệt"
 
 #. module: plm
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
 msgid "Latest"
-msgstr "Mới nhất"
+msgstr "Mới nhất (Latest)"
 
 #. module: plm
 #: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
@@ -629,11 +629,11 @@ msgstr "Số phiên bản"
 
 #. module: tdb_plm_custom
 msgid "Child Documents"
-msgstr "File con"
+msgstr "Tài liệu con (Assembly)"
 
 #. module: tdb_plm_custom
 msgid "Where Used"
-msgstr "Nơi sử dụng"
+msgstr "Cụm máy cha (Where Used)"
 
 #. module: tdb_plm_custom
 msgid "Child Documents Count"
@@ -672,12 +672,20 @@ msgid "Transfer & Release Key Holder"
 msgstr "Chuyển giao & Thu hồi quyền giữ Key"
 
 #. module: tdb_plm_custom
-msgid "Transfer Check-in permission (Key Holder) to another engineer, or Force Unlock to release the document."
-msgstr "Chuyển giao quyền Check-in (giữ Key) cho kỹ sư khác hoặc Force Unlock (Thu hồi Key) để tài liệu trở về trạng thái tự do."
+msgid ""
+"Transfer Check-in permission (Key Holder) to another engineer, or Force "
+"Unlock to release the document."
+msgstr ""
+"Chuyển giao quyền Check-in (giữ Key) cho kỹ sư khác hoặc Force Unlock (Thu "
+"hồi Key) để tài liệu trở về trạng thái tự do."
 
 #. module: tdb_plm_custom
-msgid "Transfer Check-in permission (Key Holder) to another engineer, or Unlock to release the document."
-msgstr "Chuyển giao quyền Check-in (giữ Key) cho kỹ sư khác hoặc Unlock để tài liệu trở về trạng thái tự do."
+msgid ""
+"Transfer Check-in permission (Key Holder) to another engineer, or Unlock to "
+"release the document."
+msgstr ""
+"Chuyển giao quyền Check-in (giữ Key) cho kỹ sư khác hoặc Unlock để tài liệu "
+"trở về trạng thái tự do."
 
 #. module: tdb_plm_custom
 msgid "Document Information"
@@ -685,7 +693,7 @@ msgstr "Thông tin tài liệu"
 
 #. module: tdb_plm_custom
 msgid "Current Key Holder"
-msgstr "Kỹ sư đang giữ Key"
+msgstr "Người đang giữ Key"
 
 #. module: tdb_plm_custom
 msgid "Action Type"
@@ -701,7 +709,7 @@ msgstr "Giải phóng toàn bộ Check-out"
 
 #. module: tdb_plm_custom
 msgid "Reason (Optional)"
-msgstr "Lý do (Không bắt buộc)"
+msgstr "Lý do (Tùy chọn)"
 
 #. module: tdb_plm_custom
 msgid "Enter reason for transfer or unlock (optional)..."
@@ -741,7 +749,7 @@ msgstr "Check-in"
 
 #. module: tdb_plm_custom
 msgid "Undo Check-out"
-msgstr "Hủy Check-out"
+msgstr "Hủy Check-Out"
 
 #. module: tdb_plm_custom
 msgid "Are you sure you want to UNDO Check-out on this document?"
@@ -749,7 +757,7 @@ msgstr "Bạn có chắc chắn muốn HỦY Check-out tài liệu này không?"
 
 #. module: tdb_plm_custom
 msgid "Attachment"
-msgstr "Tài liệu đính kèm"
+msgstr "Tệp đính kèm"
 
 #. module: tdb_plm_custom
 msgid "File Data"
@@ -797,7 +805,7 @@ msgstr "Mô hình tài nguyên"
 
 #. module: tdb_plm_custom
 msgid "Workflow History"
-msgstr "Lịch sử luồng công việc"
+msgstr "Lịch sử quy trình"
 
 #. module: tdb_plm_custom
 msgid "Changes"
@@ -817,7 +825,7 @@ msgstr "Người duyệt kỹ thuật"
 
 #. module: tdb_plm_custom
 msgid "User"
-msgstr "Người thực hiện"
+msgstr "Người dùng"
 
 #. module: tdb_plm_custom
 msgid "Released By"
@@ -833,7 +841,7 @@ msgstr "Linh kiện liên kết"
 
 #. module: tdb_plm_custom
 msgid "Indexed Content"
-msgstr "Nội dung chỉ mục"
+msgstr "Nội dung trích xuất CAD"
 
 #. module: tdb_plm_custom
 msgid "Notes"
@@ -889,7 +897,7 @@ msgstr "Khôi phục"
 
 #. module: tdb_plm_custom
 msgid "Download"
-msgstr "Tải về"
+msgstr "Tải xuống"
 
 #. module: tdb_plm_custom
 msgid "Version Information"
@@ -923,3 +931,1616 @@ msgstr "Đã bị khóa (Có người giữ Key)"
 msgid "Unlocked (Free)"
 msgstr "Tự do (Chưa có ai giữ Key)"
 
+#. module: tdb_plm_custom
+msgid "Part Relations"
+msgstr "Quan hệ linh kiện"
+
+#. module: tdb_plm_custom
+msgid "Activities"
+msgstr "Hoạt động"
+
+#. module: tdb_plm_custom
+msgid "CAD Documents"
+msgstr "Tài liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "Engineering Components"
+msgstr "Linh kiện Kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "CAD Desktop Tokens"
+msgstr "Mã truy cập CAD"
+
+#. module: tdb_plm_custom
+msgid "3D Preview"
+msgstr "Hình ảnh 3D"
+
+#. module: tdb_plm_custom
+msgid "Component Name"
+msgstr "Tên linh kiện"
+
+#. module: tdb_plm_custom
+msgid "Document Name"
+msgstr "Tên tài liệu"
+
+#. module: tdb_plm_custom
+msgid "CAD Configuration"
+msgstr "Cấu hình CAD"
+
+#. module: tdb_plm_custom
+msgid "Engineering Revision"
+msgstr "Phiên bản (Revision)"
+
+#. module: tdb_plm_custom
+msgid "Engineering State"
+msgstr "Trạng thái kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "CAD Material"
+msgstr "Vật liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "CAD Surface"
+msgstr "Bề mặt CAD"
+
+#. module: tdb_plm_custom
+msgid "Last Year"
+msgstr "Năm trước"
+
+#. module: tdb_plm_custom
+msgid "Last Month"
+msgstr "Tháng trước"
+
+#. module: tdb_plm_custom
+msgid "Last Week"
+msgstr "Tuần trước"
+
+#. module: tdb_plm_custom
+msgid "Latest Revision"
+msgstr "Phiên bản mới nhất"
+
+#. module: tdb_plm_custom
+msgid "Created by Me"
+msgstr "Do tôi tạo"
+
+#. module: tdb_plm_custom
+msgid "Modified by Me"
+msgstr "Do tôi sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "Draft Component"
+msgstr "Sửa linh kiện (Bản thảo)"
+
+#. module: tdb_plm_custom
+msgid "Component Description"
+msgstr "Mô tả linh kiện"
+
+#. module: tdb_plm_custom
+msgid "Standard Description"
+msgstr "Mô tả kỹ thuật tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Standard Description Attributes"
+msgstr "Thông số mô tả tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Product Category"
+msgstr "Nhóm sản phẩm"
+
+#. module: tdb_plm_custom
+msgid "Workflow"
+msgstr "Quy trình làm việc (Workflow)"
+
+#. module: tdb_plm_custom
+msgid "Release Date"
+msgstr "Ngày ban hành"
+
+#. module: tdb_plm_custom
+msgid "Revised By"
+msgstr "Người sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "Revision Date"
+msgstr "Ngày sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "Workflow By"
+msgstr "Người thực hiện quy trình"
+
+#. module: tdb_plm_custom
+msgid "Workflow Date"
+msgstr "Ngày thực hiện quy trình"
+
+#. module: tdb_plm_custom
+msgid "Revisions"
+msgstr "Phiên bản (Revision)"
+
+#. module: tdb_plm_custom
+msgid "Template"
+msgstr "Mẫu linh kiện"
+
+#. module: tdb_plm_custom
+msgid "Print BoM"
+msgstr "In BOM"
+
+#. module: tdb_plm_custom
+msgid "Bill of Materials"
+msgstr "Định mức BOM"
+
+#. module: tdb_plm_custom
+msgid "e.g. Spur Gear, Drive Shaft, Hex Bolt M8..."
+msgstr "Ví dụ: Bánh răng trụ, Trục truyền động, Bu-lông M8..."
+
+#. module: tdb_plm_custom
+msgid "Can be Sold"
+msgstr "Có thể bán"
+
+#. module: tdb_plm_custom
+msgid "Purchase"
+msgstr "Có thể mua"
+
+#. module: tdb_plm_custom
+msgid "KIT BoM Type"
+msgstr "Bộ linh kiện (BOM KIT)"
+
+#. module: tdb_plm_custom
+msgid "ODOOPLM INFORMATION"
+msgstr "THÔNG TIN KỸ THUẬT PLM"
+
+#. module: tdb_plm_custom
+msgid "General Information"
+msgstr "Thông tin chung"
+
+#. module: tdb_plm_custom
+msgid "Inventory"
+msgstr "Kho vận"
+
+#. module: tdb_plm_custom
+msgid "Linked Documents by Revision"
+msgstr "Tài liệu liên kết theo phiên bản"
+
+#. module: tdb_plm_custom
+msgid "Created By"
+msgstr "Người tạo"
+
+#. module: tdb_plm_custom
+msgid "Created On"
+msgstr "Ngày tạo"
+
+#. module: tdb_plm_custom
+msgid "Last Updated By"
+msgstr "Người cập nhật"
+
+#. module: tdb_plm_custom
+msgid "Last Updated"
+msgstr "Cập nhật lần cuối"
+
+#. module: tdb_plm_custom
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: tdb_plm_custom
+msgid "Draft Document"
+msgstr "Sửa tài liệu (Bản thảo)"
+
+#. module: tdb_plm_custom
+msgid "Unrelease Document"
+msgstr "Hủy ban hành"
+
+#. module: tdb_plm_custom
+msgid "Re-release Document"
+msgstr "Ban hành lại"
+
+#. module: tdb_plm_custom
+msgid "Sync BOM to Production"
+msgstr "Đồng bộ BOM sang Sản xuất"
+
+#. module: tdb_plm_custom
+msgid "Lock Document"
+msgstr "Khóa tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Unlock Document"
+msgstr "Mở khóa tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Upload PDF"
+msgstr "Tải lên PDF"
+
+#. module: tdb_plm_custom
+msgid "Preview PDF"
+msgstr "Xem trước PDF"
+
+#. module: tdb_plm_custom
+msgid "Download PDF"
+msgstr "Tải file PDF"
+
+#. module: tdb_plm_custom
+msgid "Locked by Released Parent Assembly (Read-Only)"
+msgstr "Bị khóa bởi Cụm máy cha đã Ban hành (Chỉ đọc)"
+
+#. module: tdb_plm_custom
+msgid "Parent Assembly Released"
+msgstr "Cụm máy cha đã ban hành"
+
+#. module: tdb_plm_custom
+msgid "Released Document (Read-Only)"
+msgstr "Tài liệu đã Ban hành (Chỉ đọc)"
+
+#. module: tdb_plm_custom
+msgid "Holding Key"
+msgstr "Bạn đang giữ Key"
+
+#. module: tdb_plm_custom
+msgid "Reference Mode"
+msgstr "Chế độ tham chiếu"
+
+#. module: tdb_plm_custom
+msgid "No Key Holder"
+msgstr "Chưa có người giữ Key"
+
+#. module: tdb_plm_custom
+msgid "Waiting to Lock"
+msgstr "Đang chờ khóa"
+
+#. module: tdb_plm_custom
+msgid "Related Documents"
+msgstr "Tài liệu liên quan"
+
+#. module: tdb_plm_custom
+msgid "CAD Structure"
+msgstr "Cấu trúc CAD"
+
+#. module: tdb_plm_custom
+msgid "CAD Revision"
+msgstr "Phiên bản CAD"
+
+#. module: tdb_plm_custom
+msgid "CAD Revisions"
+msgstr "Phiên bản CAD"
+
+#. module: tdb_plm_custom
+msgid "Revision History"
+msgstr "Lịch sử phiên bản"
+
+#. module: tdb_plm_custom
+msgid "2D Drawings"
+msgstr "Bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "3D Models"
+msgstr "Mô hình 3D"
+
+#. module: tdb_plm_custom
+msgid "Document Engineering Code"
+msgstr "Mã kỹ thuật tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Is a PLM Document ?"
+msgstr "Tài liệu PLM"
+
+#. module: tdb_plm_custom
+msgid "CAD DOCUMENT FILE DATA"
+msgstr "DỮ LIỆU TỆP TÀI LIỆU CAD"
+
+#. module: tdb_plm_custom
+msgid "CAD Document Type"
+msgstr "Loại tài liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "Storage Type"
+msgstr "Kiểu lưu trữ"
+
+#. module: tdb_plm_custom
+msgid "PDF Printout (Printout Content)"
+msgstr "Bản in PDF (Printout Content)"
+
+#. module: tdb_plm_custom
+msgid "PDF Printout Name"
+msgstr "Tên file bản in PDF"
+
+#. module: tdb_plm_custom
+msgid "Linked to"
+msgstr "Liên kết tới"
+
+#. module: tdb_plm_custom
+msgid "Record ID"
+msgstr "ID bản ghi"
+
+#. module: tdb_plm_custom
+msgid "Attached to"
+msgstr "Đính kèm cho"
+
+#. module: tdb_plm_custom
+msgid "Record Name"
+msgstr "Tên bản ghi"
+
+#. module: tdb_plm_custom
+msgid "Data Model"
+msgstr "Mô hình dữ liệu"
+
+#. module: tdb_plm_custom
+msgid "Audit Log"
+msgstr "Nhật ký thay đổi"
+
+#. module: tdb_plm_custom
+msgid "Workflow Approver"
+msgstr "Người duyệt quy trình"
+
+#. module: tdb_plm_custom
+msgid "Technical Description"
+msgstr "Mô tả kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Saved At"
+msgstr "Thời điểm lưu"
+
+#. module: tdb_plm_custom
+msgid "2D Drawings (Layout Tree)"
+msgstr "Bản vẽ 2D (Layout Tree)"
+
+#. module: tdb_plm_custom
+msgid "Link 2D Drawing"
+msgstr "Thêm liên kết Bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "2D Drawing File Name (.slddrw)"
+msgstr "Tên file bản vẽ 2D (.slddrw)"
+
+#. module: tdb_plm_custom
+msgid "PDF Printout"
+msgstr "Bản in PDF"
+
+#. module: tdb_plm_custom
+msgid "Source 3D Models"
+msgstr "Mô hình 3D nguồn"
+
+#. module: tdb_plm_custom
+msgid "Source 3D Model File Name"
+msgstr "Tên file mô hình 3D"
+
+#. module: tdb_plm_custom
+msgid "Child Parts (References / Assemblies)"
+msgstr "Chi tiết con (Tham chiếu / Cụm lắp ráp)"
+
+#. module: tdb_plm_custom
+msgid "Child Parts List"
+msgstr "Danh sách chi tiết con"
+
+#. module: tdb_plm_custom
+msgid "Child Document"
+msgstr "Tài liệu con"
+
+#. module: tdb_plm_custom
+msgid "Lock Status"
+msgstr "Trạng thái khóa Key"
+
+#. module: tdb_plm_custom
+msgid "Where Used (Parent Assemblies)"
+msgstr "Cụm máy cha sử dụng (Where Used)"
+
+#. module: tdb_plm_custom
+msgid "Where Used List"
+msgstr "Danh sách Cụm máy cha sử dụng"
+
+#. module: tdb_plm_custom
+msgid "Parent Document"
+msgstr "Tài liệu cha"
+
+#. module: tdb_plm_custom
+msgid "Search Engineering Components"
+msgstr "Tìm kiếm Linh kiện Kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Search CAD Documents"
+msgstr "Tìm kiếm Tài liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "Search Document Relations"
+msgstr "Tìm kiếm Quan hệ Tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Checked-Out Documents"
+msgstr "Tài liệu đang Check-Out"
+
+#. module: tdb_plm_custom
+msgid "Backup Documents"
+msgstr "Tập dữ liệu Sao lưu (Backup)"
+
+#. module: tdb_plm_custom
+msgid "Open CAD Documents"
+msgstr "Tài liệu CAD đang mở"
+
+#. module: tdb_plm_custom
+msgid "Open CAD Documents (Backup)"
+msgstr "Tài liệu CAD mở dự phòng"
+
+#. module: tdb_plm_custom
+msgid "Standard Descriptions"
+msgstr "Mô tả Tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Finishing / Surface"
+msgstr "Độ nhám / Bề mặt"
+
+#. module: tdb_plm_custom
+msgid "Treatment / Heat Treatment"
+msgstr "Nhiệt luyện / Xử lý nhiệt"
+
+#. module: tdb_plm_custom
+msgid "Engineering Materials"
+msgstr "Vật liệu Kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Engineering Groups"
+msgstr "Nhóm Kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Search Product CAD"
+msgstr "Tìm kiếm CAD Sản phẩm"
+
+#. module: tdb_plm_custom
+msgid "IP Address"
+msgstr "Địa chỉ IP"
+
+#. module: tdb_plm_custom
+msgid "Issued At"
+msgstr "Thời điểm cấp"
+
+#. module: tdb_plm_custom
+msgid "Expires At"
+msgstr "Thời điểm hết hạn"
+
+#. module: tdb_plm_custom
+msgid "Expires At (180 days)"
+msgstr "Hạn chót (180 ngày)"
+
+#. module: tdb_plm_custom
+msgid "Last Used"
+msgstr "Lần dùng cuối"
+
+#. module: tdb_plm_custom
+msgid "Revoke"
+msgstr "Thu hồi"
+
+#. module: tdb_plm_custom
+msgid "Test Expiry"
+msgstr "Test Hết hạn"
+
+#. module: tdb_plm_custom
+msgid "Restore Access"
+msgstr "Khôi phục truy cập"
+
+#. module: tdb_plm_custom
+msgid "Renew 180 Days"
+msgstr "Gia hạn 180 ngày"
+
+#. module: tdb_plm_custom
+msgid "Expired"
+msgstr "Đã hết hạn"
+
+#. module: tdb_plm_custom
+msgid "Search Workstation Tokens"
+msgstr "Tìm kiếm Token máy trạm"
+
+#. module: tdb_plm_custom
+msgid "Technical Parameters & Session"
+msgstr "Thông số Kỹ thuật & Phiên làm việc"
+
+#. module: tdb_plm_custom
+msgid "Token Hash"
+msgstr "Mã băm Token (Hash)"
+
+#. module: tdb_plm_custom
+msgid "Session SID"
+msgstr "Mã phiên SID"
+
+#. module: tdb_plm_custom
+msgid "Device & Engineer Information"
+msgstr "Thông tin Thiết bị & Kỹ sư"
+
+#. module: tdb_plm_custom
+msgid "Validity & Status"
+msgstr "Hiệu lực & Trạng thái"
+
+#. module: tdb_plm_custom
+msgid "CAD Workstation Name"
+msgstr "Tên máy trạm CAD"
+
+#. module: tdb_plm_custom
+msgid "Transfer & Force Unlock Key"
+msgstr "Chuyển giao & Thu hồi Quyền giữ Key"
+
+#. module: tdb_plm_custom
+msgid "Technical Document"
+msgstr "Tài liệu kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Operation Type"
+msgstr "Loại tác vụ"
+
+#. module: tdb_plm_custom
+msgid "Action"
+msgstr "Tác vụ"
+
+#. module: tdb_plm_custom
+msgid "Release all Check-outs"
+msgstr "Hủy toàn bộ Check-out"
+
+#. module: tdb_plm_custom
+msgid "Target 3D Model"
+msgstr "Mô hình 3D đích"
+
+#. module: tdb_plm_custom
+msgid "3D Model Name"
+msgstr "Tên mô hình 3D"
+
+#. module: tdb_plm_custom
+msgid "2D Drawing to Link"
+msgstr "Bản vẽ 2D cần liên kết"
+
+#. module: tdb_plm_custom
+msgid "2D Drawing"
+msgstr "Bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "Drawing State"
+msgstr "Trạng thái bản vẽ"
+
+#. module: tdb_plm_custom
+msgid "Confirm Link"
+msgstr "Xác nhận liên kết"
+
+#. module: tdb_plm_custom
+msgid "Upload Technical PDF Printout"
+msgstr "Tải lên Bản in PDF Kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Target Document"
+msgstr "Tài liệu nhận file"
+
+#. module: tdb_plm_custom
+msgid "Technical PDF File"
+msgstr "Tệp PDF kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Select PDF File"
+msgstr "Chọn tệp PDF"
+
+#. module: tdb_plm_custom
+msgid "Saved File Name"
+msgstr "Tên tệp lưu trữ"
+
+#. module: tdb_plm_custom
+msgid "Confirm Upload"
+msgstr "Xác nhận tải lên"
+
+#. module: tdb_plm_custom
+msgid "Technical Drawing Preview"
+msgstr "Xem trước Bản vẽ kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Close"
+msgstr "Đóng"
+
+#. module: tdb_plm_custom
+msgid "CAD Document File History"
+msgstr "Lịch sử tệp tài liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "CAD Document History Details"
+msgstr "Chi tiết lịch sử tài liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "Restore to this version"
+msgstr "Khôi phục về phiên bản này"
+
+#. module: tdb_plm_custom
+msgid "Change Notes"
+msgstr "Ghi chú sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "Reference"
+msgstr "Mã định mức BOM"
+
+#. module: tdb_plm_custom
+msgid "Quantity"
+msgstr "Số lượng thành phẩm"
+
+#. module: tdb_plm_custom
+msgid "Desktop Access Tokens (Quản lý thiết bị CAD)"
+msgstr "Mã truy cập CAD"
+
+#. module: tdb_plm_custom
+msgid "Normal BoMs"
+msgstr "Định mức BOM tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Restore Document"
+msgstr "Khôi phục tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Restore All Documents"
+msgstr "Khôi phục tất cả tài liệu"
+
+#. module: tdb_plm_custom
+msgid "View Document Relations"
+msgstr "Xem quan hệ tài liệu"
+
+#. module: tdb_plm_custom
+msgid "DB Thread Action"
+msgstr "Luồng CSDL"
+
+#. module: tdb_plm_custom
+msgid "Part Number"
+msgstr "Mã kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Linked Docs"
+msgstr "Tài liệu liên kết"
+
+#. module: tdb_plm_custom
+msgid "Checked-out by Me"
+msgstr "Đang Check-out bởi tôi"
+
+#. module: tdb_plm_custom
+msgid "File Size"
+msgstr "Dung lượng file"
+
+#. module: tdb_plm_custom
+msgid "Version"
+msgstr "Phiên bản"
+
+#. module: tdb_plm_custom
+msgid "Lock State"
+msgstr "Trạng thái khóa"
+
+#. module: tdb_plm_custom
+msgid "Checked-out User"
+msgstr "Người Check-out"
+
+#. module: tdb_plm_custom
+msgid "Workstation"
+msgstr "Máy trạm"
+
+#. module: tdb_plm_custom
+msgid "Check-out Time"
+msgstr "Thời điểm Check-out"
+
+#. module: tdb_plm_custom
+msgid "2D Drawing Count"
+msgstr "Số bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "2D Drawing Relations"
+msgstr "Quan hệ bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "Has 2D Drawings"
+msgstr "Có bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "Source 3D Models Count"
+msgstr "Số mô hình 3D"
+
+#. module: tdb_plm_custom
+msgid "Has PDF Printout"
+msgstr "Có bản in PDF"
+
+#. module: tdb_plm_custom
+msgid "PDF Preview"
+msgstr "Xem trước PDF"
+
+#. module: tdb_plm_custom
+msgid "BOM"
+msgstr "Định mức BOM"
+
+#. module: tdb_plm_custom
+msgid "BOM Count"
+msgstr "Số định mức BOM"
+
+#. module: tdb_plm_custom
+msgid "Linked Products Count"
+msgstr "Số linh kiện liên kết"
+
+#. module: tdb_plm_custom
+msgid "Printout Name"
+msgstr "Tên bản in"
+
+#. module: tdb_plm_custom
+msgid "Frozen Parent Name"
+msgstr "Cụm cha đã ban hành"
+
+#. module: tdb_plm_custom
+msgid "Is Parent Frozen"
+msgstr "Cụm cha bị đóng băng"
+
+#. module: tdb_plm_custom
+msgid "Next Activity Deadline"
+msgstr "Hạn chót hoạt động"
+
+#. module: tdb_plm_custom
+msgid "Activity Exception Decoration"
+msgstr "Trang trí hoạt động ngoại lệ"
+
+#. module: tdb_plm_custom
+msgid "Activity State"
+msgstr "Trạng thái hoạt động"
+
+#. module: tdb_plm_custom
+msgid "Next Activity Summary"
+msgstr "Tóm tắt hoạt động"
+
+#. module: tdb_plm_custom
+msgid "Next Activity Type"
+msgstr "Loại hoạt động tiếp theo"
+
+#. module: tdb_plm_custom
+msgid "Responsible User"
+msgstr "Người chịu trách nhiệm"
+
+#. module: tdb_plm_custom
+msgid "Check-Out"
+msgstr "Check-Out"
+
+#. module: tdb_plm_custom
+msgid "Checked-Out to"
+msgstr "Đã Check-out cho"
+
+#. module: tdb_plm_custom
+msgid "Release date"
+msgstr "Ngày ban hành"
+
+#. module: tdb_plm_custom
+msgid "Release User"
+msgstr "Người ban hành"
+
+#. module: tdb_plm_custom
+msgid "Datetime Revision"
+msgstr "Thời điểm sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "Force Unlock (Thu hồi Key)"
+msgstr "Thu hồi Key"
+
+#. module: tdb_plm_custom
+msgid "Release"
+msgstr "Ban hành"
+
+#. module: tdb_plm_custom
+msgid "Transfer Key"
+msgstr "Chuyển giao Key"
+
+#. module: tdb_plm_custom
+msgid "Link"
+msgstr "Liên kết"
+
+#. module: tdb_plm_custom
+msgid "Obsolete"
+msgstr "Lỗi thời"
+
+#. module: tdb_plm_custom
+msgid "CAD File Information"
+msgstr "Thông tin tệp CAD"
+
+#. module: tdb_plm_custom
+msgid "PLM INFORMATION"
+msgstr "THÔNG TIN PLM"
+
+#. module: tdb_plm_custom
+msgid "FILE DATA"
+msgstr "DỮ LIỆU TỆP"
+
+#. module: tdb_plm_custom
+msgid "Latest (Released)"
+msgstr "Mới nhất (Đã ban hành)"
+
+#. module: tdb_plm_custom
+msgid "Draft State"
+msgstr "Bản thảo"
+
+#. module: tdb_plm_custom
+msgid "Confirmed State"
+msgstr "Đã xác nhận"
+
+#. module: tdb_plm_custom
+msgid "Released State"
+msgstr "Đã ban hành"
+
+#. module: tdb_plm_custom
+msgid "Under Modify State"
+msgstr "Đang sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "My Checked-Out"
+msgstr "Tài liệu tôi Check-out"
+
+#. module: tdb_plm_custom
+msgid "Parts / Components"
+msgstr "Linh kiện"
+
+#. module: tdb_plm_custom
+msgid "Assemblies"
+msgstr "Cụm chi tiết (Assembly)"
+
+#. module: tdb_plm_custom
+msgid "2D Drawings (SLDDRW)"
+msgstr "Bản vẽ 2D (SLDDRW)"
+
+#. module: tdb_plm_custom
+msgid "Manually Revoked"
+msgstr "Đã thu hồi thủ công"
+
+#. module: tdb_plm_custom
+msgid "Is Admin"
+msgstr "Quản trị viên"
+
+#. module: tdb_plm_custom
+msgid "KIT Bom Type"
+msgstr "Loại BoM Bộ (KIT)"
+
+#. module: tdb_plm_custom
+msgid "Product Type"
+msgstr "Loại sản phẩm"
+
+#. module: tdb_plm_custom
+msgid "Track Inventory"
+msgstr "Theo dõi tồn kho"
+
+#. module: tdb_plm_custom
+msgid "Sales Price"
+msgstr "Giá bán"
+
+#. module: tdb_plm_custom
+msgid "Sales Taxes"
+msgstr "Thuế bán lẻ"
+
+#. module: tdb_plm_custom
+msgid "Cost"
+msgstr "Chi phí"
+
+#. module: tdb_plm_custom
+msgid "Purchase Taxes"
+msgstr "Thuế mua hàng"
+
+#. module: tdb_plm_custom
+msgid "Category"
+msgstr "Nhóm sản phẩm"
+
+#. module: tdb_plm_custom
+msgid "Barcode"
+msgstr "Mã vạch"
+
+#. module: tdb_plm_custom
+msgid "Plm Cad Open Bck"
+msgstr "Mở tài liệu CAD (Sao lưu)"
+
+#. module: tdb_plm_custom
+msgid "Plm Cad Open"
+msgstr "Mở tài liệu CAD"
+
+#. module: tdb_plm_custom
+msgid "Backup Data Set"
+msgstr "Dữ liệu sao lưu"
+
+#. module: tdb_plm_custom
+msgid "Backup Document Set"
+msgstr "Bộ dữ liệu sao lưu"
+
+#. module: tdb_plm_custom
+msgid "Plm checkout"
+msgstr "Quản lý Check-out"
+
+#. module: tdb_plm_custom
+msgid "Documents in Check-Out"
+msgstr "Tài liệu đang Check-out"
+
+#. module: tdb_plm_custom
+msgid "Checked-Out Document"
+msgstr "Tài liệu đang Check-out"
+
+#. module: tdb_plm_custom
+msgid "Search on Document Relations"
+msgstr "Tìm kiếm quan hệ tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Related User"
+msgstr "Người dùng liên quan"
+
+#. module: tdb_plm_custom
+msgid "Related Document"
+msgstr "Tài liệu liên quan"
+
+#. module: tdb_plm_custom
+msgid "Related BOM Line"
+msgstr "Dòng định mức BOM liên quan"
+
+#. module: tdb_plm_custom
+msgid "Related BOM Revisions"
+msgstr "Các phiên bản BOM liên quan"
+
+#. module: tdb_plm_custom
+msgid "Related Db Thread"
+msgstr "Tiến trình CSDL liên quan"
+
+#. module: tdb_plm_custom
+msgid "Backup Document Reference"
+msgstr "Mã tham chiếu tài liệu sao lưu"
+
+#. module: tdb_plm_custom
+msgid "Created on"
+msgstr "Ngày tạo"
+
+#. module: tdb_plm_custom
+msgid "Created by"
+msgstr "Người tạo"
+
+#. module: tdb_plm_custom
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối"
+
+#. module: tdb_plm_custom
+msgid "Last Updated by"
+msgstr "Người cập nhật"
+
+#. module: tdb_plm_custom
+msgid "Hostname"
+msgstr "Tên máy trạm"
+
+#. module: tdb_plm_custom
+msgid "hostname"
+msgstr "Tên máy trạm"
+
+#. module: tdb_plm_custom
+msgid "Machine UUID"
+msgstr "UUID máy tính"
+
+#. module: tdb_plm_custom
+msgid "PWS Path"
+msgstr "Đường dẫn thư mục PWS"
+
+#. module: tdb_plm_custom
+msgid "PWS Directory"
+msgstr "Thư mục PWS"
+
+#. module: tdb_plm_custom
+msgid "Physical Document Location"
+msgstr "Đường dẫn tệp vật lý"
+
+#. module: tdb_plm_custom
+msgid "Original FStore Name"
+msgstr "Tên gốc trong FileStore"
+
+#. module: tdb_plm_custom
+msgid "Stored Name"
+msgstr "Tên lưu trữ"
+
+#. module: tdb_plm_custom
+msgid "Preview Content"
+msgstr "Nội dung xem trước"
+
+#. module: tdb_plm_custom
+msgid "Printout Content"
+msgstr "Nội dung bản in"
+
+#. module: tdb_plm_custom
+msgid "Has Child PDF Printout"
+msgstr "Có bản in PDF con"
+
+#. module: tdb_plm_custom
+msgid "Has Parent PDF Printout"
+msgstr "Có bản in PDF cha"
+
+#. module: tdb_plm_custom
+msgid "Checkout User"
+msgstr "Người Check-out"
+
+#. module: tdb_plm_custom
+msgid "CheckOut User"
+msgstr "Người Check-out"
+
+#. module: tdb_plm_custom
+msgid "Is Checked-Out"
+msgstr "Đang Check-out"
+
+#. module: tdb_plm_custom
+msgid "engineering_code"
+msgstr "Mã kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "File Size (Bytes)"
+msgstr "Dung lượng tệp (Bytes)"
+
+#. module: tdb_plm_custom
+msgid "File Content"
+msgstr "Nội dung tệp"
+
+#. module: tdb_plm_custom
+msgid "File Content (base64))"
+msgstr "Nội dung tệp (base64)"
+
+#. module: tdb_plm_custom
+msgid "Revision Number"
+msgstr "Số thứ tự phiên bản"
+
+#. module: tdb_plm_custom
+msgid "Effective"
+msgstr "Hiệu lực"
+
+#. module: tdb_plm_custom
+msgid "Is Administrator"
+msgstr "Là quản trị viên"
+
+#. module: tdb_plm_custom
+msgid "Child"
+msgstr "Chi tiết con"
+
+#. module: tdb_plm_custom
+msgid "Children"
+msgstr "Chi tiết con"
+
+#. module: tdb_plm_custom
+msgid "Child Actions"
+msgstr "Tác vụ chi tiết con"
+
+#. module: tdb_plm_custom
+msgid "Child Document Type"
+msgstr "Loại tài liệu con"
+
+#. module: tdb_plm_custom
+msgid "Child Linked Components"
+msgstr "Linh kiện liên kết con"
+
+#. module: tdb_plm_custom
+msgid "Child Preview"
+msgstr "Xem trước chi tiết con"
+
+#. module: tdb_plm_custom
+msgid "Child Revision"
+msgstr "Phiên bản con"
+
+#. module: tdb_plm_custom
+msgid "Child Status"
+msgstr "Trạng thái con"
+
+#. module: tdb_plm_custom
+msgid "Child Confirmed"
+msgstr "Chi tiết con đã xác nhận"
+
+#. module: tdb_plm_custom
+msgid "Child Released"
+msgstr "Chi tiết con đã ban hành"
+
+#. module: tdb_plm_custom
+msgid "Parent"
+msgstr "Cụm máy cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Document Type"
+msgstr "Loại tài liệu cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Linked Components"
+msgstr "Linh kiện liên kết cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Path"
+msgstr "Đường dẫn cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Preview"
+msgstr "Xem trước cụm cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Revision"
+msgstr "Phiên bản cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Status"
+msgstr "Trạng thái cha"
+
+#. module: tdb_plm_custom
+msgid "Parent Confirmed"
+msgstr "Cụm cha đã xác nhận"
+
+#. module: tdb_plm_custom
+msgid "Parent Released"
+msgstr "Cụm cha đã ban hành"
+
+#. module: tdb_plm_custom
+msgid "Parent branch"
+msgstr "Nhánh cha"
+
+#. module: tdb_plm_custom
+msgid "Group By Parent"
+msgstr "Nhóm theo cụm cha"
+
+#. module: tdb_plm_custom
+msgid "Kind of Link"
+msgstr "Loại liên kết"
+
+#. module: tdb_plm_custom
+msgid "Document Relation Kind"
+msgstr "Loại quan hệ tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Source Relation"
+msgstr "Quan hệ nguồn"
+
+#. module: tdb_plm_custom
+msgid "Source Relationship"
+msgstr "Mối quan hệ nguồn"
+
+#. module: tdb_plm_custom
+msgid "Show Document Relation"
+msgstr "Hiển thị quan hệ tài liệu"
+
+#. module: tdb_plm_custom
+msgid "BoM Hierarchy"
+msgstr "Cây cấu trúc BOM"
+
+#. module: tdb_plm_custom
+msgid "BoM Type"
+msgstr "Loại định mức BOM"
+
+#. module: tdb_plm_custom
+msgid "Available BoMs"
+msgstr "Định mức BOM hiện có"
+
+#. module: tdb_plm_custom
+msgid "Bom Name"
+msgstr "Tên định mức BOM"
+
+#. module: tdb_plm_custom
+msgid "Bom Result"
+msgstr "Kết quả BOM"
+
+#. module: tdb_plm_custom
+msgid "Create Normal Bom"
+msgstr "Tạo BOM tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Creation of Normal Bom"
+msgstr "Khởi tạo BOM tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Open Related Boms"
+msgstr "Mở các định mức BOM liên quan"
+
+#. module: tdb_plm_custom
+msgid "Number Related Boms"
+msgstr "Số lượng BOM liên quan"
+
+#. module: tdb_plm_custom
+msgid "Number Related Documents"
+msgstr "Số lượng tài liệu liên quan"
+
+#. module: tdb_plm_custom
+msgid "Preserve custom BOM lines from previous Normal BOM revision"
+msgstr "Giữ lại các dòng BOM tùy chỉnh từ phiên bản BOM tiêu chuẩn trước"
+
+#. module: tdb_plm_custom
+msgid "Summarise Bom Lines if needed."
+msgstr "Tổng hợp các dòng BOM nếu cần"
+
+#. module: tdb_plm_custom
+msgid "Line BoM Type"
+msgstr "Loại dòng BOM"
+
+#. module: tdb_plm_custom
+msgid "Continuous Production"
+msgstr "Sản xuất liên tục"
+
+#. module: tdb_plm_custom
+msgid "Cutted Compute Type"
+msgstr "Cách tính phôi cắt"
+
+#. module: tdb_plm_custom
+msgid "Custom Operation Dependencies"
+msgstr "Phụ thuộc công đoạn tùy biến"
+
+#. module: tdb_plm_custom
+msgid "Subassembly Count"
+msgstr "Số cụm lắp ráp con"
+
+#. module: tdb_plm_custom
+msgid "Component Count"
+msgstr "Số lượng linh kiện"
+
+#. module: tdb_plm_custom
+msgid "CAD Item Position"
+msgstr "Vị trí linh kiện trên CAD"
+
+#. module: tdb_plm_custom
+msgid "CAD Item Position Label"
+msgstr "Nhãn vị trí linh kiện trên CAD"
+
+#. module: tdb_plm_custom
+msgid "Must Update from CAD"
+msgstr "Cần cập nhật từ CAD"
+
+#. module: tdb_plm_custom
+msgid "Must be updated from CAD"
+msgstr "Phải được cập nhật từ CAD"
+
+#. module: tdb_plm_custom
+msgid "Must Update form CAD"
+msgstr "Cần cập nhật từ CAD"
+
+#. module: tdb_plm_custom
+msgid "Material"
+msgstr "Vật liệu"
+
+#. module: tdb_plm_custom
+msgid "Raw Material"
+msgstr "Vật liệu thô"
+
+#. module: tdb_plm_custom
+msgid "Finishing"
+msgstr "Hoàn thiện"
+
+#. module: tdb_plm_custom
+msgid "Surface Finishing"
+msgstr "Hoàn thiện bề mặt"
+
+#. module: tdb_plm_custom
+msgid "Treatment"
+msgstr "Xử lý"
+
+#. module: tdb_plm_custom
+msgid "Thermal Treatment"
+msgstr "Xử lý nhiệt"
+
+#. module: tdb_plm_custom
+msgid "Cad Thermal Treatment"
+msgstr "Xử lý nhiệt CAD"
+
+#. module: tdb_plm_custom
+msgid "Specification"
+msgstr "Quy cách / Đặc tả"
+
+#. module: tdb_plm_custom
+msgid "Designation"
+msgstr "Ký hiệu / Mác vật liệu"
+
+#. module: tdb_plm_custom
+msgid "Description English"
+msgstr "Mô tả Tiếng Anh"
+
+#. module: tdb_plm_custom
+msgid "Note to Description"
+msgstr "Ghi chú mô tả"
+
+#. module: tdb_plm_custom
+msgid "Normative Rule"
+msgstr "Quy chuẩn / Tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Normative reference"
+msgstr "Tham chiếu quy chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Standard description parameters info"
+msgstr "Thông tin tham số mô tả tiêu chuẩn"
+
+#. module: tdb_plm_custom
+msgid "Technical feature label and formatting"
+msgstr "Nhãn đặc tính kỹ thuật & định dạng"
+
+#. module: tdb_plm_custom
+msgid "Format Feature 1"
+msgstr "Đặc tính định dạng 1"
+
+#. module: tdb_plm_custom
+msgid "Format Feature 2"
+msgstr "Đặc tính định dạng 2"
+
+#. module: tdb_plm_custom
+msgid "Format Feature 3"
+msgstr "Đặc tính định dạng 3"
+
+#. module: tdb_plm_custom
+msgid "Format Feature Composed"
+msgstr "Đặc tính định dạng tổng hợp"
+
+#. module: tdb_plm_custom
+msgid "UM / Feature 1"
+msgstr "ĐVT / Đặc tính 1"
+
+#. module: tdb_plm_custom
+msgid "UM / Feature 2"
+msgstr "ĐVT / Đặc tính 2"
+
+#. module: tdb_plm_custom
+msgid "UM / Feature 3"
+msgstr "ĐVT / Đặc tính 3"
+
+#. module: tdb_plm_custom
+msgid "Open 2D Drawing"
+msgstr "Mở bản vẽ 2D"
+
+#. module: tdb_plm_custom
+msgid "Open 3D Model"
+msgstr "Mở mô hình 3D"
+
+#. module: tdb_plm_custom
+msgid "Restore All"
+msgstr "Khôi phục tất cả"
+
+#. module: tdb_plm_custom
+msgid "Restore Entry"
+msgstr "Khôi phục mục"
+
+#. module: tdb_plm_custom
+msgid "Restore Entire Document Tree"
+msgstr "Khôi phục toàn bộ cây tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Restore Selected Document"
+msgstr "Khôi phục tài liệu đã chọn"
+
+#. module: tdb_plm_custom
+msgid "Restore document to this version"
+msgstr "Khôi phục tài liệu về phiên bản này"
+
+#. module: tdb_plm_custom
+msgid "Engineering Information"
+msgstr "Thông tin kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Attachments"
+msgstr "Tệp đính kèm"
+
+#. module: tdb_plm_custom
+msgid "OdooPLM Information"
+msgstr "Thông tin Odoo PLM"
+
+#. module: tdb_plm_custom
+msgid "PLM Portal"
+msgstr "Cổng thông tin PLM"
+
+#. module: tdb_plm_custom
+msgid "Are you sure you want to create a new Normal Bom?"
+msgstr "Bạn có chắc chắn muốn tạo một Định mức BOM tiêu chuẩn mới không?"
+
+#. module: tdb_plm_custom
+msgid "Download snapshot of this version"
+msgstr "Tải về bản chụp phiên bản này"
+
+#. module: tdb_plm_custom
+msgid "Download technical drawing PDF file"
+msgstr "Tải tệp PDF bản vẽ kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Preview technical drawing PDF in popup window"
+msgstr "Xem trước bản vẽ kỹ thuật PDF trong cửa sổ popup"
+
+#. module: tdb_plm_custom
+msgid "Upload technical drawing PDF for this drawing"
+msgstr "Tải lên tệp PDF bản vẽ kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Upload technical printout PDF for this drawing"
+msgstr "Tải lên bản in PDF kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Link a 2D drawing (.slddrw) with this 3D model"
+msgstr "Liên kết bản vẽ 2D (.slddrw) với mô hình 3D này"
+
+#. module: tdb_plm_custom
+msgid "Locked (Key held)"
+msgstr "Đã khóa (Đang giữ Key)"
+
+#. module: tdb_plm_custom
+msgid "Unlocked"
+msgstr "Đang mở khóa"
+
+#. module: tdb_plm_custom
+msgid "Changed By Me"
+msgstr "Sửa bởi tôi"
+
+#. module: tdb_plm_custom
+msgid "Changed by"
+msgstr "Người sửa"
+
+#. module: tdb_plm_custom
+msgid "Changed in"
+msgstr "Sửa tại"
+
+#. module: tdb_plm_custom
+msgid "Create By Me"
+msgstr "Tạo bởi tôi"
+
+#. module: tdb_plm_custom
+msgid "Create by Month"
+msgstr "Tạo theo tháng"
+
+#. module: tdb_plm_custom
+msgid "Created in"
+msgstr "Tạo tại"
+
+#. module: tdb_plm_custom
+msgid "Creator"
+msgstr "Người tạo"
+
+#. module: tdb_plm_custom
+msgid "Latest 7 Days"
+msgstr "7 ngày gần nhất"
+
+#. module: tdb_plm_custom
+msgid "Latest Child"
+msgstr "Chi tiết con mới nhất"
+
+#. module: tdb_plm_custom
+msgid "Latest Parent"
+msgstr "Cụm cha mới nhất"
+
+#. module: tdb_plm_custom
+msgid "Has Error"
+msgstr "Có lỗi"
+
+#. module: tdb_plm_custom
+msgid "Component has a save error"
+msgstr "Linh kiện gặp lỗi lưu"
+
+#. module: tdb_plm_custom
+msgid "Product line search"
+msgstr "Tìm kiếm dòng sản phẩm"
+
+#. module: tdb_plm_custom
+msgid "Own"
+msgstr "Của tôi"
+
+#. module: tdb_plm_custom
+msgid "Company roots"
+msgstr "Công ty gốc"
+
+#. module: tdb_plm_custom
+msgid "Note to help selection"
+msgstr "Ghi chú hướng dẫn chọn"
+
+#. module: tdb_plm_custom
+msgid "Engineering Product"
+msgstr "Sản phẩm kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Type Document"
+msgstr "Loại tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Variant Name"
+msgstr "Tên biến thể"
+
+#. module: tdb_plm_custom
+msgid ""
+"Types of Feature Format: %s for Only Value / %s %s for Label Value / %s_%s "
+"for Label_Value / %s/%s for Label/Value"
+msgstr ""
+"Các kiểu định dạng: %s (Chỉ giá trị) / %s %s (Nhãn Giá trị) / %s_%s "
+"(Nhãn_Giá trị) / %s/%s (Nhãn/Giá trị)"
+
+#. module: tdb_plm_custom
+msgid ""
+"You can use Normalized features formatting, where the component description "
+"will be Standard Description + Format Feature Composed."
+msgstr ""
+"Bạn có thể sử dụng định dạng đặc tính chuẩn hóa, khi đó mô tả linh kiện sẽ "
+"bằng Mô tả tiêu chuẩn + Đặc tính định dạng tổng hợp."
+
+#. module: tdb_plm_custom
+msgid ""
+"If Normative Rule is defined, it will be added at the end of the "
+"description."
+msgstr "Nếu Quy chuẩn được định nghĩa, nó sẽ được thêm vào cuối mô tả."
+
+#. module: tdb_plm_custom
+msgid "Document name and version"
+msgstr "Tên và phiên bản tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Thread Code assigned automatically"
+msgstr "Mã tiến trình (Tự động cấp)"
+
+#. module: tdb_plm_custom
+msgid "This thread is done ?"
+msgstr "Tiến trình đã hoàn thành?"
+
+#. module: tdb_plm_custom
+msgid "Error message"
+msgstr "Thông báo lỗi"
+
+#. module: tdb_plm_custom
+msgid "Create groups"
+msgstr "Nhóm có quyền tạo"
+
+#. module: tdb_plm_custom
+msgid "Read groups"
+msgstr "Nhóm có quyền đọc"
+
+#. module: tdb_plm_custom
+msgid "Write groups"
+msgstr "Nhóm có quyền ghi"
+
+#. module: tdb_plm_custom
+msgid "Unlink groups"
+msgstr "Nhóm có quyền xóa"
+
+#. module: tdb_plm_custom
+msgid "Document Count"
+msgstr "Số lượng tài liệu"
+
+#. module: tdb_plm_custom
+msgid "Att Count"
+msgstr "Số lượng đính kèm"
+
+#. module: tdb_plm_custom
+msgid "Attachment Count"
+msgstr "Số lượng đính kèm"
+
+#. module: tdb_plm_custom
+msgid "Document Rel Count"
+msgstr "Số lượng quan hệ tài liệu"
+
+#. module: tdb_plm_custom
+msgid "File library path"
+msgstr "Đường dẫn thư viện tệp"
+
+#. module: tdb_plm_custom
+msgid "Source path of the first time save"
+msgstr "Đường dẫn lưu ban đầu"
+
+#. module: tdb_plm_custom
+msgid "Modification Description"
+msgstr "Mô tả sửa đổi"
+
+#. module: tdb_plm_custom
+msgid "Old Plm Code Sequence"
+msgstr "Thứ tự mã PLM cũ"
+
+#. module: tdb_plm_custom
+msgid "Engineering Branch index"
+msgstr "Chỉ số nhánh kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Engineering Code Editable"
+msgstr "Được phép sửa mã kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Engineering Editable"
+msgstr "Được phép sửa kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Engineering Revision Count"
+msgstr "Số lượng phiên bản kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Engineering Revision letter"
+msgstr "Ký tự phiên bản kỹ thuật"
+
+#. module: tdb_plm_custom
+msgid "Engineering Sub Revision letter"
+msgstr "Ký tự phiên bản con"
+
+#. module: tdb_plm_custom
+msgid "Sub revision path"
+msgstr "Đường dẫn phiên bản con"
+
+#. module: tdb_plm_custom
+msgid "User Revision"
+msgstr "Kỹ sư tạo phiên bản"
+
+#. module: tdb_plm_custom
+msgid "Workflow date"
+msgstr "Ngày thực hiện quy trình"
+
+#. module: tdb_plm_custom
+msgid "Is A Plm Document"
+msgstr "Là tài liệu PLM"
+
+#. module: tdb_plm_custom
+msgid "Is Library file"
+msgstr "Là tệp thư viện"
+
+#. module: tdb_plm_custom
+msgid "Is Linked Components"
+msgstr "Đã liên kết linh kiện"

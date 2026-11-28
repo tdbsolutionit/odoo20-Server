@@ -68,3 +68,8 @@ install.log
 /data/
 /logs/
 /start_odoo.ps1
+
+addons/dms_backup/
+
+
+config/odoo.conf

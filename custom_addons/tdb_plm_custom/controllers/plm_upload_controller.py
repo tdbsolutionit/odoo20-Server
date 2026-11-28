@@ -222,3 +222,81 @@ class TdbPlmUploadDocument(UploadDocument):
             ('Expires', '0'),
         ]
         return Response(raw_bytes, headers=headers)
+
+    @route(
+        "/plm/ir_attachment_printout/<int:id>",
+        type="http",
+        auth="user",
+        methods=["GET"],
+        csrf=False,
+    )
+    def get_printout(self, id, **kw):
+        """Kế thừa endpoint xuất PDF kỹ thuật của OdooPLM:
+        - Cho phép tải và xem inline trực tiếp trên trình duyệt Web mà không bị chặn token CAD.
+        - Hỗ trợ xem trực tiếp trong modal iframe (inline) hoặc tải về máy (?download=1).
+        - Fallback an toàn: Nếu report watermark của Omnia gặp sự cố, tự động trả về tệp PDF kỹ thuật gốc mà không bị lỗi 404/500.
+        """
+        try:
+            attachment = request.env["ir.attachment"].browse(id)
+            if not attachment.exists():
+                return Response("Tài liệu không tồn tại trên hệ thống.", status=404, headers={'Content-Type': 'text/plain; charset=utf-8'})
+
+            raw_pdf = False
+            if attachment.printout:
+                import base64
+                # 1. Thử render watermark chuẩn qua Omnia PLM
+                try:
+                    rep = request.env["report.plm.ir_attachment_pdf"]
+                    print_out_data = rep._render_qweb_pdf(attachment)
+                    if print_out_data and print_out_data[0]:
+                        raw_pdf = print_out_data[0]
+                except Exception as ex:
+                    _logger.warning(f"[TDB PLM] Không thể watermark PDF bằng report.plm.ir_attachment_pdf: {ex}. Sử dụng PDF gốc.")
+
+                # 2. Fallback: Lấy trực tiếp dữ liệu binary PDF gốc
+                if not raw_pdf:
+                    val = attachment.printout
+                    try:
+                        raw = bytes(val)
+                        if raw.startswith(b'%PDF'):
+                            raw_pdf = raw
+                        else:
+                            raw_pdf = base64.b64decode(raw)
+                    except Exception:
+                        try:
+                            raw_pdf = base64.b64decode(val)
+                        except Exception:
+                            raw_pdf = bytes(val)
+
+            elif attachment.raw and (attachment.name or '').lower().endswith('.pdf'):
+                raw_pdf = bytes(attachment.raw)
+            elif attachment.datas and (attachment.name or '').lower().endswith('.pdf'):
+                import base64
+                try:
+                    raw_pdf = base64.b64decode(attachment.datas)
+                except Exception:
+                    pass
+
+            if raw_pdf:
+                code = attachment.engineering_code or attachment.name or str(attachment.id)
+                rev = attachment.engineering_revision or 0
+                filename = f"{code}_{rev}.pdf" if not code.lower().endswith('.pdf') else code
+                quoted_filename = urllib.parse.quote(filename)
+                is_download = kw.get('download') in ('1', 'true', True)
+                disposition = f'attachment; filename="{filename}"; filename*=UTF-8\'\'{quoted_filename}' if is_download else f'inline; filename="{filename}"; filename*=UTF-8\'\'{quoted_filename}'
+                headers = [
+                    ("Content-Type", "application/pdf"),
+                    ("Content-Length", str(len(raw_pdf))),
+                    ("Content-Disposition", disposition),
+                    ("X-Frame-Options", "SAMEORIGIN"),
+                ]
+                return request.make_response(raw_pdf, headers)
+            else:
+                return Response(
+                    f"Tài liệu '{attachment.name or id}' chưa có bản in PDF kỹ thuật (printout) được tải lên từ SolidWorks.",
+                    status=404,
+                    headers={'Content-Type': 'text/plain; charset=utf-8'}
+                )
+        except Exception as ex:
+            _logger.error(f"[TDB PLM] Lỗi khi xử lý get_printout id={id}: {ex}")
+            return Response(f"Lỗi khi xử lý tệp PDF: {ex}", status=500, headers={'Content-Type': 'text/plain; charset=utf-8'})

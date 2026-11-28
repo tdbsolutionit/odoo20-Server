@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View Wizard: Liên kết Bản vẽ 2D với Mô hình 3D -->
+    <record id="view_plm_link_drawing_wizard_form" model="ir.ui.view">
+        <field name="name">plm.link.drawing.wizard.form</field>
+        <field name="model">plm.link.drawing.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Link 2D Drawing (Layout Tree)">
+                <div class="alert alert-info d-flex align-items-center mb-3 py-2" role="alert">
+                    <span>Select a 2D drawing file (.slddrw, .dwg, .dxf, .pdf) to link with this 3D model.</span>
+                </div>
+                <group>
+                    <group string="Target 3D Model">
+                        <field name="parent_name" string="3D Model Name"/>
+                    </group>
+                    <group string="2D Drawing to Link">
+                        <field name="drawing_id"
+                               string="2D Drawing"
+                               options="{'no_create': True, 'no_create_edit': True}"
+                               placeholder="Search or select 2D drawing file..."/>
+                        <field name="drawing_code" string="Engineering Code" invisible="not drawing_id"/>
+                        <field name="drawing_state" string="Drawing State" invisible="not drawing_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_confirm_link"
+                            type="object"
+                            string="Confirm Link"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Form View Wizard: Tải lên Bản in PDF Kỹ thuật -->
+    <record id="view_plm_upload_printout_wizard_form" model="ir.ui.view">
+        <field name="name">plm.upload.printout.wizard.form</field>
+        <field name="model">plm.upload.printout.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Upload Technical PDF Printout">
+                <field name="attachment_id" invisible="1"/>
+                <div class="alert alert-info d-flex align-items-center mb-3 py-2" role="alert">
+                    <span>Upload technical printout PDF drawing for this document. The system will store it as Printout for preview and download.</span>
+                </div>
+                <group>
+                    <group string="Target Document">
+                        <field name="attachment_name" string="Document Name"/>
+                        <field name="engineering_code" string="Engineering Code"/>
+                    </group>
+                    <group string="Technical PDF File">
+                        <field name="pdf_file"
+                               widget="binary"
+                               filename="pdf_filename"
+                               options="{'accepted_file_extensions': '.pdf'}"
+                               string="Select PDF File"
+                               required="1"/>
+                        <field name="pdf_filename"
+                               string="Saved File Name"
+                               required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_confirm_upload"
+                            type="object"
+                            string="Confirm Upload"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

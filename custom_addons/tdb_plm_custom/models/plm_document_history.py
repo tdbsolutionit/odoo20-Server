@@ -30,7 +30,7 @@ class PlmDocumentHistory(models.Model):
 
     document_id = fields.Many2one(
         "ir.attachment",
-        string="Document",
+        string="CAD Document",
         required=True,
         ondelete="cascade",
         index=True,
@@ -38,14 +38,14 @@ class PlmDocumentHistory(models.Model):
         help="Technical / CAD document associated with this version."
     )
     version = fields.Char(
-        string="Version",
+        string="Revision",
         required=True,
         readonly=True,
         index=True,
         help="Version symbol (e.g. v1, v2, ...)."
     )
     version_number = fields.Integer(
-        string="Version Number",
+        string="Revision Number",
         default=1,
         readonly=True,
         index=True,
@@ -68,7 +68,7 @@ class PlmDocumentHistory(models.Model):
         help="File size in bytes."
     )
     file_size_display = fields.Char(
-        string="Size",
+        string="File Size",
         compute="_compute_file_size_display",
         store=False,
         help="Human readable file size."
@@ -81,12 +81,12 @@ class PlmDocumentHistory(models.Model):
         help="User who created this version."
     )
     create_date = fields.Datetime(
-        string="Date",
+        string="Saved At",
         readonly=True,
         help="Timestamp when this version was created."
     )
     description = fields.Text(
-        string="Note",
+        string="Change Notes",
         help="Note or reason for this version."
     )
 

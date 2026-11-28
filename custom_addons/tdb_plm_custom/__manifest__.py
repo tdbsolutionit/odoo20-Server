@@ -2,9 +2,9 @@
 # Copyright 2026 TDB Solution Co., Ltd.
 {
     "name": "TDB PLM Customization - Giao diện & Access Token 180 Ngày SolidWorks",
-    "version": "20.0.1.7.10",
+    "version": "20.0.1.9.0",
     "category": "Manufacturing/Product Lifecycle Management (PLM)",
-    "summary": "Tùy biến chuẩn hóa PLM, Document Lock Key Holder, File History, Assembly References, Version Restore và Access Token 180 ngày SolidWorks",
+    "summary": "Tùy biến chuẩn hóa PLM, Document Lock Key Holder, File History, Assembly References, Version Restore, 2D Drawing-3D Model (LyTree) và Access Token 180 ngày SolidWorks",
     "description": """
 TDB Solution - Module tùy biến phân hệ PLM (Product Lifecycle Management)
 ========================================================================
@@ -25,6 +25,12 @@ Tính năng chính:
    - Cơ chế bảo vệ 2 lớp: Quyền giữ Key cục bộ và bảo vệ Cụm máy cha (Where-Used Protection).
    - Khôi phục an toàn: Tự động sinh phiên bản tiếp theo mang nội dung snapshot cũ mà không mất dữ liệu lịch sử.
    - Tự động ghi nhận nhật ký kiểm toán (Audit Trail) vào Chatter và thông báo Client Action.
+7. Liên kết Drawing với Part/Assembly (Task HT-1 Quan hệ tài liệu 2D - 3D LyTree):
+   - Chuẩn hóa quan hệ 2D-3D thông qua ir.attachment.relation (link_kind='LyTree').
+   - Smart buttons trên Form view: 'Bản vẽ 2D' (đếm và mở 2D từ 3D) và 'Mô hình 3D' (đếm và mở 3D từ 2D).
+   - Helper methods: get_related_drawings(), get_related_3d_models(), link_drawing_document(), action_view_drawings(), action_open_source_3d().
+   - Tab References chuyên biệt hiển thị bản vẽ 2D (.slddrw), trạng thái printout_name và nút icon xem/tải PDF kỹ thuật trực tiếp (/plm/ir_attachment_printout/<id>).
+   - Tương thích 100% với hàm getRelatedLyTree của Omnia PLM và SolidWorks Add-in.
     """,
     "author": "TDB Solution",
     "website": "https://tdbsolution.com",
@@ -32,16 +38,20 @@ Tính năng chính:
     "depends": [
         "plm",
         "product",
+        "mrp",
         "bus",
     ],
     "data": [
         "security/plm_desktop_token_security.xml",
         "security/ir.access.csv",
         "wizard/plm_transfer_key_wizard_views.xml",
+        "wizard/plm_drawing_link_wizard_views.xml",
+        "wizard/plm_bom_diff_wizard_views.xml",
         "views/plm_component_views.xml",
         "views/plm_document_views.xml",
         "views/plm_desktop_token_views.xml",
         "views/plm_menu_views.xml",
+        "views/mrp_bom_views.xml",
     ],
     "assets": {
         "web.assets_backend": [
@@ -49,6 +59,7 @@ Tính năng chính:
             "tdb_plm_custom/static/src/scss/plm_table_layout.scss",
             "tdb_plm_custom/static/src/scss/plm_table_header.scss",
             "tdb_plm_custom/static/src/scss/plm_table_cells.scss",
+            "tdb_plm_custom/static/src/scss/plm_preview.scss",
             "tdb_plm_custom/static/src/js/plm_realtime_reload.js",
         ],
     },

@@ -4,23 +4,23 @@
         <field name="name">plm.transfer.key.wizard.form</field>
         <field name="model">plm.transfer.key.wizard</field>
         <field name="arch" type="xml">
-            <form string="Transfer &amp; Release Key Holder">
+            <form string="Transfer &amp; Force Unlock Key">
                 <sheet>
                     <field name="is_admin" invisible="1"/>
                     <field name="is_holder" invisible="1"/>
                     <div class="alert alert-warning mb-3 py-2" role="alert" invisible="is_holder">
-                        Transfer Check-in permission (Key Holder) to another engineer, or Force Unlock to release the document.
+                        Transfer Check-in rights (Key Holder) to another engineer, or Force Unlock to release the document.
                     </div>
                     <div class="alert alert-warning mb-3 py-2" role="alert" invisible="not is_holder">
-                        Transfer Check-in permission (Key Holder) to another engineer, or Unlock to release the document.
+                        Transfer Check-in rights (Key Holder) to another engineer, or Unlock to free the document.
                     </div>
                     <group>
-                        <group string="Document Information">
+                        <group string="CAD Document Information">
                             <field name="document_id" invisible="1"/>
-                            <field name="document_name" string="Document"/>
+                            <field name="document_name" string="Technical Document"/>
                             <field name="current_key_holder_id" string="Current Key Holder" widget="many2one_avatar_user"/>
                         </group>
-                        <group string="Action Type">
+                        <group string="Operation Type">
                             <field name="is_holder" invisible="1"/>
                             <field name="transfer_type_holder"
                                    widget="radio"
@@ -36,7 +36,7 @@
                                    options="{'no_create': True, 'no_open': True}"
                                    invisible="(is_holder and transfer_type_holder != 'to_user') or (not is_holder and transfer_type_admin != 'to_user')"
                                    required="(is_holder and transfer_type_holder == 'to_user') or (not is_holder and transfer_type_admin == 'to_user')"/>
-                            <field name="release_all_checkouts" string="Release All Check-outs"/>
+                            <field name="release_all_checkouts" string="Release all Check-outs"/>
                         </group>
                     </group>
                     <group string="Reason (Optional)">

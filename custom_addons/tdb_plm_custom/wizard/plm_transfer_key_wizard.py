@@ -60,44 +60,44 @@ class PlmTransferKeyWizard(models.TransientModel):
 
     transfer_type_holder = fields.Selection(
         selection=[
-            ('to_user', 'Transfer to another engineer'),
-            ('release', 'Unlock'),
+            ('to_user', 'Chuyển giao cho kỹ sư khác'),
+            ('release', 'Mở khóa tài liệu (Trả Key)'),
         ],
-        string="Action",
+        string="Tác vụ thực hiện",
         default='to_user',
         required=True,
     )
     transfer_type_admin = fields.Selection(
         selection=[
-            ('to_user', 'Transfer to another engineer'),
-            ('release', 'Force Unlock'),
+            ('to_user', 'Chuyển giao cho kỹ sư khác'),
+            ('release', 'Thu hồi Key bắt buộc (Force Unlock)'),
         ],
-        string="Action",
+        string="Tác vụ thực hiện",
         default='to_user',
         required=True,
     )
     transfer_type = fields.Selection(
         selection=[
-            ('to_user', 'Transfer to another engineer'),
-            ('release', 'Release'),
+            ('to_user', 'Chuyển giao cho kỹ sư khác'),
+            ('release', 'Mở khóa / Trả Key'),
         ],
-        string="Action",
+        string="Tác vụ thực hiện",
         default='to_user',
     )
     new_key_holder_id = fields.Many2one(
         "res.users",
-        string="New Key Holder",
+        string="Kỹ sư nhận Key mới",
         domain="[('share', '=', False)]",
-        help="Select engineer to receive Key Holder rights."
+        help="Chọn kỹ sư sẽ tiếp nhận quyền giữ Key."
     )
     reason = fields.Text(
-        string="Reason",
+        string="Lý do chuyển giao / Thu hồi",
         required=False,
     )
     release_all_checkouts = fields.Boolean(
-        string="Release All Current Check-outs",
+        string="Hủy toàn bộ trạng thái Check-out cục bộ",
         default=True,
-        help="Automatically cancel previous check-outs so document is ready for new engineer."
+        help="Tự động hủy các phiên Check-out trước đó để kỹ sư mới có thể Check-out ngay."
     )
 
     @api.model

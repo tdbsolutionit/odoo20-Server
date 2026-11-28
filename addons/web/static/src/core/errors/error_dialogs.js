@@ -81,8 +81,28 @@ export class ErrorDialog extends Component {
         browser.setTimeout(this.popover.close, 800);
     }
 
+    _copyText(text) {
+        if (browser.navigator.clipboard && browser.navigator.clipboard.writeText) {
+            browser.navigator.clipboard.writeText(text);
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand("copy");
+            } catch (e) {
+                browser.console.warn("Copy to clipboard failed", e);
+            }
+            document.body.removeChild(textArea);
+        }
+    }
+
     onClickClipboard() {
-        browser.navigator.clipboard.writeText(
+        this._copyText(
             `${this.props.name}\n\n${this.props.message}\n\n${this.contextDetails}\n\n${this.props.traceback}`
         );
         this.showTooltip();
@@ -143,7 +163,7 @@ export class RPCErrorDialog extends ErrorDialog {
     }
 
     onClickClipboard() {
-        browser.navigator.clipboard.writeText(
+        this._copyText(
             `${this.props.name}\n\n${this.props.message}\n\n${this.contextDetails}\n\n${this.traceback}`
         );
         this.showTooltip();

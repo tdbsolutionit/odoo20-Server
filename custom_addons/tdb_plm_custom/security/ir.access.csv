@@ -5,3 +5,7 @@ access_plm_desktop_token_boss_rel,plm.desktop.token.boss.rel,plm.desktop.token,t
 access_plm_document_history_user,plm.document.history.user,plm.document.history,base.group_user,cr,
 access_plm_document_history_admin,plm.document.history.admin,plm.document.history,plm.group_plm_admin,crud,
 access_plm_transfer_key_wizard_user,plm.transfer.key.wizard.user,plm.transfer.key.wizard,base.group_user,crud,
+access_plm_link_drawing_wizard_user,plm.link.drawing.wizard.user,plm.link.drawing.wizard,base.group_user,crud,
+access_plm_upload_printout_wizard_user,plm.upload.printout.wizard.user,plm.upload.printout.wizard,base.group_user,crud,
+access_plm_bom_diff_wizard_user,plm.bom.diff.wizard.user,plm.bom.diff.wizard,base.group_user,crud,
+access_plm_bom_diff_line_user,plm.bom.diff.line.user,plm.bom.diff.line,base.group_user,crud,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- List View: CAD Desktop Access Tokens -->
+    <!-- List View: Quản lý Mã truy cập CAD Desktop -->
     <record id="plm_desktop_token_view_list" model="ir.ui.view">
         <field name="name">plm.desktop.token.list</field>
         <field name="model">plm.desktop.token</field>
@@ -14,7 +14,7 @@
                   decoration-warning="state == 'expired'">
                 <field name="is_current_user_admin" column_invisible="1"/>
                 <field name="user_id" widget="many2one_avatar_user" string="CAD Engineer"/>
-                <field name="machine_name" string="Workstation"/>
+                <field name="machine_name" string="Workstation Name"/>
                 <field name="client_ip" string="IP Address"/>
                 <field name="cad_version" string="CAD Version"/>
                 <field name="issued_at" string="Issued At"/>
@@ -25,7 +25,7 @@
                        decoration-danger="state == 'revoked'"
                        decoration-warning="state == 'expired'"
                        string="Status"/>
-                <!-- Action Buttons: Admin only -->
+                <!-- Action Buttons: Chỉ dành cho Admin -->
                 <button name="action_revoke"
                         type="object"
                         string="Revoke"
@@ -34,10 +34,10 @@
                         confirm="Are you sure you want to revoke CAD access for this workstation?"/>
                 <button name="action_set_expired_test"
                         type="object"
-                        string="Test Expired"
+                        string="Test Expiry"
                         class="btn-warning btn-sm"
                         invisible="state != 'active' or not is_current_user_admin"
-                        confirm="Set token to EXPIRED to test 180-day expiration check?"/>
+                        confirm="Set token to EXPIRED to test 180-day block mechanism?"/>
                 <button name="action_unrevoke"
                         type="object"
                         string="Restore Access"
@@ -52,12 +52,12 @@
         </field>
     </record>
 
-    <!-- Form View: CAD Desktop Access Token -->
+    <!-- Form View: Chi tiết Mã truy cập CAD Desktop -->
     <record id="plm_desktop_token_view_form" model="ir.ui.view">
         <field name="name">plm.desktop.token.form</field>
         <field name="model">plm.desktop.token</field>
         <field name="arch" type="xml">
-            <form string="Desktop Access Token" create="false" delete="false">
+            <form string="Desktop Access Tokens" create="false" delete="false">
                 <header>
                     <field name="is_current_user_admin" invisible="1"/>
                     <button name="action_revoke"
@@ -68,10 +68,10 @@
                             confirm="Are you sure you want to revoke and disconnect this CAD workstation?"/>
                     <button name="action_set_expired_test"
                             type="object"
-                            string="Test Expired"
+                            string="Test Expiry"
                             class="btn-warning"
                             invisible="state != 'active' or not is_current_user_admin"
-                            confirm="Set token to EXPIRED to test 180-day expiration check?"/>
+                            confirm="Set token to EXPIRED to test 180-day block mechanism?"/>
                     <button name="action_unrevoke"
                             type="object"
                             string="Restore Access"
@@ -89,7 +89,7 @@
                 </header>
                 <sheet>
                     <div class="oe_title">
-                        <label for="machine_name" string="Workstation Name"/>
+                        <label for="machine_name" string="CAD Workstation Name"/>
                         <h1>
                             <field name="machine_name" placeholder="e.g. WS-CAD-01"/>
                         </h1>
@@ -127,7 +127,7 @@
         <field name="name">plm.desktop.token.search</field>
         <field name="model">plm.desktop.token</field>
         <field name="arch" type="xml">
-            <search string="Search Desktop Tokens">
+            <search string="Search Workstation Tokens">
                 <field name="user_id"/>
                 <field name="machine_name"/>
                 <field name="client_ip"/>
@@ -151,22 +151,22 @@
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                No CAD workstation connected yet.
+                No CAD workstations connected yet.
             </p>
         </field>
     </record>
 
-    <!-- Menuitem trên Top Bar PLM: Hiển thị trực tiếp cho Sếp Admin, ẩn hoàn toàn với Kỹ sư -->
+    <!-- Menuitem trên Top Bar PLM -->
     <menuitem id="menu_plm_desktop_token_top"
-              name="Desktop Access Tokens"
+              name="CAD Desktop Tokens"
               parent="plm.plm_menu"
               action="action_plm_desktop_token"
               groups="tdb_plm_custom.group_plm_desktop_token_boss"
               sequence="90"/>
 
-    <!-- Menuitem phụ trong PLM ➔ Cấu hình: Chỉ duy nhất Sếp Admin -->
+    <!-- Menuitem phụ trong PLM ➔ Cấu hình -->
     <menuitem id="menu_plm_desktop_token"
-              name="Desktop Access Tokens"
+              name="CAD Desktop Tokens"
               parent="plm.plm_menu_dictionaries"
               action="action_plm_desktop_token"
               groups="tdb_plm_custom.group_plm_desktop_token_boss"

@@ -37,32 +37,32 @@ class IrAttachment(models.Model):
         readonly=True,
         index=True,
         tracking=True,
-        help="Engineer who holds exclusive Check-in permission for this CAD document."
+        help="Engineer currently holding exclusive Check-in rights."
     )
     is_key_holder = fields.Boolean(
-        string="I Hold Key",
+        string="Holding Key",
         compute="_compute_is_key_holder",
         store=False
     )
     is_checked_out_by_me = fields.Boolean(
-        string="Checked Out By Me",
+        string="Checked-out by Me",
         compute="_compute_is_checked_out_by_me",
         store=False,
-        help="Marks whether this document has been checked out by current user."
+        help="Indicates this document is checked out by current user."
     )
     lock_state = fields.Selection(
         [
             ('unlocked', 'Unlocked'),
-            ('locked', 'Locked'),
+            ('locked', 'Locked (Key held)'),
         ],
-        string="Status",
+        string="Lock State",
         compute="_compute_lock_state",
         store=False,
-        help="Check-out lock status of document."
+        help="Check-out/Lock status of the CAD document."
     )
     locked_user_id = fields.Many2one(
         "res.users",
-        string="Checked Out By",
+        string="Checked-out User",
         compute="_compute_lock_state",
         store=False
     )
@@ -76,6 +76,13 @@ class IrAttachment(models.Model):
         compute="_compute_lock_state",
         store=False
     )
+
+    # =========================================================================
+    # FIELD-LEVEL TRACKING CHO QUẢN LÝ VÒNG ĐỜI & BẢN VẼ PLM (HT-5)
+    # =========================================================================
+    engineering_state = fields.Selection(string="Engineering State", tracking=True)
+    engineering_revision = fields.Integer(string="Engineering Revision", tracking=True)
+    document_type = fields.Selection(string="CAD Document Type", tracking=True)
 
     # Trường datas tương thích ngược cho Odoo 18 / phân hệ DMS / CAD Client
     datas = fields.Binary(
@@ -161,6 +168,12 @@ class IrAttachment(models.Model):
                     "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép Check-in hoặc cập nhật bản vẽ!"
                 ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
+
+            if doc.is_parent_frozen:
+                raise UserError(_(
+                    "Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng. "
+                    "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                ) % (doc.name or doc.engineering_code, doc.parent_released_name))
 
             if not doc.key_holder_id:
                 raise UserError(_(
@@ -353,12 +366,21 @@ class IrAttachment(models.Model):
     child_relation_ids = fields.One2many(
         "ir.attachment.relation",
         "parent_id",
+        domain=[("link_kind", "!=", "LyTree")],
         string="Child Documents",
         help="List of child component files referenced by this Assembly."
+    )
+    drawing_relation_ids = fields.One2many(
+        "ir.attachment.relation",
+        "parent_id",
+        domain=[("link_kind", "=", "LyTree")],
+        string="2D Drawing Relations",
+        help="Danh sách quan hệ bản vẽ 2D (Layout Tree) liên kết với mô hình 3D này."
     )
     parent_relation_ids = fields.One2many(
         "ir.attachment.relation",
         "child_id",
+        domain=[("link_kind", "!=", "LyTree")],
         string="Where Used",
         help="List of parent assemblies referencing this document."
     )
@@ -374,6 +396,83 @@ class IrAttachment(models.Model):
         store=False,
         help="Number of parent assemblies using this document."
     )
+    is_parent_frozen = fields.Boolean(
+        string="Is Parent Frozen",
+        compute="_compute_parent_assembly_status",
+        store=False,
+        help="Đánh dấu True nếu tài liệu này thuộc một Cụm máy cha (Where Used) đã ở trạng thái Đóng băng/Ban hành."
+    )
+    parent_released_name = fields.Char(
+        string="Frozen Parent Name",
+        compute="_compute_parent_assembly_status",
+        store=False
+    )
+    linked_product_count = fields.Integer(
+        string="Linked Products Count",
+        compute="_compute_linked_product_info",
+        store=False,
+        help="Số lượng sản phẩm linh kiện kỹ thuật liên kết với tài liệu CAD này."
+    )
+    bom_count = fields.Integer(
+        string="BOM Count",
+        compute="_compute_bom_info",
+        store=False,
+        help="Số lượng Định mức vật tư (mrp.bom) liên kết với tài liệu CAD này."
+    )
+
+    @api.depends("linkedcomponents")
+    def _compute_linked_product_info(self):
+        for doc in self:
+            doc.linked_product_count = len(doc.linkedcomponents)
+
+    def _get_related_boms(self):
+        """Lấy danh sách các bản ghi mrp.bom liên quan đến tài liệu này."""
+        self.ensure_one()
+        if not self.id:
+            return self.env["mrp.bom"]
+        if self.linkedcomponents:
+            domain = ["|", ("source_id", "=", self.id), ("product_id", "in", self.linkedcomponents.ids)]
+        else:
+            domain = [("source_id", "=", self.id)]
+        return self.env["mrp.bom"].sudo().search(domain)
+
+    @api.depends("linkedcomponents")
+    def _compute_bom_info(self):
+        for doc in self:
+            if not doc.id:
+                doc.bom_count = 0
+                continue
+            doc.bom_count = len(doc._get_related_boms())
+
+    def get_all_parent_assemblies(self):
+        """Lấy danh sách tất cả các Cụm máy cha (tất cả các cấp Where-Used) chứa tài liệu này."""
+        all_parents = self.env['ir.attachment']
+        current_docs = self
+        visited_ids = set(self.ids)
+        while current_docs:
+            relations = self.env['ir.attachment.relation'].search([
+                ('child_id', 'in', current_docs.ids)
+            ])
+            parents = relations.mapped('parent_id').filtered(lambda p: p.id not in visited_ids and p.exists())
+            if not parents:
+                break
+            all_parents |= parents
+            visited_ids.update(parents.ids)
+            current_docs = parents
+        return all_parents
+
+    @api.depends("parent_relation_ids", "parent_relation_ids.parent_id.engineering_state")
+    def _compute_parent_assembly_status(self):
+        for doc in self:
+            all_parents = doc.get_all_parent_assemblies()
+            frozen_parents = all_parents.filtered(lambda p: p.engineering_state in ['confirmed', 'released', 'obsoleted'])
+            if frozen_parents:
+                doc.is_parent_frozen = True
+                names = [p.name or p.engineering_code or str(p.id) for p in frozen_parents[:3]]
+                doc.parent_released_name = ", ".join(names)
+            else:
+                doc.is_parent_frozen = False
+                doc.parent_released_name = False
 
     @api.depends("child_relation_ids", "parent_relation_ids")
     def _compute_relation_counts(self):
@@ -496,6 +595,399 @@ class IrAttachment(models.Model):
         }
 
     # =========================================================================
+    # TASK HT-1: LIÊN KẾT BẢN VẼ 2D VỚI MÔ HÌNH 3D (2D - 3D LYTREE RELATION)
+    # =========================================================================
+    has_printout = fields.Boolean(
+        string="Has PDF Printout",
+        compute="_compute_has_printout",
+        store=False,
+        help="Checks if the document has a technical PDF printout file."
+    )
+    preview_pdf_html = fields.Html(
+        string="PDF Preview",
+        compute="_compute_preview_pdf_html",
+        sanitize=False,
+        help="Frame for previewing technical PDF in modal."
+    )
+    printout_name = fields.Char(
+        string="Printout Name",
+        compute="_getPrintoutName",
+        inverse="_inverse_printout_name",
+    )
+    drawing_count = fields.Integer(
+        string="2D Drawing Count",
+        compute="_compute_drawing_info",
+        store=False,
+        help="Number of 2D Drawings (Layout Tree) linked to this 3D model."
+    )
+    has_drawing = fields.Boolean(
+        string="Has 2D Drawings",
+        compute="_compute_drawing_info",
+        store=False,
+        help="Checks if this 3D model has at least one linked 2D drawing."
+    )
+    source_3d_count = fields.Integer(
+        string="Source 3D Models Count",
+        compute="_compute_source_3d_info",
+        store=False,
+        help="Number of source 3D models this 2D drawing represents."
+    )
+    linked_drawing_ids = fields.Many2many(
+        "ir.attachment",
+        compute="_compute_drawing_info",
+        string="Linked 2D Drawings",
+        help="List of 2D Drawings (Layout Tree) linked to this 3D model."
+    )
+    linked_source_3d_ids = fields.Many2many(
+        "ir.attachment",
+        compute="_compute_source_3d_info",
+        string="Source 3D Models",
+        help="List of source 3D models this 2D drawing is linked to."
+    )
+
+    @api.depends("printout", "raw", "datas", "name")
+    def _compute_has_printout(self):
+        for doc in self:
+            has_p = bool(doc.printout)
+            if not has_p and (doc.name or "").lower().endswith(".pdf"):
+                has_p = bool(doc.raw or doc.datas)
+            doc.has_printout = has_p
+
+    @api.depends("printout", "raw", "datas", "name", "has_printout")
+    def _compute_preview_pdf_html(self):
+        for doc in self:
+            if not doc.id:
+                doc.preview_pdf_html = False
+                continue
+            if doc.has_printout:
+                ts = int(fields.Datetime.now().timestamp())
+                pdf_url = f"/plm/ir_attachment_printout/{doc.id}?v={ts}"
+                doc.preview_pdf_html = (
+                    f'<iframe src="{pdf_url}" '
+                    f'style="width: 100%; height: 84vh; border: none; display: block; background: #525659;"></iframe>'
+                )
+            else:
+                doc.preview_pdf_html = (
+                    '<div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-5 text-muted" style="min-height: 60vh;">'
+                    '<i class="fa fa-file-pdf-o fa-5x mb-3 text-secondary"></i>'
+                    '<h4>Tài liệu chưa có bản in PDF kỹ thuật.</h4>'
+                    '<p class="mb-0">Vui lòng tải lên tệp PDF hoặc xuất printout từ phần mềm CAD.</p>'
+                    '</div>'
+                )
+
+    def _inverse_printout_name(self):
+        for doc in self:
+            pass
+
+    @api.depends("child_relation_ids", "parent_relation_ids", "child_relation_ids.link_kind", "parent_relation_ids.link_kind")
+    def _compute_drawing_info(self):
+        """Tính toán số lượng và danh sách bản vẽ 2D liên kết với mô hình 3D."""
+        for doc in self:
+            if doc.id:
+                drawings = doc.get_related_drawings()
+                doc.linked_drawing_ids = drawings
+                doc.drawing_count = len(drawings)
+                doc.has_drawing = bool(doc.drawing_count > 0)
+            else:
+                doc.linked_drawing_ids = self.env["ir.attachment"]
+                doc.drawing_count = 0
+                doc.has_drawing = False
+
+    @api.depends("child_relation_ids", "parent_relation_ids", "child_relation_ids.link_kind", "parent_relation_ids.link_kind")
+    def _compute_source_3d_info(self):
+        """Tính toán số lượng và danh sách mô hình 3D nguồn khi đang ở bản vẽ 2D."""
+        for doc in self:
+            if doc.id:
+                models_3d = doc.get_related_3d_models()
+                doc.linked_source_3d_ids = models_3d
+                doc.source_3d_count = len(models_3d)
+            else:
+                doc.linked_source_3d_ids = self.env["ir.attachment"]
+                doc.source_3d_count = 0
+
+    def get_related_drawings(self):
+        """Trả về Recordset các tài liệu ir.attachment là Bản vẽ 2D (document_type == '2d')
+        liên kết với chi tiết 3D hiện tại qua link_kind='LyTree'.
+        Tương thích 100% với getRelatedLyTree của Omnia PLM và SolidWorks Add-in.
+        """
+        self.ensure_one()
+        if not self.id:
+            return self.env["ir.attachment"]
+
+        drawing_ids = set()
+        # 1. Tận dụng hàm chuẩn của Omnia PLM nếu có thể
+        try:
+            omnia_drawings = self.getRelatedLyTree(self.id, optional_return_type=["2d"])
+            if omnia_drawings:
+                drawing_ids.update(omnia_drawings)
+        except Exception as e:
+            _logger.debug(f"[TDB PLM] getRelatedLyTree error: {e}")
+
+        # 2. Truy vấn trực tiếp từ bảng quan hệ ir.attachment.relation để đảm bảo nhận diện 2 chiều
+        rel_domain = [
+            ("link_kind", "in", ["LyTree", "PkgTree"]),
+            "|",
+            ("parent_id", "=", self.id),
+            ("child_id", "=", self.id),
+        ]
+        relations = self.env["ir.attachment.relation"].search(rel_domain)
+        for rel in relations:
+            other = rel.child_id if rel.parent_id.id == self.id else rel.parent_id
+            if not other or not other.exists() or other.id == self.id:
+                continue
+            is_2d = (
+                other.document_type == "2d"
+                or (other.name and other.name.lower().endswith((".slddrw", ".dwg", ".dxf", ".pdf")))
+            )
+            if is_2d:
+                drawing_ids.add(other.id)
+
+        return self.browse(list(drawing_ids)).exists()
+
+    def get_related_3d_models(self):
+        """Trả về Recordset các tài liệu ir.attachment là Mô hình 3D (document_type == '3d')
+        liên kết với bản vẽ 2D hiện tại qua link_kind='LyTree'.
+        """
+        self.ensure_one()
+        if not self.id:
+            return self.env["ir.attachment"]
+
+        model_ids = set()
+        # 1. Tận dụng hàm chuẩn của Omnia PLM nếu có thể
+        try:
+            omnia_models = self.getRelatedLyTree(self.id, optional_return_type=["3d"])
+            if omnia_models:
+                model_ids.update(omnia_models)
+        except Exception as e:
+            _logger.debug(f"[TDB PLM] getRelatedLyTree error: {e}")
+
+        # 2. Truy vấn trực tiếp từ bảng quan hệ ir.attachment.relation
+        rel_domain = [
+            ("link_kind", "in", ["LyTree", "PkgTree"]),
+            "|",
+            ("parent_id", "=", self.id),
+            ("child_id", "=", self.id),
+        ]
+        relations = self.env["ir.attachment.relation"].search(rel_domain)
+        for rel in relations:
+            other = rel.child_id if rel.parent_id.id == self.id else rel.parent_id
+            if not other or not other.exists() or other.id == self.id:
+                continue
+            is_3d = (
+                other.document_type == "3d"
+                or (other.name and other.name.lower().endswith((".sldprt", ".sldasm", ".prt", ".asm", ".step", ".stp")))
+            )
+            if is_3d:
+                model_ids.add(other.id)
+
+        return self.browse(list(model_ids)).exists()
+
+    def link_drawing_document(self, drawing_doc_id):
+        """Liên kết bản vẽ 2D với mô hình 3D hiện tại qua link_kind='LyTree'.
+        Sử dụng hàm add_child_reference có sẵn để đảm bảo toàn vẹn dữ liệu.
+        :param drawing_doc_id: ID (int) hoặc Recordset ir.attachment của bản vẽ 2D.
+        :return: Recordset ir.attachment.relation vừa tạo hoặc đã tồn tại.
+        """
+        self.ensure_one()
+        if not drawing_doc_id:
+            raise UserError(_("Vui lòng chỉ định bản vẽ 2D cần liên kết."))
+
+        drawing = self.browse(drawing_doc_id) if isinstance(drawing_doc_id, int) else drawing_doc_id
+        if not drawing.exists():
+            raise UserError(_("Bản vẽ 2D không tồn tại trên hệ thống."))
+
+        # Kiểm tra an toàn: File được liên kết phải có document_type == '2d' hoặc phần mở rộng là file bản vẽ
+        valid_extensions = ('.slddrw', '.dwg', '.dxf', '.pdf')
+        has_2d_ext = bool(drawing.name and drawing.name.lower().endswith(valid_extensions))
+        is_2d_type = (drawing.document_type == '2d')
+
+        if not (is_2d_type or has_2d_ext):
+            raise UserError(_(
+                "Tài liệu '%s' không phải là bản vẽ 2D hợp lệ! "
+                "(Yêu cầu document_type == '2d' hoặc đuôi file thuộc: .slddrw, .dwg, .dxf, .pdf)"
+            ) % (drawing.name or drawing.id))
+
+        # Tự động cập nhật document_type nếu chưa đặt đúng
+        if drawing.document_type != '2d':
+            drawing.sudo().write({'document_type': '2d'})
+
+        if not self.document_type or self.document_type == 'other':
+            if self.name and self.name.lower().endswith(('.sldprt', '.sldasm', '.prt', '.asm', '.step', '.stp')):
+                self.sudo().write({'document_type': '3d'})
+
+        # Gọi hàm add_child_reference chuẩn hóa với link_kind='LyTree'
+        return self.add_child_reference(drawing.id, link_kind='LyTree')
+
+    def action_view_drawings(self):
+        """Action Window mở danh sách / chi tiết các bản vẽ 2D của Part/Assembly hiện tại."""
+        self.ensure_one()
+        drawings = self.get_related_drawings()
+        list_view = self.env.ref("plm.ir_attachment_list", raise_if_not_found=False)
+        form_view = self.env.ref("plm.view_attachment_form_plm_hinerit", raise_if_not_found=False)
+
+        if len(drawings) == 1:
+            return {
+                "name": drawings.name or drawings.engineering_code or _("Bản vẽ 2D"),
+                "type": "ir.actions.act_window",
+                "res_model": "ir.attachment",
+                "res_id": drawings.id,
+                "view_mode": "form",
+                "views": [(form_view.id, "form")] if form_view else False,
+                "context": {
+                    "odooPLM": True,
+                    "default_is_plm": True,
+                    "default_document_type": "2d",
+                    "form_view_ref": "plm.view_attachment_form_plm_hinerit",
+                },
+            }
+
+        views = []
+        if list_view:
+            views.append((list_view.id, "list"))
+        if form_view:
+            views.append((form_view.id, "form"))
+
+        return {
+            "name": _("Bản vẽ 2D liên kết: %s") % (self.name or self.engineering_code or self.id),
+            "type": "ir.actions.act_window",
+            "res_model": "ir.attachment",
+            "view_mode": "list,form",
+            "views": views or False,
+            "domain": [("id", "in", drawings.ids)],
+            "context": {
+                "odooPLM": True,
+                "default_is_plm": True,
+                "default_document_type": "2d",
+                "form_view_ref": "plm.view_attachment_form_plm_hinerit",
+                "list_view_ref": "plm.ir_attachment_list",
+            },
+        }
+
+    def action_open_source_3d(self):
+        """Action Window mở chi tiết mô hình 3D gốc khi người dùng đang đứng ở form bản vẽ 2D."""
+        self.ensure_one()
+        models_3d = self.get_related_3d_models()
+        form_view = self.env.ref("plm.view_attachment_form_plm_hinerit", raise_if_not_found=False)
+        list_view = self.env.ref("plm.ir_attachment_list", raise_if_not_found=False)
+
+        if len(models_3d) == 1:
+            return {
+                "name": models_3d.name or models_3d.engineering_code or _("Mô hình 3D"),
+                "type": "ir.actions.act_window",
+                "res_model": "ir.attachment",
+                "res_id": models_3d.id,
+                "view_mode": "form",
+                "views": [(form_view.id, "form")] if form_view else False,
+                "context": {
+                    "odooPLM": True,
+                    "default_is_plm": True,
+                    "default_document_type": "3d",
+                    "form_view_ref": "plm.view_attachment_form_plm_hinerit",
+                },
+            }
+
+        views = []
+        if list_view:
+            views.append((list_view.id, "list"))
+        if form_view:
+            views.append((form_view.id, "form"))
+
+        return {
+            "name": _("Mô hình 3D nguồn: %s") % (self.name or self.engineering_code or self.id),
+            "type": "ir.actions.act_window",
+            "res_model": "ir.attachment",
+            "view_mode": "list,form",
+            "views": views or False,
+            "domain": [("id", "in", models_3d.ids)],
+            "context": {
+                "odooPLM": True,
+                "default_is_plm": True,
+                "default_document_type": "3d",
+                "form_view_ref": "plm.view_attachment_form_plm_hinerit",
+                "list_view_ref": "plm.ir_attachment_list",
+            },
+        }
+
+    def action_open_document_form(self):
+        """Mở Form view PLM chi tiết của chính tài liệu này trên Odoo."""
+        self.ensure_one()
+        form_view = self.env.ref("plm.view_attachment_form_plm_hinerit", raise_if_not_found=False)
+        return {
+            "name": self.name or self.engineering_code or _("Tài liệu kỹ thuật"),
+            "type": "ir.actions.act_window",
+            "res_model": "ir.attachment",
+            "res_id": self.id,
+            "view_mode": "form",
+            "views": [(form_view.id, "form")] if form_view else False,
+            "target": "current",
+            "context": {
+                "odooPLM": True,
+                "default_is_plm": True,
+                "form_view_ref": "plm.view_attachment_form_plm_hinerit",
+            },
+        }
+
+    def action_open_link_drawing_wizard(self):
+        """Mở wizard liên kết bản vẽ 2D với mô hình 3D hiện tại."""
+        self.ensure_one()
+        return {
+            "name": _("Liên kết Bản vẽ 2D với %s") % (self.name or self.engineering_code or self.id),
+            "type": "ir.actions.act_window",
+            "res_model": "plm.link.drawing.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_parent_id": self.id,
+            },
+        }
+
+    def action_upload_printout_wizard(self):
+        """Mở wizard tải lên bản in PDF kỹ thuật cho tài liệu này."""
+        self.ensure_one()
+        code = self.engineering_code or self.name or "document"
+        rev = self.engineering_revision or 0
+        return {
+            "name": _("Tải lên bản in PDF: %s") % (self.name or self.engineering_code or self.id),
+            "type": "ir.actions.act_window",
+            "res_model": "plm.upload.printout.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "active_id": self.id,
+                "active_ids": [self.id],
+                "active_model": "ir.attachment",
+                "default_attachment_id": self.id,
+                "default_pdf_filename": f"{code}_{rev}.pdf",
+            },
+        }
+
+    def action_preview_pdf(self):
+        """Mở popup modal xem trước bản in PDF kỹ thuật trực tiếp trên Odoo."""
+        self.ensure_one()
+        view_id = self.env.ref("tdb_plm_custom.view_plm_attachment_preview_modal", raise_if_not_found=False)
+        name_display = self.printout_name or self.engineering_code or self.name or str(self.id)
+        return {
+            "name": _("Xem trước Bản in PDF: %s") % name_display,
+            "type": "ir.actions.act_window",
+            "res_model": "ir.attachment",
+            "res_id": self.id,
+            "view_mode": "form",
+            "views": [(view_id.id if view_id else False, "form")],
+            "target": "new",
+            "context": {"dialog_size": "extra-large"},
+        }
+
+    def action_download_printout(self):
+        """Tải tệp bản in PDF kỹ thuật trực tiếp về máy trạm."""
+        self.ensure_one()
+        base_url = self.env["ir.config_parameter"].sudo().get_str("web.base.url")
+        return {
+            "type": "ir.actions.act_url",
+            "url": f"{base_url}/plm/ir_attachment_printout/{self.id}?download=1",
+            "target": "self",
+        }
+
+    # =========================================================================
     # 4. KIỂM SOÁT TOKEN 180 NGÀY CHO CAD CLIENT
     # =========================================================================
     def _check_cad_access_token(self):
@@ -543,8 +1035,8 @@ class IrAttachment(models.Model):
 
     def canCheckOut(self, showError=False):
         """Mở rộng canCheckOut: Chỉ cho phép Check-out tài liệu khi ở trạng thái Dự thảo (draft).
-        Tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted) bị khóa tuyệt đối,
-        không được phép Check-out để đảm bảo tính đóng băng thiết kế.
+        Tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted) bị khóa tuyệt đối.
+        Đồng thời chặn Check-out nếu tài liệu thuộc Cụm máy cha (Where Used) đã ở trạng thái Ban hành / Đóng băng.
         """
         for doc in self:
             if doc.engineering_state not in ['draft', False]:
@@ -555,20 +1047,32 @@ class IrAttachment(models.Model):
                 if showError:
                     raise UserError(msg)
                 return False, msg
+
+            if doc.is_parent_frozen:
+                msg = _("Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng nên không thể Check-out.") % (
+                    doc.name or doc.engineering_code, doc.parent_released_name
+                )
+                if showError:
+                    raise UserError(msg)
+                return False, msg
         return super().canCheckOut(showError=showError)
 
     def canCheckOut1(self, host_name='', host_pws=''):
         """Kiểm tra quyền Check-out cho SolidWorks CAD Client:
-        Tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted):
+        Tài liệu đã Ban hành (released), Chờ duyệt (confirmed), Lỗi thời (obsoleted) hoặc thuộc Cụm máy cha đã Ban hành:
         Phải trả về 'check_out_released' theo đúng chuẩn OdooPLM gốc.
-        SolidWorks Add-in sẽ nhận biết tài liệu đã khóa/đóng băng và mở ở chế độ Chỉ đọc (Read-Only),
-        tuyệt đối không tạo phiên check-out làm bẩn / đánh dấu xanh linh kiện trong Multi Edit Parts!
         """
         self._clean_invalid_checkouts()
         for docBrws in self:
             if docBrws.engineering_state not in ['draft', False]:
                 msg = _("Unable to check-Out document %s that is in state %s") % (
                     docBrws.name or docBrws.engineering_code, docBrws.engineering_state
+                )
+                return docBrws.id, 'check_out_released', msg
+
+            if docBrws.is_parent_frozen:
+                msg = _("Unable to check-Out document %s because parent assembly %s is released") % (
+                    docBrws.name or docBrws.engineering_code, docBrws.parent_released_name
                 )
                 return docBrws.id, 'check_out_released', msg
 
@@ -590,9 +1094,8 @@ class IrAttachment(models.Model):
 
     def checkout(self, hostName, hostPws, showError=True, user_id=False):
         """Khóa tài liệu Check-out:
-        Chặn đứng Check-out nếu tài liệu đã Ban hành (released), Chờ duyệt (confirmed) hoặc Lỗi thời (obsoleted).
-        Quyền Check-in ghi đè được kiểm soát riêng biệt bởi Người giữ Key (key_holder_id).
-        Check-out không tự động cấp Key (kỹ sư phải bấm nút 'Lock' khi tài liệu tự do để nhận quyền giữ Key).
+        Chặn đứng Check-out nếu tài liệu đã Ban hành (released), Chờ duyệt (confirmed), Lỗi thời (obsoleted)
+        hoặc thuộc Cụm máy cha đã Ban hành.
         """
         self._check_cad_access_token()
         for doc in self:
@@ -600,6 +1103,14 @@ class IrAttachment(models.Model):
                 state_desc = "Đã ban hành" if doc.engineering_state == 'released' else ("Đang chờ duyệt" if doc.engineering_state == 'confirmed' else "Lỗi thời")
                 msg = _("Tài liệu '%s' đang ở trạng thái %s (%s) nên không thể Check-out.") % (
                     doc.name or doc.engineering_code, state_desc, doc.engineering_state
+                )
+                if showError:
+                    raise UserError(msg)
+                return False, msg
+
+            if doc.is_parent_frozen:
+                msg = _("Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng nên không thể Check-out.") % (
+                    doc.name or doc.engineering_code, doc.parent_released_name
                 )
                 if showError:
                     raise UserError(msg)
@@ -613,6 +1124,11 @@ class IrAttachment(models.Model):
     def action_web_checkout(self):
         """Cho phép kỹ sư bấm Check-out trực tiếp trên Web Browser để lấy file."""
         self.ensure_one()
+        if self.is_parent_frozen:
+            raise UserError(_(
+                "Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng. "
+                "Không được phép Check-out trên Web!"
+            ) % (self.name or self.engineering_code, self.parent_released_name))
         self.with_context(is_web_operation=True).checkout(f"Web ({self.env.user.name})", "web_browser", showError=True)
         return {
             'type': 'ir.actions.client',
@@ -723,6 +1239,10 @@ class IrAttachment(models.Model):
             raise UserError(_("Tài liệu '%s' đã ở trạng thái Ban hành (%s). Không thể khóa lấy Key.") % (
                 self.name or self.engineering_code, self.engineering_state
             ))
+        if self.is_parent_frozen:
+            raise UserError(_("Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng. Không thể khóa lấy Key.") % (
+                self.name or self.engineering_code, self.parent_released_name
+            ))
         if self.key_holder_id:
             raise UserError(_("Tài liệu '%s' hiện đã có người giữ Key (%s).") % (
                 self.name or self.engineering_code, self.key_holder_id.name
@@ -750,6 +1270,10 @@ class IrAttachment(models.Model):
         if self.engineering_state in ['released', 'obsoleted']:
             raise UserError(_("Tài liệu '%s' đã ở trạng thái Ban hành (%s). Không thể chuyển giao hoặc mở khóa Key.") % (
                 self.name or self.engineering_code, self.engineering_state
+            ))
+        if self.is_parent_frozen:
+            raise UserError(_("Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng. Không thể chuyển giao hoặc mở khóa Key.") % (
+                self.name or self.engineering_code, self.parent_released_name
             ))
         is_admin = self.env.user.has_group('plm.group_plm_admin') or self.env.user.has_group('base.group_system') or self.env.is_admin()
         is_holder = (self.key_holder_id == self.env.user)
@@ -901,6 +1425,12 @@ class IrAttachment(models.Model):
                     "Tài liệu '%s' đang ở trạng thái %s (%s). "
                     "Không được phép Check-in hoặc cập nhật bản vẽ!"
                 ) % (doc.name or doc.engineering_code, state_desc, doc.engineering_state))
+
+            if doc.is_parent_frozen:
+                raise UserError(_(
+                    "Tài liệu '%s' thuộc Cụm máy cha '%s' đã ở trạng thái Ban hành / Đóng băng. "
+                    "Không được phép Check-in hoặc cập nhật bản vẽ!"
+                ) % (doc.name or doc.engineering_code, doc.parent_released_name))
             doc._check_key_holder_permission()
         return super().CheckIn(attrs)
 
@@ -1079,16 +1609,27 @@ class IrAttachment(models.Model):
         return super().saveStructure(arguments)
 
     def _commonWFAction(self, writable, state, check):
-        """Đồng bộ trạng thái linh kiện liên kết khi tài liệu chuyển trạng thái workflow."""
+        """Đồng bộ trạng thái linh kiện liên kết và tài liệu con khi tài liệu chuyển trạng thái workflow."""
         res = super()._commonWFAction(writable, state, check)
         for doc in self:
-            if getattr(doc, 'is_plm', False) and hasattr(doc, 'linkedcomponents') and doc.linkedcomponents:
-                for comp in doc.linkedcomponents:
-                    if comp.engineering_state != state:
-                        try:
-                            comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': state})
-                        except Exception as e:
-                            _logger.debug(f"[TDB PLM] Sync component state on workflow: {e}")
+            if getattr(doc, 'is_plm', False):
+                # 1. Đồng bộ linh kiện liên kết
+                if hasattr(doc, 'linkedcomponents') and doc.linkedcomponents:
+                    for comp in doc.linkedcomponents:
+                        if comp.engineering_state != state:
+                            try:
+                                comp.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': state})
+                            except Exception as e:
+                                _logger.debug(f"[TDB PLM] Sync component state on workflow: {e}")
+                # 2. Đồng bộ các tài liệu con (HiTree) khi cụm cha được xác nhận hoặc ban hành
+                if state in ['confirmed', 'released', 'obsoleted']:
+                    child_docs = doc.get_child_documents()
+                    for child in child_docs:
+                        if child.engineering_state != state:
+                            try:
+                                child.sudo().with_context(skip_released_freeze=True, odooPLM=False).write({'engineering_state': state})
+                            except Exception as e:
+                                _logger.debug(f"[TDB PLM] Sync child doc state on workflow: {e}")
         return res
 
     @api.model
@@ -1292,3 +1833,299 @@ class IrAttachment(models.Model):
             )) % user_name
 
         return super().message_post(**kwargs)
+
+    # =========================================================================
+    # 8. ĐỒNG BỘ TỪ BẢN VẼ CAD SANG SẢN PHẨM & ĐỊNH MỨC VẬT TƯ BOM (HT-2.1 & HT-2.2)
+    # =========================================================================
+    def _clean_product_name(self):
+        """Lấy tên hiển thị sạch của sản phẩm từ tài liệu CAD (loại bỏ phần mở rộng CAD nếu có)."""
+        self.ensure_one()
+        name = (self.name or "").strip()
+        cad_exts = [
+            ".sldprt", ".sldasm", ".slddrw",
+            ".prt", ".asm", ".drw",
+            ".step", ".stp", ".iges", ".igs",
+            ".dwg", ".dxf", ".pdf"
+        ]
+        lower_name = name.lower()
+        for ext in cad_exts:
+            if lower_name.endswith(ext):
+                name = name[:-len(ext)].strip()
+                break
+        return name or self.engineering_code or self.name or _("Linh kiện PLM")
+
+    def _get_or_create_related_product(self):
+        """Ánh xạ hoặc khởi tạo sản phẩm product.product từ tài liệu CAD:
+        - Đối soát theo default_code (engineering_code hoặc name hoặc clean_name).
+        - Nếu chưa có, tự động tạo mới product.product chuẩn lưu kho (type='consu', is_storable=True),
+          gán mã kỹ thuật, revision, trạng thái engineering, và thumbnail 3D (image_1920 = self.preview).
+        - Thiết lập liên kết 2 chiều thông qua linkedcomponents (plm_component_document_rel).
+        """
+        self.ensure_one()
+        # 1. Nếu đã có sản phẩm trong linkedcomponents, kiểm tra đồng bộ ảnh preview và trả về
+        if self.linkedcomponents:
+            product = self.linkedcomponents[0]
+            if self.preview and not product.image_1920:
+                try:
+                    product.sudo().write({"image_1920": self.preview})
+                except Exception as e:
+                    _logger.debug(f"[TDB PLM] Không thể cập nhật ảnh preview sản phẩm: {e}")
+            return product
+
+        Product = self.env["product.product"].sudo()
+        clean_name = self._clean_product_name()
+        code_candidates = [
+            c for c in [self.engineering_code, self.name, clean_name] if c
+        ]
+
+        # 2. Tìm kiếm sản phẩm đối soát theo mã kỹ thuật hoặc default_code
+        product = False
+        for code in code_candidates:
+            product = Product.search([("default_code", "=", code)], limit=1)
+            if product:
+                break
+            if hasattr(Product, "engineering_code"):
+                product = Product.search([("engineering_code", "=", code)], limit=1)
+                if product:
+                    break
+
+        # 3. Nếu chưa có, tạo mới sản phẩm lưu kho chuẩn Odoo 20
+        if not product:
+            primary_code = self.engineering_code or self.name or clean_name
+            prod_vals = {
+                "name": clean_name or primary_code,
+                "default_code": primary_code,
+                "type": "consu",
+                "is_storable": True,
+            }
+            if hasattr(Product, "engineering_code") and self.engineering_code:
+                prod_vals["engineering_code"] = self.engineering_code
+            if hasattr(Product, "engineering_revision"):
+                prod_vals["engineering_revision"] = self.engineering_revision or 0
+            if hasattr(Product, "engineering_state"):
+                prod_vals["engineering_state"] = self.engineering_state or "draft"
+            if self.preview:
+                prod_vals["image_1920"] = self.preview
+
+            product = Product.create(prod_vals)
+
+        # 4. Thiết lập liên kết 2 chiều vào linkedcomponents
+        if product not in self.linkedcomponents:
+            self.sudo().write({"linkedcomponents": [(4, product.id)]})
+
+        return product
+
+    def action_sync_cad_bom_to_mrp(self):
+        """Tự động hóa 1-Click: Từ Cụm Assembly CAD (3D) đồng bộ toàn bộ Part/Assembly thành
+        Sản phẩm (product.product) và dựng cây định mức vật tư (mrp.bom & mrp.bom.line).
+        - Kiểm tra điều kiện Cụm lắp ráp 3D và quan hệ chi tiết con.
+        - Khởi tạo Sản phẩm cha và BOM Header (mrp.bom) có source_id trỏ về Assembly CAD.
+        - Bóc tách toàn bộ chi tiết con, khởi tạo linh kiện con, gom nhóm số lượng.
+        - Dọn sạch dòng BoM cũ (tránh trùng lặp khi đồng bộ lại) và tạo các mrp.bom.line mới.
+        - Ghi nhận Audit Trail vào Chatter và mở Form view của BOM vừa tạo.
+        """
+        self.ensure_one()
+
+        # 1. Kiểm tra điều kiện tài liệu CAD
+        if self.document_type != "3d":
+            raise UserError(_(
+                "Tính năng Đồng bộ BOM sang Sản xuất chỉ áp dụng cho tài liệu Mô hình 3D (Assembly/Part).\n"
+                "Tài liệu '%s' có kiểu là: %s."
+            ) % (self.name or self.engineering_code, self.document_type))
+
+        # Lấy các quan hệ chi tiết con (loại bỏ quan hệ bản vẽ 2D LyTree và self-reference)
+        child_relations = self.child_relation_ids.filtered(
+            lambda r: r.link_kind != "LyTree" and r.child_id and r.child_id.id != self.id
+        )
+        if not child_relations:
+            raise UserError(_(
+                "Tài liệu Cụm lắp ráp '%s' hiện chưa có chi tiết con nào trong cây cấu trúc (Child Documents).\n"
+                "Vui lòng kiểm tra lại cấu trúc tham chiếu CAD trước khi đồng bộ BOM."
+            ) % (self.name or self.engineering_code))
+
+        # 2. Khởi tạo / Lấy Sản phẩm đại diện Cụm cha
+        parent_product = self._get_or_create_related_product()
+
+        # 3. Tìm hoặc Tạo mới BOM Header (mrp.bom)
+        Bom = self.env["mrp.bom"].sudo()
+        bom = Bom.search([("source_id", "=", self.id)], limit=1)
+        if not bom and parent_product:
+            bom = Bom.search([("product_id", "=", parent_product.id)], limit=1)
+
+        bom_vals = {
+            "product_tmpl_id": parent_product.product_tmpl_id.id,
+            "product_id": parent_product.id,
+            "product_qty": 1.0,
+            "type": "normal",
+            "source_id": self.id,
+            "code": self.engineering_code or self.name,
+        }
+        if not bom:
+            bom = Bom.create(bom_vals)
+        else:
+            update_vals = {}
+            if not bom.source_id:
+                update_vals["source_id"] = self.id
+            if not bom.product_id:
+                update_vals["product_id"] = parent_product.id
+            if update_vals:
+                bom.write(update_vals)
+
+        # 4. Gom nhóm số lượng chi tiết con (Aggregation)
+        components = {}
+        for rel in child_relations:
+            child_doc = rel.child_id
+            if not child_doc.exists():
+                continue
+            child_prod = child_doc._get_or_create_related_product()
+            if child_prod.id not in components:
+                components[child_prod.id] = {
+                    "product": child_prod,
+                    "source_doc": child_doc,
+                    "qty": 1.0,
+                }
+            else:
+                components[child_prod.id]["qty"] += 1.0
+
+        if not components:
+            raise UserError(_("Không tìm thấy linh kiện con hợp lệ để tạo Định mức vật tư (BOM)."))
+
+        # 5. Cập nhật các dòng định mức (mrp.bom.line):
+        # Thu thập các dòng BOM hiện có để bảo toàn số lượng thực tế đã được xác định trước đó
+        # (ví dụ: số lượng chính xác 4 bulông, 2 thanh giằng do SolidWorks Add-in Check-in đẩy lên).
+        existing_lines_by_prod = {}
+        existing_lines_by_source = {}
+        for line in bom.bom_line_ids:
+            if line.product_id:
+                existing_lines_by_prod[line.product_id.id] = line
+            if line.source_id:
+                existing_lines_by_source[line.source_id.id] = line
+
+        BomLine = self.env["mrp.bom.line"].sudo().with_context(skip_line_audit=True)
+        active_line_ids = set()
+
+        for item in components.values():
+            child_prod = item["product"]
+            child_doc = item["source_doc"]
+
+            # Ưu tiên tìm dòng BOM đã có sẵn theo sản phẩm hoặc tài liệu nguồn CAD
+            existing_line = existing_lines_by_prod.get(child_prod.id) or existing_lines_by_source.get(child_doc.id)
+
+            if existing_line and existing_line.exists():
+                # Bảo toàn số lượng thực tế đã có từ trước (SolidWorks Add-in hoặc người dùng tinh chỉnh)
+                # Chỉ lấy số lượng mặc định 1.0 nếu số lượng cũ không hợp lệ hoặc <= 0
+                preserved_qty = existing_line.product_qty if existing_line.product_qty > 0 else item["qty"]
+                vals_to_update = {}
+                if existing_line.product_id.id != child_prod.id:
+                    vals_to_update["product_id"] = child_prod.id
+                if not existing_line.source_id or existing_line.source_id.id != child_doc.id:
+                    vals_to_update["source_id"] = child_doc.id
+                if existing_line.product_qty != preserved_qty:
+                    vals_to_update["product_qty"] = preserved_qty
+                if vals_to_update:
+                    existing_line.with_context(skip_line_audit=True).write(vals_to_update)
+                active_line_ids.add(existing_line.id)
+            else:
+                # Chi tiết con mới được bổ sung vào cây CAD: tạo mới dòng định mức
+                line_vals = {
+                    "bom_id": bom.id,
+                    "product_id": child_prod.id,
+                    "product_qty": item["qty"],
+                    "source_id": child_doc.id,
+                    "type": "normal",
+                }
+                if hasattr(BomLine, "uom_id"):
+                    line_vals["uom_id"] = child_prod.uom_id.id
+                new_line = BomLine.create(line_vals)
+                active_line_ids.add(new_line.id)
+
+        # Dọn dẹp các dòng BOM cũ không còn tồn tại trong cấu trúc CAD hiện tại (kèm cờ skip_line_audit chống spam log)
+        obsolete_lines = bom.bom_line_ids.filtered(lambda l: l.id not in active_line_ids)
+        if obsolete_lines:
+            obsolete_lines.with_context(skip_line_audit=True).unlink()
+
+        # 6. Ghi nhận Audit Trail vào Chatter của cả ir.attachment và mrp.bom
+        summary_msg = Markup(_(
+            "<p>"
+            "<strong>Đồng bộ thành công Định mức vật tư BOM từ bản vẽ CAD</strong><br/>"
+            "Mã BOM: <strong>%s</strong> (ID: %s)<br/>"
+            "Sản phẩm Cụm cha: <strong>[%s] %s</strong><br/>"
+            "Tổng số lượng linh kiện con: <strong>%s</strong> loại chi tiết "
+            "(Đã bảo toàn số lượng thực tế từ SolidWorks CAD / BOM)."
+            "</p>"
+        )) % (
+            bom.display_name or bom.code or str(bom.id),
+            bom.id,
+            parent_product.default_code or '',
+            parent_product.name,
+            len(components)
+        )
+        self.sudo().message_post(body=summary_msg)
+        bom.sudo().message_post(body=summary_msg)
+
+        # 7. Mở trực tiếp Form view của BOM vừa tạo
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Định mức vật tư (BOM)"),
+            "res_model": "mrp.bom",
+            "view_mode": "form",
+            "res_id": bom.id,
+            "target": "current",
+        }
+
+    def action_view_linked_products(self):
+        """Mở xem Form/Tree của sản phẩm (product.product) liên kết với tài liệu CAD này.
+        Nếu tài liệu chưa liên kết sản phẩm, tự động tạo/liên kết sản phẩm tương ứng.
+        """
+        self.ensure_one()
+        if not self.linkedcomponents:
+            self._get_or_create_related_product()
+
+        products = self.linkedcomponents
+        action = {
+            "type": "ir.actions.act_window",
+            "name": _("Sản phẩm linh kiện kỹ thuật"),
+            "res_model": "product.product",
+            "target": "current",
+        }
+        if len(products) == 1:
+            action.update({
+                "view_mode": "form",
+                "res_id": products.id,
+            })
+        else:
+            action.update({
+                "view_mode": "list,form",
+                "domain": [("id", "in", products.ids)],
+            })
+        return action
+
+    def action_view_mrp_boms(self):
+        """Mở xem Định mức vật tư (mrp.bom) liên kết với tài liệu CAD này.
+        Nếu tài liệu là Cụm 3D có chi tiết con và chưa có BOM, tự động kích hoạt đồng bộ BOM.
+        """
+        self.ensure_one()
+        boms = self._get_related_boms()
+        if not boms:
+            if self.document_type == "3d" and self.child_relation_ids.filtered(lambda r: r.link_kind != 'LyTree' and r.child_id and r.child_id.id != self.id):
+                return self.action_sync_cad_bom_to_mrp()
+            else:
+                raise UserError(_("Tài liệu '%s' hiện chưa có Định mức vật tư (BOM) nào được liên kết.") % (self.name or self.engineering_code))
+
+        action = {
+            "type": "ir.actions.act_window",
+            "name": _("Định mức vật tư (BOM)"),
+            "res_model": "mrp.bom",
+            "target": "current",
+        }
+        if len(boms) == 1:
+            action.update({
+                "view_mode": "form",
+                "res_id": boms.id,
+            })
+        else:
+            action.update({
+                "view_mode": "list,form",
+                "domain": [("id", "in", boms.ids)],
+            })
+        return action

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View Wizard: Đối soát khác biệt BOM -->
+    <record id="view_plm_bom_diff_wizard_form" model="ir.ui.view">
+        <field name="name">plm.bom.diff.wizard.form</field>
+        <field name="model">plm.bom.diff.wizard</field>
+        <field name="arch" type="xml">
+            <form string="So sánh đối soát BOM">
+                <sheet>
+                    <!-- Khối chọn BOM (Header selection) -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="base_bom_id" class="fw-bold text-primary"/>
+                            <field name="base_bom_id" options="{'no_open': True, 'no_create': True}" class="w-100"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="target_bom_id" class="fw-bold text-success"/>
+                            <field name="target_bom_id" options="{'no_create': True}" placeholder="Chọn BOM đối chiếu..." class="w-100"/>
+                        </div>
+                    </div>
+
+                    <!-- Khối Thống kê trực quan (Summary Badges) & Bộ lọc -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 mb-3 bg-light rounded border">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge text-bg-success px-3 py-2 fs-7">
+                                Thêm mới: <field name="total_added"/>
+                            </span>
+                            <span class="badge text-bg-danger px-3 py-2 fs-7">
+                                Loại bỏ: <field name="total_removed"/>
+                            </span>
+                            <span class="badge text-bg-warning px-3 py-2 fs-7">
+                                Đổi số lượng: <field name="total_qty_changed"/>
+                            </span>
+                            <span class="badge text-bg-secondary px-3 py-2 fs-7">
+                                Giữ nguyên: <field name="total_unchanged"/>
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
+                            <span class="text-muted fw-bold small">Bộ lọc:</span>
+                            <field name="filter_state" widget="radio" options="{'horizontal': true}"/>
+                        </div>
+                    </div>
+
+                    <field name="has_difference" invisible="1"/>
+                    <div invisible="has_difference == True or target_bom_id == False" class="alert alert-info py-2 mb-3" role="alert">
+                        Hai phiên bản BOM hoàn toàn giống nhau, không có khác biệt về linh kiện hay số lượng.
+                    </div>
+                    <div invisible="target_bom_id != False" class="alert alert-warning py-2 mb-3" role="alert">
+                        Vui lòng chọn BOM mục tiêu (Target BOM) để thực hiện đối soát khác biệt.
+                    </div>
+
+                    <!-- Bảng đối chiếu danh sách (diff_line_ids list view) -->
+                    <field name="diff_line_ids" nolabel="1">
+                        <list decoration-success="state == 'added'"
+                              decoration-danger="state == 'removed'"
+                              decoration-warning="state == 'qty_changed'"
+                              decoration-muted="state == 'unchanged'"
+                              create="0" edit="0" delete="0">
+                            <field name="state"
+                                   widget="badge"
+                                   decoration-success="state == 'added'"
+                                   decoration-danger="state == 'removed'"
+                                   decoration-warning="state == 'qty_changed'"
+                                   decoration-info="state == 'unchanged'"/>
+                            <field name="product_code" string="Mã linh kiện"/>
+                            <field name="product_name" string="Tên linh kiện"/>
+                            <field name="old_qty" string="SL Cũ (Target)"/>
+                            <field name="new_qty" string="SL Mới (Base)"/>
+                            <field name="diff_qty" string="Độ lệch (+/-)" decoration-bf="diff_qty != 0"/>
+                            <field name="uom_name" string="ĐVT"/>
+                            <field name="source_doc_name" string="Bản vẽ CAD" optional="show"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button string="Đóng" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action mở Wizard Đối soát BOM -->
+    <record id="action_plm_bom_diff_wizard" model="ir.actions.act_window">
+        <field name="name">So sánh đối soát BOM</field>
+        <field name="res_model">plm.bom.diff.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'dialog_size': 'extra-large'}</field>
+    </record>
+</odoo>

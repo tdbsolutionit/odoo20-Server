@@ -6,35 +6,6 @@
         <xpath expr="//header" position="attributes">
             <attribute name="t-att-class">{'o_navbar_home_menu_active': this.state.isHomeMenuOpened}</attribute>
         </xpath>
-        <xpath expr="//div[hasclass('o_menu_systray')]" position="before">
-            <!-- Nút chuyển đổi nhanh ngôn ngữ EN | VI -->
-            <div class="o_tdb_lang_switcher d-flex align-items-center me-3 user-select-none">
-                <div class="tdb-lang-pill" role="group" aria-label="Chuyển đổi ngôn ngữ">
-                    <button type="button"
-                            class="tdb-lang-btn"
-                            t-att-class="{'active': this.currentLanguage === 'VI'}"
-                            t-on-click="() => this.switchLanguage('VI')"
-                            title="Đang dùng / Chuyển sang Tiếng Việt">
-                        <span class="tdb-lang-flag">🇻🇳</span>
-                        <span class="tdb-lang-text">VI</span>
-                        <t t-if="this.currentLanguage === 'VI'">
-                            <span class="tdb-active-indicator" title="Đang kích hoạt">●</span>
-                        </t>
-                    </button>
-                    <button type="button"
-                            class="tdb-lang-btn"
-                            t-att-class="{'active': this.currentLanguage === 'EN'}"
-                            t-on-click="() => this.switchLanguage('EN')"
-                            title="Active / Switch to English">
-                        <span class="tdb-lang-flag">🇬🇧</span>
-                        <span class="tdb-lang-text">EN</span>
-                        <t t-if="this.currentLanguage === 'EN'">
-                            <span class="tdb-active-indicator" title="Currently Active">●</span>
-                        </t>
-                    </button>
-                </div>
-            </div>
-        </xpath>
         <xpath expr="//nav" position="after">
             <t t-if="this.state.isHomeMenuOpened">
                 <div class="o_home_menu_overlay" t-on-click.self="() => this.toggleHomeMenu(false)">

@@ -1,6 +1,7 @@
 {
     "name": "CRM Connector",
     "version": "1.0",
+    "author": "TDB Solution",
     "category": "Sales",
     "summary": "Connect Odoo with external CRM systems",
     "author": "TDB Solutions",

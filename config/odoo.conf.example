@@ -1,0 +1,31 @@
+[options]
+; Mật khẩu quản trị cơ sở dữ liệu (Master Password)
+admin_passwd = admin_master_password_change_me
+
+; Kết nối CSDL PostgreSQL
+db_host = localhost
+db_port = 5432
+db_user = odoo20
+db_password = tdb@2026
+
+; Đường dẫn Addons (Theo đúng thứ tự ưu tiên kiến trúc Odoo)
+addons_path = C:\Work\odoo20-Server\odoo\addons,C:\Work\odoo20-Server\addons,C:\Work\odoo20-Server\custom_addons
+
+; Thư mục lưu trữ dữ liệu tệp đính kèm (Filestore)
+data_dir = C:\odoo20\data
+
+; Thiết lập mạng và giao diện
+db_name = odoo20
+list_db = True
+http_interface = 0.0.0.0
+http_port = 8069
+
+[colors]
+pid = never
+loglevel = auto
+session_id = never
+http_request_line = auto
+http_response_body = auto
+perf = auto
+cursor_mode = auto
+sql = auto
