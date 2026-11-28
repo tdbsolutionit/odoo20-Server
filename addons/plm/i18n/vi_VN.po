@@ -1,0 +1,2546 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 20.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-07 00:00+0000\n"
+"PO-Revision-Date: 2026-11-07 00:00+0000\n"
+"Last-Translator: TDB Solution <contact@tdbsolution.com>\n"
+"Language-Team: Vietnamese <vi@li.org>\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: plm
+# Phân hệ chính PLM
+#: model:ir.ui.menu,name:plm.plm_menu
+msgid "PLM"
+msgstr "PLM"
+
+#. module: plm
+# Menu chính: Linh kiện
+#: model:ir.ui.menu,name:plm.plm_component_menu_view
+msgid "Components"
+msgstr "Linh kiện"
+
+#. module: plm
+# Menu chính: Tài liệu
+#: model:ir.ui.menu,name:plm.ir_attachment_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Documents"
+msgstr "Tài liệu"
+
+#. module: plm
+# Menu chính: Quan hệ linh kiện
+#: model:ir.ui.menu,name:plm.plm_menu_relation
+msgid "Component Relations"
+msgstr "Quan hệ linh kiện"
+
+#. module: plm
+# Menu Quan hệ linh kiện con
+#: model:ir.ui.menu,name:plm.menu_relation_normal
+#: model:ir.actions.act_window,name:plm.plm_action_normal_form
+msgid "Search on Normal Bill of Materials"
+msgstr "Tìm kiếm Định mức BOM"
+
+#. module: plm
+# View Where Used BOM
+#: model_terms:ir.ui.view,arch_db:plm.mrp_bom_list_view_where
+msgid "Where Used Bill of Materials"
+msgstr "Định mức vật liệu sử dụng ở đâu"
+
+#. module: plm
+# Action BOM Structure
+#: model:ir.actions.act_window,name:plm.action2
+msgid "Bill of Materials Structure"
+msgstr "Cấu trúc định mức nguyên vật liệu"
+
+#. module: plm
+# Menu chính: Cấu hình
+#: model:ir.ui.menu,name:plm.plm_menu_dictionaries
+msgid "Configuration"
+msgstr "Cấu hình"
+
+#. module: plm
+# Cấu hình: Quyền truy cập PLM
+#: model:ir.actions.act_window,name:plm.plm_access_action
+#: model:ir.ui.menu,name:plm.menu_plm_access
+msgid "PLM Access"
+msgstr "Quyền truy cập PLM"
+
+#. module: plm
+# Cấu hình: Mô tả kỹ thuật
+#: model:ir.actions.act_window,name:plm.plm_action_description_form
+#: model:ir.ui.menu,name:plm.menu_description
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_description_list
+msgid "Descriptions"
+msgstr "Mô tả kỹ thuật"
+
+#. module: plm
+# Cấu hình: Hoàn thiện bề mặt
+#: model:ir.actions.act_window,name:plm.plm_action_finishing_form
+#: model:ir.ui.menu,name:plm.menu_finishing
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_finishing_list
+msgid "Finishings"
+msgstr "Hoàn thiện bề mặt"
+
+#. module: plm
+# Cấu hình: Xử lý nhiệt & bề mặt
+#: model:ir.actions.act_window,name:plm.plm_action_treatment_form
+#: model:ir.ui.menu,name:plm.menu_treatment
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_treatment_list
+msgid "Treatments"
+msgstr "Xử lý nhiệt & bề mặt"
+
+#. module: plm
+# Cấu hình: Vật liệu chế tạo
+#: model:ir.actions.act_window,name:plm.plm_action_material_form
+#: model:ir.ui.menu,name:plm.menu_material
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_material_list
+msgid "Materials"
+msgstr "Vật liệu chế tạo"
+
+#. module: plm
+# Cấu hình: Tiến trình CSDL
+#: model:ir.actions.act_window,name:plm.plm_action_plm_dbthread
+#: model:ir.ui.menu,name:plm.plm_dbthread_id
+msgid "DbThread"
+msgstr "Luồng CSDL (DbThread)"
+
+#. module: plm
+# Cấu hình: Nhóm quyền người dùng
+#: model:ir.actions.act_window,name:plm.plm_action_res_groups
+#: model:ir.ui.menu,name:plm.plm_groups
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_groups_list
+msgid "Groups"
+msgstr "Nhóm quyền người dùng"
+
+#. module: plm
+# Cấu hình: Tìm kiếm linh kiện CAD
+#: model:ir.actions.act_window,name:plm.action_plm_component_base_cad_form
+#: model:ir.ui.menu,name:plm.plm_product_cad_search
+#: model_terms:ir.ui.view,arch_db:plm.plm_view_product_search_list
+msgid "Product Cad Search"
+msgstr "Tìm kiếm linh kiện CAD"
+
+#. module: plm
+# Cấu hình: Cài đặt
+#: model:ir.actions.act_window,name:plm.plm_action_settings_form
+#: model:ir.ui.menu,name:plm.plm_settings
+msgid "Settings"
+msgstr "Cấu hình & Cài đặt"
+
+#. module: plm
+# Cấu hình: Desktop Access Tokens
+#: model:ir.actions.act_window,name:tdb_plm_custom.action_plm_desktop_token
+#: model:ir.ui.menu,name:tdb_plm_custom.menu_plm_desktop_token
+msgid "Desktop Access Tokens"
+msgstr "Mã truy cập CAD Desktop"
+
+#. module: plm
+# Hồ sơ người dùng: Quyền truy cập PLM mặc định
+#: model:ir.model.fields,field_description:plm.field_res_users__plm_access_id
+#: model:ir.model.fields,field_description:plm.field_res_partner__plm_access
+msgid "Default PLM Access"
+msgstr "Quyền truy cập PLM mặc định"
+
+#. module: plm
+# Hồ sơ người dùng: Quyền truy cập PLM Portal
+#: model:ir.model.fields,field_description:plm.field_res_users__plm_portal_access
+#: model:ir.model.fields,field_description:plm.field_res_partner__plm_portal_access
+msgid "PLM Portal Access"
+msgstr "Quyền truy cập PLM Portal"
+
+#. module: plm
+# Lựa chọn: Kế thừa từ đối tác
+#: model:ir.model.fields.selection,name:plm.selection__res_users__plm_portal_access__inherit
+msgid "From the partner"
+msgstr "Từ đối tác"
+
+#. module: plm
+# Lựa chọn: Không có quyền truy cập PLM
+#: model:ir.model.fields.selection,name:plm.selection__res_users__plm_portal_access__none
+#: model:ir.model.fields.selection,name:plm.selection__res_partner__plm_portal_access__none
+msgid "No PLM documents"
+msgstr "Không có tài liệu PLM"
+
+#. module: plm
+# Lựa chọn: Quyền chỉ xem tài liệu PLM
+#: model:ir.model.fields.selection,name:plm.selection__res_users__plm_portal_access__view
+#: model:ir.model.fields.selection,name:plm.selection__res_partner__plm_portal_access__view
+msgid "View only"
+msgstr "Chỉ xem"
+
+#. module: plm
+# Lựa chọn: Xem và đánh dấu tài liệu PLM
+#: model:ir.model.fields.selection,name:plm.selection__res_users__plm_portal_access__markup
+#: model:ir.model.fields.selection,name:plm.selection__res_partner__plm_portal_access__markup
+msgid "View and markup"
+msgstr "Xem và đánh dấu (Markup)"
+
+#. module: plm
+# Tiêu đề action và bảng linh kiện
+#: model:ir.actions.act_window,name:plm.action_plm_component_base
+#: model:ir.actions.act_window,name:plm.action_plm_component_base_cad_form
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Engineering Parts"
+msgstr "Linh kiện kỹ thuật"
+
+#. module: plm
+# Cột bảng: Hình ảnh
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Image"
+msgstr "Hình ảnh"
+
+#. module: plm
+# Cột bảng: Tên
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Name"
+msgstr "Tên"
+
+#. module: plm
+# Cột bảng: Tên cấu hình
+#: model:ir.model.fields,field_description:plm.field_product_product__configuration_name
+#: model:ir.model.fields,field_description:plm.field_product_template__configuration_name
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Configuration Name"
+msgstr "Tên cấu hình"
+
+#. module: plm
+# Cột bảng: Mã kỹ thuật
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_code
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_code
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Engineering Code"
+msgstr "Mã kỹ thuật"
+
+#. module: plm
+# Cột bảng: Tham chiếu nội bộ
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Internal Reference"
+msgstr "Mã nội bộ"
+
+#. module: plm
+# Cột bảng: Phiên bản kỹ thuật
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_revision
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_revision
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Revision"
+msgstr "Phiên bản"
+
+#. module: plm
+# Cột bảng: Trạng thái kỹ thuật
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_state
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_state
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_state
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Engineering Status"
+msgstr "Trạng thái kỹ thuật"
+
+#. module: plm
+# Cột bảng: Mô tả
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: plm
+# Cột bảng: Có thể chỉnh sửa
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_writable
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_writable
+#: model:ir.model.fields,field_description:plm.field_ir_attachment__engineering_writable
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_list_inherit_tdb
+msgid "Writable"
+msgstr "Được phép sửa"
+
+#. module: plm
+# Cột bảng: Vật liệu CAD
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_material
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_material
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "CAD Raw Material"
+msgstr "Vật liệu CAD"
+
+#. module: plm
+# Cột bảng: Bề mặt CAD
+#: model:ir.model.fields,field_description:plm.field_product_product__engineering_surface
+#: model:ir.model.fields,field_description:plm.field_product_template__engineering_surface
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "CAD Surface Finishing"
+msgstr "Bề mặt hoàn thiện CAD"
+
+#. module: plm
+# Cột bảng: Tài liệu liên kết
+#: model:ir.model.fields,field_description:plm.field_product_product__linkeddocuments
+#: model:ir.model.fields,field_description:plm.field_product_template__linkeddocuments
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Linked Documents"
+msgstr "Tài liệu liên kết"
+
+#. module: plm
+# Cột bảng: Được kiểm xuất bởi
+#: model:ir.model.fields,field_description:plm.field_product_product__document_checkout_user_ids
+#: model:ir.model.fields,field_description:plm.field_product_template__document_checkout_user_ids
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_tree_inherit_tdb
+msgid "Checked-Out By"
+msgstr "Người Check-out"
+
+#. module: plm
+# Trạng thái: Bản thảo
+#: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__draft
+#: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__draft
+#: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__draft
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Draft"
+msgstr "Bản thảo"
+
+#. module: plm
+# Trạng thái: Đã xác nhận
+#: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__confirmed
+#: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__confirmed
+#: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__confirmed
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Confirmed"
+msgstr "Đã xác nhận"
+
+#. module: plm
+# Trạng thái: Đã ban hành
+#: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__released
+#: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__released
+#: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__released
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Released"
+msgstr "Đã ban hành"
+
+#. module: plm
+# Trạng thái: Đang sửa đổi
+#: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__undermodify
+#: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__undermodify
+#: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__undermodify
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Under Modify"
+msgstr "Đang sửa đổi"
+
+#. module: plm
+# Trạng thái: Đã lỗi thời
+#: model:ir.model.fields.selection,name:plm.selection__product_template__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:plm.selection__revision_plm_mixin__engineering_state__obsoleted
+#: model:ir.model.fields.selection,name:plm.selection__ir_attachment__engineering_state__obsoleted
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Obsoleted"
+msgstr "Đã lỗi thời"
+
+#. module: plm
+# Bộ lọc: Mới nhất
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Latest"
+msgstr "Mới nhất"
+
+#. module: plm
+# Bộ lọc: Đã kiểm xuất
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_component_base_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+msgid "Checked Out"
+msgstr "Đã kiểm xuất"
+
+#. module: plm
+# Bộ lọc: Đã kiểm xuất (Attachment)
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_ir_attachment_search_inherit_tdb
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_search_inherit_plm
+msgid "Checked-Out"
+msgstr "Đang Check-Out"
+
+#. module: plm
+# Desktop Token: Kỹ sư CAD
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__user_id
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "CAD Engineer"
+msgstr "Kỹ sư CAD"
+
+#. module: plm
+# Desktop Token: Tên máy trạm
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__machine_name
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Workstation Name"
+msgstr "Tên máy trạm"
+
+#. module: plm
+# Desktop Token: IP Client
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__client_ip
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "Client IP"
+msgstr "Địa chỉ IP máy trạm"
+
+#. module: plm
+# Desktop Token: Phiên bản CAD
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__cad_version
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "CAD Version"
+msgstr "Phiên bản CAD"
+
+#. module: plm
+# Desktop Token: Ngày cấp
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__issued_at
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Issued Date"
+msgstr "Ngày cấp"
+
+#. module: plm
+# Desktop Token: Hạn hiệu lực
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__expires_at
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Expiration Date"
+msgstr "Hạn chót hiệu lực (180 ngày)"
+
+#. module: plm
+# Desktop Token: Lần truy cập cuối
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__last_used_date
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+msgid "Last Access Date"
+msgstr "Lần truy cập cuối"
+
+#. module: plm
+# Desktop Token: Hiệu lực
+#: model:ir.model.fields,field_description:tdb_plm_custom.field_plm_desktop_token__is_active
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: plm
+# Desktop Token: Nút thu hồi
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Revoke Access"
+msgstr "Thu hồi quyền truy cập"
+
+#. module: plm
+# Desktop Token: Nút khôi phục
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_list
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_form
+msgid "Restore"
+msgstr "Khôi phục kết nối"
+
+#. module: plm
+# Desktop Token: Tìm kiếm
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "Search Desktop Tokens"
+msgstr "Tìm kiếm Desktop Tokens"
+
+#. module: plm
+# Desktop Token: Đã thu hồi
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "Revoked"
+msgstr "Đã thu hồi"
+
+#. module: plm
+# Desktop Token: Kỹ sư
+#: model_terms:ir.ui.view,arch_db:tdb_plm_custom.plm_desktop_token_view_search
+msgid "Engineer"
+msgstr "Kỹ sư"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Confirm Document"
+msgstr "Xác nhận tài liệu"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Release Document"
+msgstr "Ban hành tài liệu"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Correct Document"
+msgstr "Sửa tài liệu (Về bản thảo)"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Un Release"
+msgstr "Hủy ban hành"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Re Release"
+msgstr "Tái ban hành"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Doc Structure"
+msgstr "Cấu trúc tài liệu"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "PLM Infos:"
+msgstr "Thông tin PLM"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Eng. Document Name"
+msgstr "Tên tài liệu kỹ thuật"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Engineering revision"
+msgstr "Revision kỹ thuật"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Is a Plm Document"
+msgstr "Là tài liệu PLM"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "File Data:"
+msgstr "Dữ liệu tệp"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Related To"
+msgstr "Liên quan đến"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Attachments To"
+msgstr "Đính kèm vào"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "History"
+msgstr "Lịch sử luồng công việc"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Changes"
+msgstr "Nhật ký thay đổi"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Creation"
+msgstr "Khởi tạo"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Linked Parts"
+msgstr "Linh kiện liên kết"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Indexed Content"
+msgstr "Nội dung chỉ mục"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.view_attachment_form_plm_hinerit
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Confirm Component"
+msgstr "Xác nhận linh kiện"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Release Component"
+msgstr "Ban hành linh kiện"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Correct Component"
+msgstr "Sửa linh kiện (Về bản thảo)"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Standard Description Parameters"
+msgstr "Thông số mô tả tiêu chuẩn"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Technical Information"
+msgstr "Thông tin kỹ thuật"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_form
+msgid "Material / Surface / Treatment"
+msgstr "Vật liệu / Bề mặt / Xử lý nhiệt"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+msgid "Latest"
+msgstr "Mới nhất (Latest)"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+msgid "Checked Out"
+msgstr "Đang Check-out"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+msgid "Confirmed"
+msgstr "Đã xác nhận"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+msgid "Released"
+msgstr "Đã ban hành"
+
+#. module: plm
+#: model_terms:ir.ui.view,arch_db:plm.plm_component_base_search
+msgid "Obsoleted"
+msgstr "Đã lỗi thời"
+
+#. module: plm
+msgid "Key Holder"
+msgstr "Người giữ Key"
+
+#. module: plm
+msgid "I Hold Key"
+msgstr "Tôi đang giữ Key"
+
+#. module: plm
+msgid "Checked Out By Me"
+msgstr "Tôi đã Check-out"
+
+#. module: plm
+msgid "Version History"
+msgstr "Lịch sử phiên bản"
+
+#. module: plm
+msgid "Version Count"
+msgstr "Số phiên bản"
+
+#. module: plm
+msgid "Child Documents"
+msgstr "Tài liệu con (Assembly)"
+
+#. module: plm
+msgid "Where Used"
+msgstr "Cụm máy cha (Where Used)"
+
+#. module: plm
+msgid "Child Documents Count"
+msgstr "Số file con liên quan"
+
+#. module: plm
+msgid "Where Used Count"
+msgstr "Số nơi sử dụng"
+
+#. module: plm
+msgid "Child Engineering Code"
+msgstr "Mã kỹ thuật con"
+
+#. module: plm
+msgid "Child Lock Status"
+msgstr "Trạng thái Lock con"
+
+#. module: plm
+msgid "Child Key Holder"
+msgstr "Người giữ Key con"
+
+#. module: plm
+msgid "Parent Engineering Code"
+msgstr "Mã kỹ thuật cha"
+
+#. module: plm
+msgid "Parent Lock Status"
+msgstr "Trạng thái Lock cha"
+
+#. module: plm
+msgid "Parent Key Holder"
+msgstr "Người giữ Key cha"
+
+#. module: plm
+msgid "Transfer & Release Key Holder"
+msgstr "Chuyển giao & Thu hồi quyền giữ Key"
+
+#. module: plm
+msgid ""
+"Transfer Check-in permission (Key Holder) to another engineer, or Force "
+"Unlock to release the document."
+msgstr ""
+"Chuyển giao quyền Check-in (giữ Key) cho kỹ sư khác hoặc Force Unlock (Thu "
+"hồi Key) để tài liệu trở về trạng thái tự do."
+
+#. module: plm
+msgid ""
+"Transfer Check-in permission (Key Holder) to another engineer, or Unlock to "
+"release the document."
+msgstr ""
+"Chuyển giao quyền Check-in (giữ Key) cho kỹ sư khác hoặc Unlock để tài liệu "
+"trở về trạng thái tự do."
+
+#. module: plm
+msgid "Document Information"
+msgstr "Thông tin tài liệu"
+
+#. module: plm
+msgid "Current Key Holder"
+msgstr "Người đang giữ Key"
+
+#. module: plm
+msgid "Action Type"
+msgstr "Hình thức thực hiện"
+
+#. module: plm
+msgid "New Key Holder"
+msgstr "Kỹ sư nhận Key mới"
+
+#. module: plm
+msgid "Release All Check-outs"
+msgstr "Giải phóng toàn bộ Check-out"
+
+#. module: plm
+msgid "Reason (Optional)"
+msgstr "Lý do (Tùy chọn)"
+
+#. module: plm
+msgid "Enter reason for transfer or unlock (optional)..."
+msgstr "Nhập lý do chuyển giao hoặc mở khóa/thu hồi Key (không bắt buộc)..."
+
+#. module: plm
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#. module: plm
+msgid "Cancel"
+msgstr "Hủy bỏ"
+
+#. module: plm
+msgid "Transfer to another engineer"
+msgstr "Chuyển giao cho kỹ sư khác"
+
+#. module: plm
+msgid "Force Unlock"
+msgstr "Thu hồi Key (Force Unlock)"
+
+#. module: plm
+msgid "Unlock"
+msgstr "Unlock"
+
+#. module: plm
+msgid "Lock"
+msgstr "Lock"
+
+#. module: plm
+msgid "Check-out"
+msgstr "Check-out"
+
+#. module: plm
+msgid "Check-in"
+msgstr "Check-in"
+
+#. module: plm
+msgid "Undo Check-out"
+msgstr "Hủy Check-Out"
+
+#. module: plm
+msgid "Are you sure you want to UNDO Check-out on this document?"
+msgstr "Bạn có chắc chắn muốn HỦY Check-out tài liệu này không?"
+
+#. module: plm
+msgid "Attachment"
+msgstr "Tệp đính kèm"
+
+#. module: plm
+msgid "File Data"
+msgstr "Dữ liệu tệp"
+
+#. module: plm
+msgid "File Content (base64)"
+msgstr "Nội dung tệp (base64)"
+
+#. module: plm
+msgid "File Name"
+msgstr "Tên tệp"
+
+#. module: plm
+msgid "Document Type"
+msgstr "Loại tài liệu"
+
+#. module: plm
+msgid "Type"
+msgstr "Loại tệp"
+
+#. module: plm
+msgid "Website"
+msgstr "Trang web"
+
+#. module: plm
+msgid "Related To"
+msgstr "Liên quan đến"
+
+#. module: plm
+msgid "Resource ID"
+msgstr "ID tài nguyên"
+
+#. module: plm
+msgid "Attachments To"
+msgstr "Đính kèm vào"
+
+#. module: plm
+msgid "Resource Name"
+msgstr "Tên tài nguyên"
+
+#. module: plm
+msgid "Resource Model"
+msgstr "Mô hình tài nguyên"
+
+#. module: plm
+msgid "Workflow History"
+msgstr "Lịch sử quy trình"
+
+#. module: plm
+msgid "Changes"
+msgstr "Nhật ký thay đổi"
+
+#. module: plm
+msgid "Creation"
+msgstr "Khởi tạo"
+
+#. module: plm
+msgid "Last Update"
+msgstr "Cập nhật"
+
+#. module: plm
+msgid "Workflow User"
+msgstr "Người duyệt kỹ thuật"
+
+#. module: plm
+msgid "User"
+msgstr "Người dùng"
+
+#. module: plm
+msgid "Released By"
+msgstr "Người ban hành"
+
+#. module: plm
+msgid "Revision By"
+msgstr "Người nâng phiên bản"
+
+#. module: plm
+msgid "Linked Parts"
+msgstr "Linh kiện liên kết"
+
+#. module: plm
+msgid "Indexed Content"
+msgstr "Nội dung trích xuất CAD"
+
+#. module: plm
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: plm
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: plm
+msgid "Modification Reason"
+msgstr "Lý do sửa đổi"
+
+#. module: plm
+msgid "Referenced Documents"
+msgstr "Tài liệu tham chiếu"
+
+#. module: plm
+msgid "Referenced Documents (References)"
+msgstr "Tài liệu tham chiếu"
+
+#. module: plm
+msgid "Child Components (References / Assembly)"
+msgstr "Chi tiết con (References / Assembly)"
+
+#. module: plm
+msgid "Where Used (Parents)"
+msgstr "Nơi sử dụng (Cụm máy cha / Where-Used)"
+
+#. module: plm
+msgid "Related Child Components"
+msgstr "Chi tiết con liên quan"
+
+#. module: plm
+msgid "Related Parent Assemblies"
+msgstr "Cụm máy cha liên quan"
+
+#. module: plm
+msgid "Document File History"
+msgstr "Lịch sử phiên bản tệp"
+
+#. module: plm
+msgid "Document History Detail"
+msgstr "Chi tiết phiên bản lịch sử"
+
+#. module: plm
+msgid "Restore to this Version"
+msgstr "Khôi phục về phiên bản này"
+
+#. module: plm
+msgid "Restore"
+msgstr "Khôi phục"
+
+#. module: plm
+msgid "Download"
+msgstr "Tải xuống"
+
+#. module: plm
+msgid "Version Information"
+msgstr "Thông tin phiên bản"
+
+#. module: plm
+msgid "Log"
+msgstr "Nhật ký lưu"
+
+#. module: plm
+msgid "Modification Note"
+msgstr "Ghi chú thay đổi"
+
+#. module: plm
+msgid "Size"
+msgstr "Dung lượng"
+
+#. module: plm
+msgid "Date"
+msgstr "Thời điểm lưu"
+
+#. module: plm
+msgid "Note"
+msgstr "Ghi chú"
+
+#. module: plm
+msgid "Locked (Key Held)"
+msgstr "Đã bị khóa (Có người giữ Key)"
+
+#. module: plm
+msgid "Unlocked (Free)"
+msgstr "Tự do (Chưa có ai giữ Key)"
+
+#. module: plm
+msgid "Part Relations"
+msgstr "Quan hệ linh kiện"
+
+#. module: plm
+msgid "Activities"
+msgstr "Hoạt động"
+
+#. module: plm
+msgid "CAD Documents"
+msgstr "Tài liệu CAD"
+
+#. module: plm
+msgid "Engineering Components"
+msgstr "Linh kiện Kỹ thuật"
+
+#. module: plm
+msgid "CAD Desktop Tokens"
+msgstr "Mã truy cập CAD"
+
+#. module: plm
+msgid "3D Preview"
+msgstr "Hình ảnh 3D"
+
+#. module: plm
+msgid "Component Name"
+msgstr "Tên linh kiện"
+
+#. module: plm
+msgid "Document Name"
+msgstr "Tên tài liệu"
+
+#. module: plm
+msgid "CAD Configuration"
+msgstr "Cấu hình CAD"
+
+#. module: plm
+msgid "Engineering Revision"
+msgstr "Phiên bản (Revision)"
+
+#. module: plm
+msgid "Engineering State"
+msgstr "Trạng thái kỹ thuật"
+
+#. module: plm
+msgid "CAD Material"
+msgstr "Vật liệu CAD"
+
+#. module: plm
+msgid "CAD Surface"
+msgstr "Bề mặt CAD"
+
+#. module: plm
+msgid "Last Year"
+msgstr "Năm trước"
+
+#. module: plm
+msgid "Last Month"
+msgstr "Tháng trước"
+
+#. module: plm
+msgid "Last Week"
+msgstr "Tuần trước"
+
+#. module: plm
+msgid "Latest Revision"
+msgstr "Phiên bản mới nhất"
+
+#. module: plm
+msgid "Created by Me"
+msgstr "Do tôi tạo"
+
+#. module: plm
+msgid "Modified by Me"
+msgstr "Do tôi sửa đổi"
+
+#. module: plm
+msgid "Draft Component"
+msgstr "Sửa linh kiện (Bản thảo)"
+
+#. module: plm
+msgid "Component Description"
+msgstr "Mô tả linh kiện"
+
+#. module: plm
+msgid "Standard Description"
+msgstr "Mô tả kỹ thuật tiêu chuẩn"
+
+#. module: plm
+msgid "Standard Description Attributes"
+msgstr "Thông số mô tả tiêu chuẩn"
+
+#. module: plm
+msgid "Product Category"
+msgstr "Nhóm sản phẩm"
+
+#. module: plm
+msgid "Workflow"
+msgstr "Quy trình làm việc (Workflow)"
+
+#. module: plm
+msgid "Release Date"
+msgstr "Ngày ban hành"
+
+#. module: plm
+msgid "Revised By"
+msgstr "Người sửa đổi"
+
+#. module: plm
+msgid "Revision Date"
+msgstr "Ngày sửa đổi"
+
+#. module: plm
+msgid "Workflow By"
+msgstr "Người thực hiện quy trình"
+
+#. module: plm
+msgid "Workflow Date"
+msgstr "Ngày thực hiện quy trình"
+
+#. module: plm
+msgid "Revisions"
+msgstr "Phiên bản (Revision)"
+
+#. module: plm
+msgid "Template"
+msgstr "Mẫu linh kiện"
+
+#. module: plm
+msgid "Print BoM"
+msgstr "In BOM"
+
+#. module: plm
+msgid "Bill of Materials"
+msgstr "Định mức BOM"
+
+#. module: plm
+msgid "e.g. Spur Gear, Drive Shaft, Hex Bolt M8..."
+msgstr "Ví dụ: Bánh răng trụ, Trục truyền động, Bu-lông M8..."
+
+#. module: plm
+msgid "Can be Sold"
+msgstr "Có thể bán"
+
+#. module: plm
+msgid "Purchase"
+msgstr "Có thể mua"
+
+#. module: plm
+msgid "KIT BoM Type"
+msgstr "Bộ linh kiện (BOM KIT)"
+
+#. module: plm
+msgid "ODOOPLM INFORMATION"
+msgstr "THÔNG TIN KỸ THUẬT PLM"
+
+#. module: plm
+msgid "General Information"
+msgstr "Thông tin chung"
+
+#. module: plm
+msgid "Inventory"
+msgstr "Kho vận"
+
+#. module: plm
+msgid "Linked Documents by Revision"
+msgstr "Tài liệu liên kết theo phiên bản"
+
+#. module: plm
+msgid "Created By"
+msgstr "Người tạo"
+
+#. module: plm
+msgid "Created On"
+msgstr "Ngày tạo"
+
+#. module: plm
+msgid "Last Updated By"
+msgstr "Người cập nhật"
+
+#. module: plm
+msgid "Last Updated"
+msgstr "Cập nhật lần cuối"
+
+#. module: plm
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: plm
+msgid "Draft Document"
+msgstr "Sửa tài liệu (Bản thảo)"
+
+#. module: plm
+msgid "Unrelease Document"
+msgstr "Hủy ban hành"
+
+#. module: plm
+msgid "Re-release Document"
+msgstr "Ban hành lại"
+
+#. module: plm
+msgid "Sync BOM to Production"
+msgstr "Đồng bộ BOM sang Sản xuất"
+
+#. module: plm
+msgid "Lock Document"
+msgstr "Khóa tài liệu"
+
+#. module: plm
+msgid "Unlock Document"
+msgstr "Mở khóa tài liệu"
+
+#. module: plm
+msgid "Upload PDF"
+msgstr "Tải lên PDF"
+
+#. module: plm
+msgid "Preview PDF"
+msgstr "Xem trước PDF"
+
+#. module: plm
+msgid "Download PDF"
+msgstr "Tải file PDF"
+
+#. module: plm
+msgid "Locked by Released Parent Assembly (Read-Only)"
+msgstr "Bị khóa bởi Cụm máy cha đã Ban hành (Chỉ đọc)"
+
+#. module: plm
+msgid "Parent Assembly Released"
+msgstr "Cụm máy cha đã ban hành"
+
+#. module: plm
+msgid "Released Document (Read-Only)"
+msgstr "Tài liệu đã Ban hành (Chỉ đọc)"
+
+#. module: plm
+msgid "Holding Key"
+msgstr "Bạn đang giữ Key"
+
+#. module: plm
+msgid "Reference Mode"
+msgstr "Chế độ tham chiếu"
+
+#. module: plm
+msgid "No Key Holder"
+msgstr "Chưa có người giữ Key"
+
+#. module: plm
+msgid "Waiting to Lock"
+msgstr "Đang chờ khóa"
+
+#. module: plm
+msgid "Related Documents"
+msgstr "Tài liệu liên quan"
+
+#. module: plm
+msgid "CAD Structure"
+msgstr "Cấu trúc CAD"
+
+#. module: plm
+msgid "CAD Revision"
+msgstr "Phiên bản CAD"
+
+#. module: plm
+msgid "CAD Revisions"
+msgstr "Phiên bản CAD"
+
+#. module: plm
+msgid "Revision History"
+msgstr "Lịch sử phiên bản"
+
+#. module: plm
+msgid "2D Drawings"
+msgstr "Bản vẽ 2D"
+
+#. module: plm
+msgid "3D Models"
+msgstr "Mô hình 3D"
+
+#. module: plm
+msgid "Document Engineering Code"
+msgstr "Mã kỹ thuật tài liệu"
+
+#. module: plm
+msgid "Is a PLM Document ?"
+msgstr "Tài liệu PLM"
+
+#. module: plm
+msgid "CAD DOCUMENT FILE DATA"
+msgstr "DỮ LIỆU TỆP TÀI LIỆU CAD"
+
+#. module: plm
+msgid "CAD Document Type"
+msgstr "Loại tài liệu CAD"
+
+#. module: plm
+msgid "Storage Type"
+msgstr "Kiểu lưu trữ"
+
+#. module: plm
+msgid "PDF Printout (Printout Content)"
+msgstr "Bản in PDF (Printout Content)"
+
+#. module: plm
+msgid "PDF Printout Name"
+msgstr "Tên file bản in PDF"
+
+#. module: plm
+msgid "Linked to"
+msgstr "Liên kết tới"
+
+#. module: plm
+msgid "Record ID"
+msgstr "ID bản ghi"
+
+#. module: plm
+msgid "Attached to"
+msgstr "Đính kèm cho"
+
+#. module: plm
+msgid "Record Name"
+msgstr "Tên bản ghi"
+
+#. module: plm
+msgid "Data Model"
+msgstr "Mô hình dữ liệu"
+
+#. module: plm
+msgid "Audit Log"
+msgstr "Nhật ký thay đổi"
+
+#. module: plm
+msgid "Workflow Approver"
+msgstr "Người duyệt quy trình"
+
+#. module: plm
+msgid "Technical Description"
+msgstr "Mô tả kỹ thuật"
+
+#. module: plm
+msgid "Saved At"
+msgstr "Thời điểm lưu"
+
+#. module: plm
+msgid "2D Drawings (Layout Tree)"
+msgstr "Bản vẽ 2D (Layout Tree)"
+
+#. module: plm
+msgid "Link 2D Drawing"
+msgstr "Thêm liên kết Bản vẽ 2D"
+
+#. module: plm
+msgid "2D Drawing File Name (.slddrw)"
+msgstr "Tên file bản vẽ 2D (.slddrw)"
+
+#. module: plm
+msgid "PDF Printout"
+msgstr "Bản in PDF"
+
+#. module: plm
+msgid "Source 3D Models"
+msgstr "Mô hình 3D nguồn"
+
+#. module: plm
+msgid "Source 3D Model File Name"
+msgstr "Tên file mô hình 3D"
+
+#. module: plm
+msgid "Child Parts (References / Assemblies)"
+msgstr "Chi tiết con (Tham chiếu / Cụm lắp ráp)"
+
+#. module: plm
+msgid "Child Parts List"
+msgstr "Danh sách chi tiết con"
+
+#. module: plm
+msgid "Child Document"
+msgstr "Tài liệu con"
+
+#. module: plm
+msgid "Lock Status"
+msgstr "Trạng thái khóa Key"
+
+#. module: plm
+msgid "Where Used (Parent Assemblies)"
+msgstr "Cụm máy cha sử dụng (Where Used)"
+
+#. module: plm
+msgid "Where Used List"
+msgstr "Danh sách Cụm máy cha sử dụng"
+
+#. module: plm
+msgid "Parent Document"
+msgstr "Tài liệu cha"
+
+#. module: plm
+msgid "Search Engineering Components"
+msgstr "Tìm kiếm Linh kiện Kỹ thuật"
+
+#. module: plm
+msgid "Search CAD Documents"
+msgstr "Tìm kiếm Tài liệu CAD"
+
+#. module: plm
+msgid "Search Document Relations"
+msgstr "Tìm kiếm Quan hệ Tài liệu"
+
+#. module: plm
+msgid "Checked-Out Documents"
+msgstr "Tài liệu đang Check-Out"
+
+#. module: plm
+msgid "Backup Documents"
+msgstr "Tập dữ liệu Sao lưu (Backup)"
+
+#. module: plm
+msgid "Open CAD Documents"
+msgstr "Tài liệu CAD đang mở"
+
+#. module: plm
+msgid "Open CAD Documents (Backup)"
+msgstr "Tài liệu CAD mở dự phòng"
+
+#. module: plm
+msgid "Standard Descriptions"
+msgstr "Mô tả Tiêu chuẩn"
+
+#. module: plm
+msgid "Finishing / Surface"
+msgstr "Độ nhám / Bề mặt"
+
+#. module: plm
+msgid "Treatment / Heat Treatment"
+msgstr "Nhiệt luyện / Xử lý nhiệt"
+
+#. module: plm
+msgid "Engineering Materials"
+msgstr "Vật liệu Kỹ thuật"
+
+#. module: plm
+msgid "Engineering Groups"
+msgstr "Nhóm Kỹ thuật"
+
+#. module: plm
+msgid "Search Product CAD"
+msgstr "Tìm kiếm CAD Sản phẩm"
+
+#. module: plm
+msgid "IP Address"
+msgstr "Địa chỉ IP"
+
+#. module: plm
+msgid "Issued At"
+msgstr "Thời điểm cấp"
+
+#. module: plm
+msgid "Expires At"
+msgstr "Thời điểm hết hạn"
+
+#. module: plm
+msgid "Expires At (180 days)"
+msgstr "Hạn chót (180 ngày)"
+
+#. module: plm
+msgid "Last Used"
+msgstr "Lần dùng cuối"
+
+#. module: plm
+msgid "Revoke"
+msgstr "Thu hồi"
+
+#. module: plm
+msgid "Test Expiry"
+msgstr "Test Hết hạn"
+
+#. module: plm
+msgid "Restore Access"
+msgstr "Khôi phục truy cập"
+
+#. module: plm
+msgid "Renew 180 Days"
+msgstr "Gia hạn 180 ngày"
+
+#. module: plm
+msgid "Expired"
+msgstr "Đã hết hạn"
+
+#. module: plm
+msgid "Search Workstation Tokens"
+msgstr "Tìm kiếm Token máy trạm"
+
+#. module: plm
+msgid "Technical Parameters & Session"
+msgstr "Thông số Kỹ thuật & Phiên làm việc"
+
+#. module: plm
+msgid "Token Hash"
+msgstr "Mã băm Token (Hash)"
+
+#. module: plm
+msgid "Session SID"
+msgstr "Mã phiên SID"
+
+#. module: plm
+msgid "Device & Engineer Information"
+msgstr "Thông tin Thiết bị & Kỹ sư"
+
+#. module: plm
+msgid "Validity & Status"
+msgstr "Hiệu lực & Trạng thái"
+
+#. module: plm
+msgid "CAD Workstation Name"
+msgstr "Tên máy trạm CAD"
+
+#. module: plm
+msgid "Transfer & Force Unlock Key"
+msgstr "Chuyển giao & Thu hồi Quyền giữ Key"
+
+#. module: plm
+msgid "Technical Document"
+msgstr "Tài liệu kỹ thuật"
+
+#. module: plm
+msgid "Operation Type"
+msgstr "Loại tác vụ"
+
+#. module: plm
+msgid "Action"
+msgstr "Tác vụ"
+
+#. module: plm
+msgid "Release all Check-outs"
+msgstr "Hủy toàn bộ Check-out"
+
+#. module: plm
+msgid "Target 3D Model"
+msgstr "Mô hình 3D đích"
+
+#. module: plm
+msgid "3D Model Name"
+msgstr "Tên mô hình 3D"
+
+#. module: plm
+msgid "2D Drawing to Link"
+msgstr "Bản vẽ 2D cần liên kết"
+
+#. module: plm
+msgid "2D Drawing"
+msgstr "Bản vẽ 2D"
+
+#. module: plm
+msgid "Drawing State"
+msgstr "Trạng thái bản vẽ"
+
+#. module: plm
+msgid "Confirm Link"
+msgstr "Xác nhận liên kết"
+
+#. module: plm
+msgid "Upload Technical PDF Printout"
+msgstr "Tải lên Bản in PDF Kỹ thuật"
+
+#. module: plm
+msgid "Target Document"
+msgstr "Tài liệu nhận file"
+
+#. module: plm
+msgid "Technical PDF File"
+msgstr "Tệp PDF kỹ thuật"
+
+#. module: plm
+msgid "Select PDF File"
+msgstr "Chọn tệp PDF"
+
+#. module: plm
+msgid "Saved File Name"
+msgstr "Tên tệp lưu trữ"
+
+#. module: plm
+msgid "Confirm Upload"
+msgstr "Xác nhận tải lên"
+
+#. module: plm
+msgid "Technical Drawing Preview"
+msgstr "Xem trước Bản vẽ kỹ thuật"
+
+#. module: plm
+msgid "Close"
+msgstr "Đóng"
+
+#. module: plm
+msgid "CAD Document File History"
+msgstr "Lịch sử tệp tài liệu CAD"
+
+#. module: plm
+msgid "CAD Document History Details"
+msgstr "Chi tiết lịch sử tài liệu CAD"
+
+#. module: plm
+msgid "Restore to this version"
+msgstr "Khôi phục về phiên bản này"
+
+#. module: plm
+msgid "Change Notes"
+msgstr "Ghi chú sửa đổi"
+
+#. module: plm
+msgid "Reference"
+msgstr "Mã định mức BOM"
+
+#. module: plm
+msgid "Quantity"
+msgstr "Số lượng thành phẩm"
+
+#. module: plm
+msgid "Desktop Access Tokens (Quản lý thiết bị CAD)"
+msgstr "Mã truy cập CAD"
+
+#. module: plm
+msgid "Normal BoMs"
+msgstr "Định mức BOM tiêu chuẩn"
+
+#. module: plm
+msgid "Restore Document"
+msgstr "Khôi phục tài liệu"
+
+#. module: plm
+msgid "Restore All Documents"
+msgstr "Khôi phục tất cả tài liệu"
+
+#. module: plm
+msgid "View Document Relations"
+msgstr "Xem quan hệ tài liệu"
+
+#. module: plm
+msgid "DB Thread Action"
+msgstr "Luồng CSDL"
+
+#. module: plm
+msgid "Part Number"
+msgstr "Mã kỹ thuật"
+
+#. module: plm
+msgid "Linked Docs"
+msgstr "Tài liệu liên kết"
+
+#. module: plm
+msgid "Checked-out by Me"
+msgstr "Đang Check-out bởi tôi"
+
+#. module: plm
+msgid "File Size"
+msgstr "Dung lượng file"
+
+#. module: plm
+msgid "Version"
+msgstr "Phiên bản"
+
+#. module: plm
+msgid "Lock State"
+msgstr "Trạng thái khóa"
+
+#. module: plm
+msgid "Checked-out User"
+msgstr "Người Check-out"
+
+#. module: plm
+msgid "Workstation"
+msgstr "Máy trạm"
+
+#. module: plm
+msgid "Check-out Time"
+msgstr "Thời điểm Check-out"
+
+#. module: plm
+msgid "2D Drawing Count"
+msgstr "Số bản vẽ 2D"
+
+#. module: plm
+msgid "2D Drawing Relations"
+msgstr "Quan hệ bản vẽ 2D"
+
+#. module: plm
+msgid "Has 2D Drawings"
+msgstr "Có bản vẽ 2D"
+
+#. module: plm
+msgid "Source 3D Models Count"
+msgstr "Số mô hình 3D"
+
+#. module: plm
+msgid "Has PDF Printout"
+msgstr "Có bản in PDF"
+
+#. module: plm
+msgid "PDF Preview"
+msgstr "Xem trước PDF"
+
+#. module: plm
+msgid "BOM"
+msgstr "Định mức BOM"
+
+#. module: plm
+msgid "BOM Count"
+msgstr "Số định mức BOM"
+
+#. module: plm
+msgid "Linked Products Count"
+msgstr "Số linh kiện liên kết"
+
+#. module: plm
+msgid "Printout Name"
+msgstr "Tên bản in"
+
+#. module: plm
+msgid "Frozen Parent Name"
+msgstr "Cụm cha đã ban hành"
+
+#. module: plm
+msgid "Is Parent Frozen"
+msgstr "Cụm cha bị đóng băng"
+
+#. module: plm
+msgid "Next Activity Deadline"
+msgstr "Hạn chót hoạt động"
+
+#. module: plm
+msgid "Activity Exception Decoration"
+msgstr "Trang trí hoạt động ngoại lệ"
+
+#. module: plm
+msgid "Activity State"
+msgstr "Trạng thái hoạt động"
+
+#. module: plm
+msgid "Next Activity Summary"
+msgstr "Tóm tắt hoạt động"
+
+#. module: plm
+msgid "Next Activity Type"
+msgstr "Loại hoạt động tiếp theo"
+
+#. module: plm
+msgid "Responsible User"
+msgstr "Người chịu trách nhiệm"
+
+#. module: plm
+msgid "Check-Out"
+msgstr "Check-Out"
+
+#. module: plm
+msgid "Checked-Out to"
+msgstr "Đã Check-out cho"
+
+#. module: plm
+msgid "Release date"
+msgstr "Ngày ban hành"
+
+#. module: plm
+msgid "Release User"
+msgstr "Người ban hành"
+
+#. module: plm
+msgid "Datetime Revision"
+msgstr "Thời điểm sửa đổi"
+
+#. module: plm
+msgid "Force Unlock (Thu hồi Key)"
+msgstr "Thu hồi Key"
+
+#. module: plm
+msgid "Release"
+msgstr "Ban hành"
+
+#. module: plm
+msgid "Transfer Key"
+msgstr "Chuyển giao Key"
+
+#. module: plm
+msgid "Link"
+msgstr "Liên kết"
+
+#. module: plm
+msgid "Obsolete"
+msgstr "Lỗi thời"
+
+#. module: plm
+msgid "CAD File Information"
+msgstr "Thông tin tệp CAD"
+
+#. module: plm
+msgid "PLM INFORMATION"
+msgstr "THÔNG TIN PLM"
+
+#. module: plm
+msgid "FILE DATA"
+msgstr "DỮ LIỆU TỆP"
+
+#. module: plm
+msgid "Latest (Released)"
+msgstr "Mới nhất (Đã ban hành)"
+
+#. module: plm
+msgid "Draft State"
+msgstr "Bản thảo"
+
+#. module: plm
+msgid "Confirmed State"
+msgstr "Đã xác nhận"
+
+#. module: plm
+msgid "Released State"
+msgstr "Đã ban hành"
+
+#. module: plm
+msgid "Under Modify State"
+msgstr "Đang sửa đổi"
+
+#. module: plm
+msgid "My Checked-Out"
+msgstr "Tài liệu tôi Check-out"
+
+#. module: plm
+msgid "Parts / Components"
+msgstr "Linh kiện"
+
+#. module: plm
+msgid "Assemblies"
+msgstr "Cụm chi tiết (Assembly)"
+
+#. module: plm
+msgid "2D Drawings (SLDDRW)"
+msgstr "Bản vẽ 2D (SLDDRW)"
+
+#. module: plm
+msgid "Manually Revoked"
+msgstr "Đã thu hồi thủ công"
+
+#. module: plm
+msgid "Is Admin"
+msgstr "Quản trị viên"
+
+#. module: plm
+msgid "KIT Bom Type"
+msgstr "Loại BoM Bộ (KIT)"
+
+#. module: plm
+msgid "Product Type"
+msgstr "Loại sản phẩm"
+
+#. module: plm
+msgid "Track Inventory"
+msgstr "Theo dõi tồn kho"
+
+#. module: plm
+msgid "Sales Price"
+msgstr "Giá bán"
+
+#. module: plm
+msgid "Sales Taxes"
+msgstr "Thuế bán lẻ"
+
+#. module: plm
+msgid "Cost"
+msgstr "Chi phí"
+
+#. module: plm
+msgid "Purchase Taxes"
+msgstr "Thuế mua hàng"
+
+#. module: plm
+msgid "Category"
+msgstr "Nhóm sản phẩm"
+
+#. module: plm
+msgid "Barcode"
+msgstr "Mã vạch"
+
+#. module: plm
+msgid "Plm Cad Open Bck"
+msgstr "Mở tài liệu CAD (Sao lưu)"
+
+#. module: plm
+msgid "Plm Cad Open"
+msgstr "Mở tài liệu CAD"
+
+#. module: plm
+msgid "Backup Data Set"
+msgstr "Dữ liệu sao lưu"
+
+#. module: plm
+msgid "Backup Document Set"
+msgstr "Bộ dữ liệu sao lưu"
+
+#. module: plm
+msgid "Plm checkout"
+msgstr "Quản lý Check-out"
+
+#. module: plm
+msgid "Documents in Check-Out"
+msgstr "Tài liệu đang Check-out"
+
+#. module: plm
+msgid "Checked-Out Document"
+msgstr "Tài liệu đang Check-out"
+
+#. module: plm
+msgid "Search on Document Relations"
+msgstr "Tìm kiếm quan hệ tài liệu"
+
+#. module: plm
+msgid "Related User"
+msgstr "Người dùng liên quan"
+
+#. module: plm
+msgid "Related Document"
+msgstr "Tài liệu liên quan"
+
+#. module: plm
+msgid "Related BOM Line"
+msgstr "Dòng định mức BOM liên quan"
+
+#. module: plm
+msgid "Related BOM Revisions"
+msgstr "Các phiên bản BOM liên quan"
+
+#. module: plm
+msgid "Related Db Thread"
+msgstr "Tiến trình CSDL liên quan"
+
+#. module: plm
+msgid "Backup Document Reference"
+msgstr "Mã tham chiếu tài liệu sao lưu"
+
+#. module: plm
+msgid "Created on"
+msgstr "Ngày tạo"
+
+#. module: plm
+msgid "Created by"
+msgstr "Người tạo"
+
+#. module: plm
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối"
+
+#. module: plm
+msgid "Last Updated by"
+msgstr "Người cập nhật"
+
+#. module: plm
+msgid "Hostname"
+msgstr "Tên máy trạm"
+
+#. module: plm
+msgid "hostname"
+msgstr "Tên máy trạm"
+
+#. module: plm
+msgid "Machine UUID"
+msgstr "UUID máy tính"
+
+#. module: plm
+msgid "PWS Path"
+msgstr "Đường dẫn thư mục PWS"
+
+#. module: plm
+msgid "PWS Directory"
+msgstr "Thư mục PWS"
+
+#. module: plm
+msgid "Physical Document Location"
+msgstr "Đường dẫn tệp vật lý"
+
+#. module: plm
+msgid "Original FStore Name"
+msgstr "Tên gốc trong FileStore"
+
+#. module: plm
+msgid "Stored Name"
+msgstr "Tên lưu trữ"
+
+#. module: plm
+msgid "Preview Content"
+msgstr "Nội dung xem trước"
+
+#. module: plm
+msgid "Printout Content"
+msgstr "Nội dung bản in"
+
+#. module: plm
+msgid "Has Child PDF Printout"
+msgstr "Có bản in PDF con"
+
+#. module: plm
+msgid "Has Parent PDF Printout"
+msgstr "Có bản in PDF cha"
+
+#. module: plm
+msgid "Checkout User"
+msgstr "Người Check-out"
+
+#. module: plm
+msgid "CheckOut User"
+msgstr "Người Check-out"
+
+#. module: plm
+msgid "Is Checked-Out"
+msgstr "Đang Check-out"
+
+#. module: plm
+msgid "engineering_code"
+msgstr "Mã kỹ thuật"
+
+#. module: plm
+msgid "File Size (Bytes)"
+msgstr "Dung lượng tệp (Bytes)"
+
+#. module: plm
+msgid "File Content"
+msgstr "Nội dung tệp"
+
+#. module: plm
+msgid "File Content (base64))"
+msgstr "Nội dung tệp (base64)"
+
+#. module: plm
+msgid "Revision Number"
+msgstr "Số thứ tự phiên bản"
+
+#. module: plm
+msgid "Effective"
+msgstr "Hiệu lực"
+
+#. module: plm
+msgid "Is Administrator"
+msgstr "Là quản trị viên"
+
+#. module: plm
+msgid "Child"
+msgstr "Chi tiết con"
+
+#. module: plm
+msgid "Children"
+msgstr "Chi tiết con"
+
+#. module: plm
+msgid "Child Actions"
+msgstr "Tác vụ chi tiết con"
+
+#. module: plm
+msgid "Child Document Type"
+msgstr "Loại tài liệu con"
+
+#. module: plm
+msgid "Child Linked Components"
+msgstr "Linh kiện liên kết con"
+
+#. module: plm
+msgid "Child Preview"
+msgstr "Xem trước chi tiết con"
+
+#. module: plm
+msgid "Child Revision"
+msgstr "Phiên bản con"
+
+#. module: plm
+msgid "Child Status"
+msgstr "Trạng thái con"
+
+#. module: plm
+msgid "Child Confirmed"
+msgstr "Chi tiết con đã xác nhận"
+
+#. module: plm
+msgid "Child Released"
+msgstr "Chi tiết con đã ban hành"
+
+#. module: plm
+msgid "Parent"
+msgstr "Cụm máy cha"
+
+#. module: plm
+msgid "Parent Document Type"
+msgstr "Loại tài liệu cha"
+
+#. module: plm
+msgid "Parent Linked Components"
+msgstr "Linh kiện liên kết cha"
+
+#. module: plm
+msgid "Parent Path"
+msgstr "Đường dẫn cha"
+
+#. module: plm
+msgid "Parent Preview"
+msgstr "Xem trước cụm cha"
+
+#. module: plm
+msgid "Parent Revision"
+msgstr "Phiên bản cha"
+
+#. module: plm
+msgid "Parent Status"
+msgstr "Trạng thái cha"
+
+#. module: plm
+msgid "Parent Confirmed"
+msgstr "Cụm cha đã xác nhận"
+
+#. module: plm
+msgid "Parent Released"
+msgstr "Cụm cha đã ban hành"
+
+#. module: plm
+msgid "Parent branch"
+msgstr "Nhánh cha"
+
+#. module: plm
+msgid "Group By Parent"
+msgstr "Nhóm theo cụm cha"
+
+#. module: plm
+msgid "Kind of Link"
+msgstr "Loại liên kết"
+
+#. module: plm
+msgid "Document Relation Kind"
+msgstr "Loại quan hệ tài liệu"
+
+#. module: plm
+msgid "Source Relation"
+msgstr "Quan hệ nguồn"
+
+#. module: plm
+msgid "Source Relationship"
+msgstr "Mối quan hệ nguồn"
+
+#. module: plm
+msgid "Show Document Relation"
+msgstr "Hiển thị quan hệ tài liệu"
+
+#. module: plm
+msgid "BoM Hierarchy"
+msgstr "Cây cấu trúc BOM"
+
+#. module: plm
+msgid "BoM Type"
+msgstr "Loại định mức BOM"
+
+#. module: plm
+msgid "Available BoMs"
+msgstr "Định mức BOM hiện có"
+
+#. module: plm
+msgid "Bom Name"
+msgstr "Tên định mức BOM"
+
+#. module: plm
+msgid "Bom Result"
+msgstr "Kết quả BOM"
+
+#. module: plm
+msgid "Create Normal Bom"
+msgstr "Tạo BOM tiêu chuẩn"
+
+#. module: plm
+msgid "Creation of Normal Bom"
+msgstr "Khởi tạo BOM tiêu chuẩn"
+
+#. module: plm
+msgid "Open Related Boms"
+msgstr "Mở các định mức BOM liên quan"
+
+#. module: plm
+msgid "Number Related Boms"
+msgstr "Số lượng BOM liên quan"
+
+#. module: plm
+msgid "Number Related Documents"
+msgstr "Số lượng tài liệu liên quan"
+
+#. module: plm
+msgid "Preserve custom BOM lines from previous Normal BOM revision"
+msgstr "Giữ lại các dòng BOM tùy chỉnh từ phiên bản BOM tiêu chuẩn trước"
+
+#. module: plm
+msgid "Summarise Bom Lines if needed."
+msgstr "Tổng hợp các dòng BOM nếu cần"
+
+#. module: plm
+msgid "Line BoM Type"
+msgstr "Loại dòng BOM"
+
+#. module: plm
+msgid "Continuous Production"
+msgstr "Sản xuất liên tục"
+
+#. module: plm
+msgid "Cutted Compute Type"
+msgstr "Cách tính phôi cắt"
+
+#. module: plm
+msgid "Custom Operation Dependencies"
+msgstr "Phụ thuộc công đoạn tùy biến"
+
+#. module: plm
+msgid "Subassembly Count"
+msgstr "Số cụm lắp ráp con"
+
+#. module: plm
+msgid "Component Count"
+msgstr "Số lượng linh kiện"
+
+#. module: plm
+msgid "CAD Item Position"
+msgstr "Vị trí linh kiện trên CAD"
+
+#. module: plm
+msgid "CAD Item Position Label"
+msgstr "Nhãn vị trí linh kiện trên CAD"
+
+#. module: plm
+msgid "Must Update from CAD"
+msgstr "Cần cập nhật từ CAD"
+
+#. module: plm
+msgid "Must be updated from CAD"
+msgstr "Phải được cập nhật từ CAD"
+
+#. module: plm
+msgid "Must Update form CAD"
+msgstr "Cần cập nhật từ CAD"
+
+#. module: plm
+msgid "Material"
+msgstr "Vật liệu"
+
+#. module: plm
+msgid "Raw Material"
+msgstr "Vật liệu thô"
+
+#. module: plm
+msgid "Finishing"
+msgstr "Hoàn thiện"
+
+#. module: plm
+msgid "Surface Finishing"
+msgstr "Hoàn thiện bề mặt"
+
+#. module: plm
+msgid "Treatment"
+msgstr "Xử lý"
+
+#. module: plm
+msgid "Thermal Treatment"
+msgstr "Xử lý nhiệt"
+
+#. module: plm
+msgid "Cad Thermal Treatment"
+msgstr "Xử lý nhiệt CAD"
+
+#. module: plm
+msgid "Specification"
+msgstr "Quy cách / Đặc tả"
+
+#. module: plm
+msgid "Designation"
+msgstr "Ký hiệu / Mác vật liệu"
+
+#. module: plm
+msgid "Description English"
+msgstr "Mô tả Tiếng Anh"
+
+#. module: plm
+msgid "Note to Description"
+msgstr "Ghi chú mô tả"
+
+#. module: plm
+msgid "Normative Rule"
+msgstr "Quy chuẩn / Tiêu chuẩn"
+
+#. module: plm
+msgid "Normative reference"
+msgstr "Tham chiếu quy chuẩn"
+
+#. module: plm
+msgid "Standard description parameters info"
+msgstr "Thông tin tham số mô tả tiêu chuẩn"
+
+#. module: plm
+msgid "Technical feature label and formatting"
+msgstr "Nhãn đặc tính kỹ thuật & định dạng"
+
+#. module: plm
+msgid "Format Feature 1"
+msgstr "Đặc tính định dạng 1"
+
+#. module: plm
+msgid "Format Feature 2"
+msgstr "Đặc tính định dạng 2"
+
+#. module: plm
+msgid "Format Feature 3"
+msgstr "Đặc tính định dạng 3"
+
+#. module: plm
+msgid "Format Feature Composed"
+msgstr "Đặc tính định dạng tổng hợp"
+
+#. module: plm
+msgid "UM / Feature 1"
+msgstr "ĐVT / Đặc tính 1"
+
+#. module: plm
+msgid "UM / Feature 2"
+msgstr "ĐVT / Đặc tính 2"
+
+#. module: plm
+msgid "UM / Feature 3"
+msgstr "ĐVT / Đặc tính 3"
+
+#. module: plm
+msgid "Open 2D Drawing"
+msgstr "Mở bản vẽ 2D"
+
+#. module: plm
+msgid "Open 3D Model"
+msgstr "Mở mô hình 3D"
+
+#. module: plm
+msgid "Restore All"
+msgstr "Khôi phục tất cả"
+
+#. module: plm
+msgid "Restore Entry"
+msgstr "Khôi phục mục"
+
+#. module: plm
+msgid "Restore Entire Document Tree"
+msgstr "Khôi phục toàn bộ cây tài liệu"
+
+#. module: plm
+msgid "Restore Selected Document"
+msgstr "Khôi phục tài liệu đã chọn"
+
+#. module: plm
+msgid "Restore document to this version"
+msgstr "Khôi phục tài liệu về phiên bản này"
+
+#. module: plm
+msgid "Engineering Information"
+msgstr "Thông tin kỹ thuật"
+
+#. module: plm
+msgid "Attachments"
+msgstr "Tệp đính kèm"
+
+#. module: plm
+msgid "OdooPLM Information"
+msgstr "Thông tin Odoo PLM"
+
+#. module: plm
+msgid "PLM Portal"
+msgstr "Cổng thông tin PLM"
+
+#. module: plm
+msgid "Are you sure you want to create a new Normal Bom?"
+msgstr "Bạn có chắc chắn muốn tạo một Định mức BOM tiêu chuẩn mới không?"
+
+#. module: plm
+msgid "Download snapshot of this version"
+msgstr "Tải về bản chụp phiên bản này"
+
+#. module: plm
+msgid "Download technical drawing PDF file"
+msgstr "Tải tệp PDF bản vẽ kỹ thuật"
+
+#. module: plm
+msgid "Preview technical drawing PDF in popup window"
+msgstr "Xem trước bản vẽ kỹ thuật PDF trong cửa sổ popup"
+
+#. module: plm
+msgid "Upload technical drawing PDF for this drawing"
+msgstr "Tải lên tệp PDF bản vẽ kỹ thuật"
+
+#. module: plm
+msgid "Upload technical printout PDF for this drawing"
+msgstr "Tải lên bản in PDF kỹ thuật"
+
+#. module: plm
+msgid "Link a 2D drawing (.slddrw) with this 3D model"
+msgstr "Liên kết bản vẽ 2D (.slddrw) với mô hình 3D này"
+
+#. module: plm
+msgid "Locked (Key held)"
+msgstr "Đã khóa (Đang giữ Key)"
+
+#. module: plm
+msgid "Unlocked"
+msgstr "Đang mở khóa"
+
+#. module: plm
+msgid "Changed By Me"
+msgstr "Sửa bởi tôi"
+
+#. module: plm
+msgid "Changed by"
+msgstr "Người sửa"
+
+#. module: plm
+msgid "Changed in"
+msgstr "Sửa tại"
+
+#. module: plm
+msgid "Create By Me"
+msgstr "Tạo bởi tôi"
+
+#. module: plm
+msgid "Create by Month"
+msgstr "Tạo theo tháng"
+
+#. module: plm
+msgid "Created in"
+msgstr "Tạo tại"
+
+#. module: plm
+msgid "Creator"
+msgstr "Người tạo"
+
+#. module: plm
+msgid "Latest 7 Days"
+msgstr "7 ngày gần nhất"
+
+#. module: plm
+msgid "Latest Child"
+msgstr "Chi tiết con mới nhất"
+
+#. module: plm
+msgid "Latest Parent"
+msgstr "Cụm cha mới nhất"
+
+#. module: plm
+msgid "Has Error"
+msgstr "Có lỗi"
+
+#. module: plm
+msgid "Component has a save error"
+msgstr "Linh kiện gặp lỗi lưu"
+
+#. module: plm
+msgid "Product line search"
+msgstr "Tìm kiếm dòng sản phẩm"
+
+#. module: plm
+msgid "Own"
+msgstr "Của tôi"
+
+#. module: plm
+msgid "Company roots"
+msgstr "Công ty gốc"
+
+#. module: plm
+msgid "Note to help selection"
+msgstr "Ghi chú hướng dẫn chọn"
+
+#. module: plm
+msgid "Engineering Product"
+msgstr "Sản phẩm kỹ thuật"
+
+#. module: plm
+msgid "Type Document"
+msgstr "Loại tài liệu"
+
+#. module: plm
+msgid "Variant Name"
+msgstr "Tên biến thể"
+
+#. module: plm
+msgid ""
+"Types of Feature Format: %s for Only Value / %s %s for Label Value / %s_%s "
+"for Label_Value / %s/%s for Label/Value"
+msgstr ""
+"Các kiểu định dạng: %s (Chỉ giá trị) / %s %s (Nhãn Giá trị) / %s_%s "
+"(Nhãn_Giá trị) / %s/%s (Nhãn/Giá trị)"
+
+#. module: plm
+msgid ""
+"You can use Normalized features formatting, where the component description "
+"will be Standard Description + Format Feature Composed."
+msgstr ""
+"Bạn có thể sử dụng định dạng đặc tính chuẩn hóa, khi đó mô tả linh kiện sẽ "
+"bằng Mô tả tiêu chuẩn + Đặc tính định dạng tổng hợp."
+
+#. module: plm
+msgid ""
+"If Normative Rule is defined, it will be added at the end of the "
+"description."
+msgstr "Nếu Quy chuẩn được định nghĩa, nó sẽ được thêm vào cuối mô tả."
+
+#. module: plm
+msgid "Document name and version"
+msgstr "Tên và phiên bản tài liệu"
+
+#. module: plm
+msgid "Thread Code assigned automatically"
+msgstr "Mã tiến trình (Tự động cấp)"
+
+#. module: plm
+msgid "This thread is done ?"
+msgstr "Tiến trình đã hoàn thành?"
+
+#. module: plm
+msgid "Error message"
+msgstr "Thông báo lỗi"
+
+#. module: plm
+msgid "Create groups"
+msgstr "Nhóm có quyền tạo"
+
+#. module: plm
+msgid "Read groups"
+msgstr "Nhóm có quyền đọc"
+
+#. module: plm
+msgid "Write groups"
+msgstr "Nhóm có quyền ghi"
+
+#. module: plm
+msgid "Unlink groups"
+msgstr "Nhóm có quyền xóa"
+
+#. module: plm
+msgid "Document Count"
+msgstr "Số lượng tài liệu"
+
+#. module: plm
+msgid "Att Count"
+msgstr "Số lượng đính kèm"
+
+#. module: plm
+msgid "Attachment Count"
+msgstr "Số lượng đính kèm"
+
+#. module: plm
+msgid "Document Rel Count"
+msgstr "Số lượng quan hệ tài liệu"
+
+#. module: plm
+msgid "File library path"
+msgstr "Đường dẫn thư viện tệp"
+
+#. module: plm
+msgid "Source path of the first time save"
+msgstr "Đường dẫn lưu ban đầu"
+
+#. module: plm
+msgid "Modification Description"
+msgstr "Mô tả sửa đổi"
+
+#. module: plm
+msgid "Old Plm Code Sequence"
+msgstr "Thứ tự mã PLM cũ"
+
+#. module: plm
+msgid "Engineering Branch index"
+msgstr "Chỉ số nhánh kỹ thuật"
+
+#. module: plm
+msgid "Engineering Code Editable"
+msgstr "Được phép sửa mã kỹ thuật"
+
+#. module: plm
+msgid "Engineering Editable"
+msgstr "Được phép sửa kỹ thuật"
+
+#. module: plm
+msgid "Engineering Revision Count"
+msgstr "Số lượng phiên bản kỹ thuật"
+
+#. module: plm
+msgid "Engineering Revision letter"
+msgstr "Ký tự phiên bản kỹ thuật"
+
+#. module: plm
+msgid "Engineering Sub Revision letter"
+msgstr "Ký tự phiên bản con"
+
+#. module: plm
+msgid "Sub revision path"
+msgstr "Đường dẫn phiên bản con"
+
+#. module: plm
+msgid "User Revision"
+msgstr "Kỹ sư tạo phiên bản"
+
+#. module: plm
+msgid "Workflow date"
+msgstr "Ngày thực hiện quy trình"
+
+#. module: plm
+msgid "Is A Plm Document"
+msgstr "Là tài liệu PLM"
+
+#. module: plm
+msgid "Is Library file"
+msgstr "Là tệp thư viện"
+
+#. module: plm
+msgid "Is Linked Components"
+msgstr "Đã liên kết linh kiện"

@@ -46,10 +46,12 @@ Tính năng chính:
         "security/ir.access.csv",
         "wizard/plm_transfer_key_wizard_views.xml",
         "wizard/plm_drawing_link_wizard_views.xml",
+        "wizard/plm_bom_diff_wizard_views.xml",
         "views/plm_component_views.xml",
         "views/plm_document_views.xml",
         "views/plm_desktop_token_views.xml",
         "views/plm_menu_views.xml",
+        "views/mrp_bom_views.xml",
     ],
     "assets": {
         "web.assets_backend": [

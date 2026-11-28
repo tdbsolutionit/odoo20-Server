@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Kế thừa Form View mrp.bom: Thêm nút So sánh BOM trên Header (HT-3.2) -->
+    <record id="view_mrp_bom_form_inherit_diff" model="ir.ui.view">
+        <field name="name">mrp.bom.form.inherit.diff</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_open_bom_diff_wizard"
+                            type="object"
+                            string="So sánh BOM"
+                            class="btn-secondary"
+                            icon="fa-balance-scale"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -16,19 +16,19 @@
             <!-- Thêm class nhận diện chung bảng PLM -->
             <xpath expr="//list" position="attributes">
                 <attribute name="class">tdb_plm_list_view</attribute>
-                <attribute name="string">Documents</attribute>
+                <attribute name="string">CAD Documents</attribute>
             </xpath>
 
             <!-- Preview -->
             <xpath expr="//field[@name='preview']" position="attributes">
-                <attribute name="string">Preview</attribute>
+                <attribute name="string">3D Preview</attribute>
                 <attribute name="class">text-center</attribute>
                 <attribute name="width">75</attribute>
             </xpath>
 
             <!-- Tên tài liệu -->
             <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="string">Name</attribute>
+                <attribute name="string">Document Name</attribute>
             </xpath>
 
             <!-- Engineering Revision -->
@@ -40,7 +40,7 @@
 
             <!-- Engineering Status -->
             <xpath expr="//field[@name='engineering_state']" position="attributes">
-                <attribute name="string">Engineering Status</attribute>
+                <attribute name="string">Engineering State</attribute>
                 <attribute name="class">text-center</attribute>
                 <attribute name="width">140</attribute>
             </xpath>
@@ -52,22 +52,22 @@
 
             <!-- Người tạo -->
             <xpath expr="//field[@name='create_uid']" position="attributes">
-                <attribute name="string">Created by</attribute>
+                <attribute name="string">Created By</attribute>
             </xpath>
 
             <!-- Ngày tạo -->
             <xpath expr="//field[@name='create_date']" position="attributes">
-                <attribute name="string">Created on</attribute>
+                <attribute name="string">Created On</attribute>
             </xpath>
 
             <!-- Người cập nhật -->
             <xpath expr="//field[@name='write_uid']" position="attributes">
-                <attribute name="string">Last Updated by</attribute>
+                <attribute name="string">Last Updated By</attribute>
             </xpath>
 
             <!-- Ngày cập nhật -->
             <xpath expr="//field[@name='write_date']" position="attributes">
-                <attribute name="string">Last Updated on</attribute>
+                <attribute name="string">Last Updated</attribute>
             </xpath>
 
             <!-- Người giữ Key & Nút chuyển giao Key -->
@@ -105,13 +105,13 @@
                 <attribute name="string">Release Document</attribute>
             </xpath>
             <xpath expr="//button[@name='action_draft']" position="attributes">
-                <attribute name="string">Correct Document</attribute>
+                <attribute name="string">Draft Document</attribute>
             </xpath>
             <xpath expr="//button[@name='action_un_release']" position="attributes">
-                <attribute name="string">Un Release</attribute>
+                <attribute name="string">Unrelease Document</attribute>
             </xpath>
             <xpath expr="//button[@name='action_un_release_release']" position="attributes">
-                <attribute name="string">Re Release</attribute>
+                <attribute name="string">Re-release Document</attribute>
             </xpath>
 
             <!-- Thêm các nút thao tác trên Header -->
@@ -130,10 +130,10 @@
                 <!-- Nút Đồng bộ BOM sang Sản xuất (HT-2.2) -->
                 <button name="action_sync_cad_bom_to_mrp"
                         type="object"
-                        string="Đồng bộ BOM sang Sản xuất"
+                        string="Sync BOM to Production"
                         class="btn-primary"
                         invisible="child_document_count == 0 or document_type != '3d'"
-                        confirm="Hệ thống sẽ tự động tạo/cập nhật Linh kiện và Định mức vật tư (BOM) từ cây CAD này. Bạn có muốn tiếp tục?"/>
+                        confirm="The system will automatically create/update Components and Bill of Materials (BOM) from this CAD assembly. Do you want to proceed?"/>
 
                 <!-- Nút Lock: Hiển thị khi chưa có ai giữ Key và đang ở trạng thái draft -->
                 <button name="action_lock_key"
@@ -182,18 +182,18 @@
                 <!-- Nút Tải lên Bản in PDF kỹ thuật cho bản vẽ 2D -->
                 <button name="action_upload_printout_wizard"
                         type="object"
-                        string="Tải lên PDF"
+                        string="Upload PDF"
                         class="btn-outline-primary"
                         invisible="document_type != '2d' or engineering_state in ['released', 'obsoleted']"
-                        title="Tải lên tệp bản vẽ in PDF kỹ thuật (Printout) cho bản vẽ này"/>
+                        title="Upload technical printout PDF for this drawing"/>
 
                 <!-- Nút Xem trước Bản in PDF kỹ thuật (Popup Modal) -->
                 <button name="action_preview_pdf"
                         type="object"
-                        string="Xem trước PDF"
+                        string="Preview PDF"
                         class="btn-outline-danger"
                         invisible="not has_printout"
-                        title="Xem trước bản in PDF kỹ thuật trong cửa sổ popup"/>
+                        title="Preview technical drawing PDF in popup window"/>
             </xpath>
 
             <!-- Banner thông tin Người giữ Key -->
@@ -203,8 +203,8 @@
                      role="alert"
                      invisible="not is_parent_frozen or engineering_state in ['released', 'obsoleted']">
                     <div>
-                        <span class="fw-bold">Bị khóa bởi Cụm máy cha đã Ban hành (Chỉ đọc)</span>
-                        <span class="text-muted ms-2">(Tài liệu này thuộc Cụm máy cha: <field name="parent_released_name" readonly="1" class="fw-bold text-dark"/> đã ở trạng thái Ban hành. Bị đóng băng chỉ đọc, không được phép Check-out hoặc Check-in!)</span>
+                        <span class="fw-bold">Locked by Released Parent Assembly (Read-Only)</span>
+                        <span class="text-muted ms-2">(This document belongs to parent assembly: <field name="parent_released_name" readonly="1" class="fw-bold text-dark"/> which is released. It is frozen read-only, check-out or check-in is not permitted!)</span>
                     </div>
                     <div>
                         <span class="badge bg-warning text-dark">Parent Assembly Released</span>
@@ -216,8 +216,8 @@
                      role="alert"
                      invisible="engineering_state not in ['released', 'obsoleted']">
                     <div>
-                        <span class="fw-bold">Document Released (Read-Only)</span>
-                        <span class="text-muted ms-2">(Document is released/obsoleted and locked against modification or check-in)</span>
+                        <span class="fw-bold">Released Document (Read-Only)</span>
+                        <span class="text-muted ms-2">(Document is released or obsoleted, completely frozen, cannot be modified or checked-in)</span>
                     </div>
                     <div>
                         <span class="badge bg-success" invisible="engineering_state != 'released'">Released</span>
@@ -230,10 +230,10 @@
                      invisible="not key_holder_id or engineering_state in ['released', 'obsoleted']">
                     <div>
                         <span>Key Holder: </span><field name="key_holder_id" readonly="1" options="{'no_open': True}" class="fw-bold"/>
-                        <span class="text-muted ms-2">(Key holder has exclusive permission to Check-in)</span>
+                        <span class="text-muted ms-2">(Only the key holder is allowed to check in and update drawings)</span>
                     </div>
                     <div>
-                        <span class="badge bg-success" invisible="not is_key_holder">You hold the Key</span>
+                        <span class="badge bg-success" invisible="not is_key_holder">Holding Key</span>
                         <span class="badge bg-secondary" invisible="is_key_holder">Reference Mode</span>
                     </div>
                 </div>
@@ -241,24 +241,24 @@
                      role="alert"
                      invisible="key_holder_id or engineering_state in ['released', 'obsoleted']">
                     <div>
-                        <span>Document status: </span><span class="fw-bold">No Key Holder</span>
-                        <span class="text-muted ms-2">(Click 'Lock' button on the header to claim Key)</span>
+                        <span>Document Status: </span><span class="fw-bold">No Key Holder</span>
+                        <span class="text-muted ms-2">(Click 'Lock' on the toolbar to acquire Key)</span>
                     </div>
                     <div>
-                        <span class="badge bg-warning text-dark">Waiting for Lock</span>
+                        <span class="badge bg-warning text-dark">Waiting to Lock</span>
                     </div>
                 </div>
             </xpath>
 
             <!-- Stat Button trên Button Box -->
             <xpath expr="//field[@name='document_rel_count']" position="attributes">
-                <attribute name="string">Documents</attribute>
+                <attribute name="string">Related Documents</attribute>
             </xpath>
             <xpath expr="//button[@name='print_Document_Doc_Structure']" position="attributes">
-                <attribute name="string">Doc Structure</attribute>
+                <attribute name="string">CAD Structure</attribute>
             </xpath>
             <xpath expr="//button[@name='open_related_document_revisions']" position="attributes">
-                <attribute name="string">Revision</attribute>
+                <attribute name="string">CAD Revision</attribute>
             </xpath>
 
             <!-- Bổ sung Stat button đếm và xem lịch sử phiên bản tệp & quan hệ tham chiếu -->
@@ -268,7 +268,7 @@
                         class="oe_stat_button"
                         icon="history"
                         invisible="history_count == 0">
-                    <field name="history_count" widget="statinfo" string="Version History"/>
+                    <field name="history_count" widget="statinfo" string="Revision History"/>
                 </button>
                 <button name="action_view_child_documents"
                         type="object"
@@ -291,7 +291,7 @@
                         class="oe_stat_button"
                         icon="edit"
                         invisible="drawing_count == 0 or document_type == '2d'">
-                    <field name="drawing_count" widget="statinfo" string="Bản vẽ 2D"/>
+                    <field name="drawing_count" widget="statinfo" string="2D Drawings"/>
                 </button>
 
                 <!-- Smart Button: Mô hình 3D (cho 2D Drawing) -->
@@ -300,7 +300,7 @@
                         class="oe_stat_button"
                         icon="category"
                         invisible="source_3d_count == 0 or document_type != '2d'">
-                    <field name="source_3d_count" widget="statinfo" string="Mô hình 3D"/>
+                    <field name="source_3d_count" widget="statinfo" string="3D Models"/>
                 </button>
 
                 <!-- Smart Button: Linh kiện (Product) (HT-2.1) -->
@@ -308,7 +308,7 @@
                         type="object"
                         class="oe_stat_button"
                         icon="category">
-                    <field name="linked_product_count" widget="statinfo" string="Linh kiện"/>
+                    <field name="linked_product_count" widget="statinfo" string="Components"/>
                 </button>
 
                 <!-- Smart Button: Định mức BOM (HT-2.2) -->
@@ -317,23 +317,23 @@
                         class="oe_stat_button"
                         icon="build"
                         invisible="document_type != '3d'">
-                    <field name="bom_count" widget="statinfo" string="Định mức BOM"/>
+                    <field name="bom_count" widget="statinfo" string="Bill of Materials"/>
                 </button>
             </xpath>
 
             <!-- Nhóm Thông tin PLM -->
             <xpath expr="//group[@name='main_doc_info']" position="attributes">
-                <attribute name="string">PLM Information</attribute>
+                <attribute name="string">PLM INFORMATION</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_code']" position="attributes">
-                <attribute name="string">Eng. Document Name</attribute>
+                <attribute name="string">Engineering Code</attribute>
                 <attribute name="readonly">id &gt; 0 or engineering_state in ['released', 'obsoleted']</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_revision']" position="attributes">
                 <attribute name="string">Engineering Revision</attribute>
             </xpath>
             <xpath expr="//field[@name='is_plm']" position="attributes">
-                <attribute name="string">Is a PLM Document</attribute>
+                <attribute name="string">Is a PLM Document ?</attribute>
             </xpath>
             <xpath expr="//field[@name='plm_access_id']" position="attributes">
                 <attribute name="string">PLM Access</attribute>
@@ -350,7 +350,7 @@
                 <attribute name="string">Attachment</attribute>
             </xpath>
             <xpath expr="//group[@name='FileData']" position="attributes">
-                <attribute name="string">File Data</attribute>
+                <attribute name="string">CAD DOCUMENT FILE DATA</attribute>
             </xpath>
             <xpath expr="//field[@name='raw']" position="attributes">
                 <attribute name="string">File Content (base64)</attribute>
@@ -359,51 +359,51 @@
                 <attribute name="string">File Name</attribute>
             </xpath>
             <xpath expr="//field[@name='document_type']" position="attributes">
-                <attribute name="string">Document Type</attribute>
+                <attribute name="string">CAD Document Type</attribute>
             </xpath>
             <xpath expr="//group[@name='FileData']//field[@name='type']" position="attributes">
-                <attribute name="string">Type</attribute>
+                <attribute name="string">Storage Type</attribute>
             </xpath>
             <!-- Hiển thị trường Bản in PDF kỹ thuật trong Tab Attachment -->
             <xpath expr="//field[@name='printout']" position="replace">
                 <field name="printout"
                        filename="printout_name"
                        widget="binary"
-                       string="Bản in PDF (Printout Content)"
+                       string="PDF Printout (Printout Content)"
                        readonly="engineering_state in ['released', 'obsoleted']"/>
                 <field name="printout_name"
-                       string="Tên file bản in PDF"
+                       string="PDF Printout Name"
                        readonly="1"/>
                 <div class="d-flex gap-2 mt-1" invisible="not has_printout">
                     <button name="action_preview_pdf"
                             type="object"
-                            string="Xem trước PDF"
+                            string="Preview PDF"
                             class="btn btn-sm btn-outline-danger"
-                            title="Xem trước bản in PDF kỹ thuật trong cửa sổ popup"/>
+                            title="Preview technical drawing PDF in popup window"/>
                     <button name="action_download_printout"
                             type="object"
-                            string="Tải file PDF"
+                            string="Download PDF"
                             class="btn btn-sm btn-outline-primary"
-                            title="Tải tệp bản in PDF kỹ thuật về máy"/>
+                            title="Download technical drawing PDF file"/>
                 </div>
             </xpath>
             <xpath expr="//group[@name='group_url']" position="attributes">
                 <attribute name="string">Website</attribute>
             </xpath>
             <xpath expr="//group[@name='related']//group[1]" position="attributes">
-                <attribute name="string">Related To</attribute>
+                <attribute name="string">Linked to</attribute>
             </xpath>
             <xpath expr="//field[@name='res_id']" position="attributes">
-                <attribute name="string">Resource ID</attribute>
+                <attribute name="string">Record ID</attribute>
             </xpath>
             <xpath expr="//group[@name='related']//group[2]" position="attributes">
-                <attribute name="string">Attachments To</attribute>
+                <attribute name="string">Attached to</attribute>
             </xpath>
             <xpath expr="//field[@name='res_name']" position="attributes">
-                <attribute name="string">Resource Name</attribute>
+                <attribute name="string">Record Name</attribute>
             </xpath>
             <xpath expr="//field[@name='res_model']" position="attributes">
-                <attribute name="string">Resource Model</attribute>
+                <attribute name="string">Data Model</attribute>
             </xpath>
 
             <!-- Tab 2: Workflow History -->
@@ -411,16 +411,16 @@
                 <attribute name="string">Workflow History</attribute>
             </xpath>
             <xpath expr="//page[@name='workflow_section']/group[1]" position="attributes">
-                <attribute name="string">Changes</attribute>
+                <attribute name="string">Audit Log</attribute>
             </xpath>
             <xpath expr="//page[@name='workflow_section']//label[@for='create_uid']" position="attributes">
-                <attribute name="string">Creation</attribute>
+                <attribute name="string">Created By</attribute>
             </xpath>
             <xpath expr="//page[@name='workflow_section']//label[@for='write_uid']" position="attributes">
-                <attribute name="string">Last Update</attribute>
+                <attribute name="string">Last Updated By</attribute>
             </xpath>
             <xpath expr="//page[@name='workflow_section']//label[@for='engineering_workflow_user']" position="attributes">
-                <attribute name="string">Workflow User</attribute>
+                <attribute name="string">Workflow Approver</attribute>
             </xpath>
             <xpath expr="//page[@name='workflow_section']//div[@name='attachment_release_user_div']/.." position="attributes">
                 <attribute name="string">User</attribute>
@@ -429,7 +429,7 @@
                 <attribute name="string">Released By</attribute>
             </xpath>
             <xpath expr="//page[@name='workflow_section']//label[@for='engineering_revision_user']" position="attributes">
-                <attribute name="string">Revision By</attribute>
+                <attribute name="string">Revised By</attribute>
             </xpath>
 
             <!-- Tab 3: Linked Parts -->
@@ -447,7 +447,7 @@
                 <attribute name="string">Notes</attribute>
             </xpath>
             <xpath expr="//page[@name='page_notes']//label[@for='description']" position="attributes">
-                <attribute name="string">Description</attribute>
+                <attribute name="string">Technical Description</attribute>
             </xpath>
             <xpath expr="//page[@name='page_notes']//label[@for='desc_modify']" position="attributes">
                 <attribute name="string">Modification Reason</attribute>
@@ -455,16 +455,16 @@
 
             <!-- Bổ sung Tab Version History & Referenced Documents -->
             <xpath expr="//notebook" position="inside">
-                <page string="Version History" name="file_history">
+                <page string="Revision History" name="file_history">
                     <field name="history_ids" readonly="1">
-                        <list string="Version History" default_order="version_number desc" create="0" delete="0">
+                        <list string="Revision History" default_order="version_number desc" create="0" delete="0">
                             <field name="version_number" column_invisible="1"/>
-                            <field name="version" string="Version" width="90"/>
+                            <field name="version" string="Revision" width="90"/>
                             <field name="file_name" string="File Name"/>
                             <field name="file_size_display" string="Size" width="110"/>
                             <field name="user_id" string="User" widget="many2one_avatar_user" width="160"/>
-                            <field name="create_date" string="Date" width="160"/>
-                            <field name="description" string="Note"/>
+                            <field name="create_date" string="Saved At" width="160"/>
+                            <field name="description" string="Notes"/>
                             <button name="action_restore_version"
                                      type="object"
                                      string="Restore"
@@ -476,7 +476,7 @@
                                      type="object"
                                      string="Download"
                                      class="btn btn-sm btn-secondary"
-                                     title="Download this version"/>
+                                     title="Download snapshot of this version"/>
                         </list>
                     </field>
                 </page>
@@ -487,57 +487,52 @@
                     <div class="pt-3 pb-2 mb-4" invisible="document_type == '2d' and drawing_count == 0">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div class="d-flex align-items-center gap-2">
-                                <separator string="2D Drawings (Bản vẽ 2D - Layout Tree)" class="mb-0"/>
+                                <separator string="2D Drawings (Layout Tree)" class="mb-0"/>
                                 <button name="action_open_link_drawing_wizard"
                                         type="object"
-                                        string="Thêm liên kết Bản vẽ 2D"
+                                        string="Link 2D Drawing"
                                         class="btn btn-sm btn-outline-primary py-0 px-2"
                                         invisible="document_type == '2d' or engineering_state in ['released', 'obsoleted']"
-                                        title="Liên kết một bản vẽ 2D (.slddrw) với chi tiết 3D này"/>
+                                        title="Link a 2D drawing (.slddrw) with this 3D model"/>
                             </div>
                             <span class="badge bg-primary text-white" invisible="drawing_count == 0">
-                                <field name="drawing_count"/> bản vẽ 2D
+                                <field name="drawing_count"/> 2D Drawings
                             </span>
                         </div>
-                        <field name="drawing_relation_ids" context="{'default_link_kind': 'LyTree'}">
-                            <list string="Bản vẽ 2D" editable="bottom">
-                                <field name="child_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
-                                <field name="child_id"
-                                       string="Tên file bản vẽ 2D (.slddrw)"
-                                       domain="[('is_plm', '=', True), ('id', '!=', parent.id), '|', ('document_type', '=', '2d'), ('name', '=ilike', '%.slddrw')]"
-                                       context="{'form_view_ref': 'plm.view_attachment_form_plm_hinerit', 'odooPLM': True, 'default_document_type': '2d', 'default_is_plm': True}"
-                                       required="1"/>
-                                <button name="action_open_child_document"
+                        <field name="linked_drawing_ids" readonly="1">
+                            <list string="2D Drawings">
+                                <field name="preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55"/>
+                                <field name="name" string="2D Drawing File Name (.slddrw)"/>
+                                <button name="action_open_document_form"
                                         type="object"
                                         icon="arrow_forward"
                                         class="btn btn-light btn-sm d-inline-flex align-items-center py-0 px-1 border"
-                                        title="Liên kết nội bộ (Mở bản vẽ 2D)"/>
-                                <field name="child_engineering_code" string="Mã kỹ thuật" width="130" optional="show" readonly="1"/>
-                                <field name="child_revision" string="Revision" width="70" readonly="1"/>
-                                <field name="child_state"
-                                       string="Trạng thái"
+                                        title="Open 2D Drawing"/>
+                                <field name="engineering_code" string="Engineering Code" width="130" optional="show"/>
+                                <field name="engineering_revision" string="Revision" width="70"/>
+                                <field name="engineering_state"
+                                       string="Status"
                                        widget="badge"
-                                       decoration-info="child_state == 'draft'"
-                                       decoration-primary="child_state == 'confirmed'"
-                                       decoration-success="child_state == 'released'"
-                                       decoration-warning="child_state == 'undermodify'"
-                                       decoration-danger="child_state == 'obsoleted'"
-                                       width="130"
-                                       readonly="1"/>
-                                <field name="child_has_printout" column_invisible="True"/>
-                                <field name="child_printout_name" string="Bản in PDF" width="180" readonly="1"/>
-                                <button name="action_preview_child_pdf"
+                                       decoration-info="engineering_state == 'draft'"
+                                       decoration-primary="engineering_state == 'confirmed'"
+                                       decoration-success="engineering_state == 'released'"
+                                       decoration-warning="engineering_state == 'undermodify'"
+                                       decoration-danger="engineering_state == 'obsoleted'"
+                                       width="130"/>
+                                <field name="has_printout" column_invisible="True"/>
+                                <field name="printout_name" string="PDF Printout" width="180"/>
+                                <button name="action_preview_pdf"
                                         type="object"
-                                        string="Xem trước PDF"
+                                        string="Preview PDF"
                                         class="btn btn-sm btn-outline-danger"
-                                        invisible="not child_has_printout"
-                                        title="Xem trước bản in PDF kỹ thuật trong cửa sổ popup"/>
-                                <button name="action_upload_child_printout_wizard"
+                                        invisible="not has_printout"
+                                        title="Preview technical drawing PDF in popup window"/>
+                                <button name="action_upload_printout_wizard"
                                         type="object"
-                                        string="Tải lên PDF"
+                                        string="Upload PDF"
                                         class="btn btn-sm btn-outline-primary"
-                                        invisible="child_has_printout"
-                                        title="Tải lên tệp PDF kỹ thuật cho bản vẽ này"/>
+                                        invisible="has_printout"
+                                        title="Upload technical drawing PDF for this drawing"/>
                             </list>
                         </field>
                     </div>
@@ -545,24 +540,24 @@
                     <!-- Khu vực hiển thị Mô hình 3D nguồn (Source 3D Models khi là file 2D Drawing) -->
                     <div class="pt-3 pb-2 mb-4" invisible="document_type != '2d'">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <separator string="Mô hình 3D nguồn (Source 3D Models)" class="mb-0"/>
+                            <separator string="Source 3D Models" class="mb-0"/>
                             <span class="badge bg-info text-dark" invisible="source_3d_count == 0">
-                                <field name="source_3d_count"/> mô hình 3D
+                                <field name="source_3d_count"/> 3D Models
                             </span>
                         </div>
                         <field name="linked_source_3d_ids" readonly="1">
-                            <list string="Mô hình 3D nguồn" create="0" delete="0">
+                            <list string="Source 3D Models" create="0" delete="0">
                                 <field name="preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
-                                <field name="name" string="Tên file mô hình 3D"/>
+                                <field name="name" string="Source 3D Model File Name"/>
                                 <button name="action_open_document_form"
                                         type="object"
                                         icon="arrow_forward"
                                         class="btn btn-light btn-sm d-inline-flex align-items-center py-0 px-1 border"
-                                        title="Liên kết nội bộ"/>
-                                <field name="engineering_code" string="Mã kỹ thuật" width="130" optional="show"/>
+                                        title="Open 3D Model"/>
+                                <field name="engineering_code" string="Engineering Code" width="130" optional="show"/>
                                 <field name="engineering_revision" string="Revision" width="70"/>
                                 <field name="engineering_state"
-                                       string="Trạng thái"
+                                       string="Status"
                                        widget="badge"
                                        decoration-info="engineering_state == 'draft'"
                                        decoration-primary="engineering_state == 'confirmed'"
@@ -575,9 +570,9 @@
                     </div>
 
                     <div class="pt-3 pb-2 mb-4">
-                        <separator string="Child Components (References / Assembly)"/>
+                        <separator string="Child Parts (References / Assemblies)"/>
                         <field name="child_relation_ids" context="{'default_link_kind': 'HiTree'}">
-                            <list string="Related Child Components" editable="bottom">
+                            <list string="Child Parts List" editable="bottom">
                                 <field name="child_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
                                 <field name="child_id"
                                        string="Child Document"
@@ -597,7 +592,7 @@
                                        width="150"
                                        readonly="1"/>
                                 <field name="child_lock_state"
-                                       string="Lock State"
+                                       string="Lock Status"
                                        widget="badge"
                                        decoration-danger="child_lock_state == 'locked'"
                                        decoration-success="child_lock_state == 'unlocked'"
@@ -608,15 +603,15 @@
                                        widget="many2one_avatar_user"
                                        width="150"
                                        readonly="1"/>
-                                <field name="child_printout_name" string="Bản in PDF" optional="hide" readonly="1"/>
+                                <field name="child_printout_name" string="PDF Printout" optional="hide" readonly="1"/>
                             </list>
                         </field>
                     </div>
 
-                    <div class="pt-3 pb-2">
-                        <separator string="Where Used (Parents)"/>
-                        <field name="parent_relation_ids">
-                            <list string="Related Parent Assemblies" create="0" delete="0">
+                    <div class="pt-3 pb-2" invisible="parent_document_count == 0">
+                        <separator string="Where Used (Parent Assemblies)"/>
+                        <field name="parent_relation_ids" domain="[('link_kind', '!=', 'LyTree')]">
+                            <list string="Where Used List" create="0" delete="0">
                                 <field name="parent_preview" widget="image" options="{'size': [36, 36]}" class="oe_avatar" string="Preview" width="55" readonly="1"/>
                                 <field name="parent_id"
                                        string="Parent Document"
@@ -635,7 +630,7 @@
                                        width="150"
                                        readonly="1"/>
                                 <field name="parent_lock_state"
-                                       string="Lock State"
+                                       string="Lock Status"
                                        widget="badge"
                                        decoration-danger="parent_lock_state == 'locked'"
                                        decoration-success="parent_lock_state == 'unlocked'"
@@ -646,7 +641,7 @@
                                        widget="many2one_avatar_user"
                                        width="150"
                                        readonly="1"/>
-                                <field name="parent_printout_name" string="Bản in PDF" optional="hide" readonly="1"/>
+                                <field name="parent_printout_name" string="PDF Printout" optional="hide" readonly="1"/>
                             </list>
                         </field>
                     </div>
@@ -663,7 +658,7 @@
         <field name="priority" eval="10"/>
         <field name="arch" type="xml">
             <xpath expr="//search" position="attributes">
-                <attribute name="string">Documents</attribute>
+                <attribute name="string">CAD Documents</attribute>
             </xpath>
             <xpath expr="//filter[@name='confirmed']" position="attributes">
                 <attribute name="string">Confirmed</attribute>
@@ -672,39 +667,39 @@
                 <attribute name="string">Released</attribute>
             </xpath>
             <xpath expr="//filter[@name='latest']" position="attributes">
-                <attribute name="string">Latest</attribute>
+                <attribute name="string">Latest Revision</attribute>
             </xpath>
             <xpath expr="//filter[@name='create_by_me']" position="attributes">
-                <attribute name="string">Create By Me</attribute>
+                <attribute name="string">Created by Me</attribute>
             </xpath>
             <xpath expr="//filter[@name='changed_by_me']" position="attributes">
-                <attribute name="string">Changed By Me</attribute>
+                <attribute name="string">Modified by Me</attribute>
             </xpath>
             <xpath expr="//filter[@name='created_in']" position="attributes">
-                <attribute name="string">Created in</attribute>
+                <attribute name="string">Created In</attribute>
             </xpath>
             <xpath expr="//filter[@name='canged_in']" position="attributes">
-                <attribute name="string">Changed in</attribute>
+                <attribute name="string">Modified In</attribute>
             </xpath>
             <xpath expr="//filter[@name='create_by']" position="attributes">
-                <attribute name="string">Created by</attribute>
+                <attribute name="string">Created By</attribute>
             </xpath>
             <xpath expr="//filter[@name='changed_by']" position="attributes">
-                <attribute name="string">Changed by</attribute>
+                <attribute name="string">Modified By</attribute>
             </xpath>
             <xpath expr="//filter[@name='status']" position="attributes">
-                <attribute name="string">Status</attribute>
+                <attribute name="string">Engineering State</attribute>
             </xpath>
             <xpath expr="//filter[@name='type']" position="attributes">
-                <attribute name="string">Type Document</attribute>
+                <attribute name="string">Document Type</attribute>
             </xpath>
 
             <!-- Bộ lọc trạng thái khóa và người giữ Key -->
             <xpath expr="//filter[@name='latest']" position="after">
                 <separator orientation="vertical"/>
-                <filter name="filter_my_locked" string="I Hold Key" domain="[('key_holder_id', '=', uid)]"/>
-                <filter name="filter_locked" string="Locked (Key Held)" domain="[('key_holder_id', '!=', False)]"/>
-                <filter name="filter_unlocked" string="Unlocked (Free)" domain="[('key_holder_id', '=', False)]"/>
+                <filter name="filter_my_locked" string="Holding Key" domain="[('key_holder_id', '=', uid)]"/>
+                <filter name="filter_locked" string="Locked (Key held)" domain="[('key_holder_id', '!=', False)]"/>
+                <filter name="filter_unlocked" string="Unlocked" domain="[('key_holder_id', '=', False)]"/>
             </xpath>
         </field>
     </record>
@@ -733,15 +728,15 @@
         <field name="name">plm.document.history.list</field>
         <field name="model">plm.document.history</field>
         <field name="arch" type="xml">
-            <list string="Document File History" default_order="version_number desc" create="0" delete="1">
+            <list string="CAD Document File History" default_order="version_number desc" create="0" delete="1">
                 <field name="version_number" column_invisible="1"/>
-                <field name="document_id" string="Document"/>
-                <field name="version" string="Version" width="90"/>
+                <field name="document_id" string="CAD Document"/>
+                <field name="version" string="Revision" width="90"/>
                 <field name="file_name" string="File Name"/>
                 <field name="file_size_display" string="Size" width="110"/>
                 <field name="user_id" string="User" widget="many2one_avatar_user" width="160"/>
-                <field name="create_date" string="Date" width="160"/>
-                <field name="description" string="Note"/>
+                <field name="create_date" string="Saved At" width="160"/>
+                <field name="description" string="Notes"/>
                 <button name="action_restore_version"
                         type="object"
                         string="Restore"
@@ -753,7 +748,7 @@
                         type="object"
                         string="Download"
                         class="btn btn-sm btn-secondary"
-                        title="Download this version"/>
+                        title="Download snapshot of this version"/>
             </list>
         </field>
     </record>
@@ -763,11 +758,11 @@
         <field name="name">plm.document.history.form</field>
         <field name="model">plm.document.history</field>
         <field name="arch" type="xml">
-            <form string="Document History Detail" create="0" delete="1">
+            <form string="CAD Document History Details" create="0" delete="1">
                 <header>
                     <button name="action_restore_version"
                             type="object"
-                            string="Restore to this Version"
+                            string="Restore to this version"
                             class="btn-warning"
                             confirm="Are you sure you want to RESTORE this document to this version?"/>
                     <button name="action_download_file"
@@ -783,14 +778,14 @@
                             <field name="file_name" readonly="1"/>
                             <field name="file_size_display" readonly="1"/>
                         </group>
-                        <group string="Log">
+                        <group string="Audit Log">
                             <field name="user_id" readonly="1"/>
                             <field name="create_date" readonly="1"/>
                             <field name="datas" filename="file_name" widget="binary" readonly="1"/>
                         </group>
                     </group>
-                    <group string="Modification Note">
-                        <field name="description" placeholder="Note on changes or update reasons..."/>
+                    <group string="Change Notes">
+                        <field name="description" placeholder="Enter change notes or reason for update..."/>
                     </group>
                 </sheet>
             </form>
@@ -799,7 +794,7 @@
 
     <!-- Cập nhật Action Documents -->
     <record id="plm.plm_action_document_form" model="ir.actions.act_window">
-        <field name="name">Documents</field>
+        <field name="name">CAD Documents</field>
         <field name="context">{"odooPLM": True}</field>
     </record>
 
@@ -812,16 +807,16 @@
         <field name="model">ir.attachment</field>
         <field name="priority">999</field>
         <field name="arch" type="xml">
-            <form string="Xem trước Bản vẽ kỹ thuật" class="o_plm_preview_box">
+            <form string="Technical Drawing Preview" class="o_plm_preview_box">
                 <field name="has_printout" invisible="1"/>
                 <field name="preview_pdf_html" widget="html" nolabel="1" readonly="1" class="d-block w-100 m-0 p-0"/>
                 <footer>
                     <button name="action_download_printout"
                             type="object"
-                            string="Tải file PDF"
+                            string="Download PDF"
                             class="btn btn-outline-primary"
                             invisible="not has_printout"/>
-                    <button string="Đóng" class="btn btn-secondary" special="cancel"/>
+                    <button string="Close" class="btn btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

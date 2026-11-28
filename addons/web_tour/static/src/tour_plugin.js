@@ -210,27 +210,32 @@ export class TourPlugin extends Plugin {
             );
             new TourAutomatic(tour).start();
         } else {
-            await loadBundle("web_tour.interactive");
-            const module = odoo.loader.modules.get(
-                "@web_tour/tour_interactive/tour_interactive"
-            );
-            if (!module || !module.TourInteractive) {
+            try {
+                await loadBundle("web_tour.interactive");
+                const module = odoo.loader.modules.get(
+                    "@web_tour/tour_interactive/tour_interactive"
+                );
+                if (!module || !module.TourInteractive) {
+                    tourState.clear();
+                    return;
+                }
+                const { TourInteractive } = module;
+                new TourInteractive(tour, {
+                    orm: this.orm,
+                    effect: this.effect,
+                    overlay: this.overlay,
+                    onChainNextTour: (nextTour) =>
+                        this.startTour(nextTour.name, {
+                            mode: "manual",
+                            fromDB: true,
+                            redirect: false,
+                            rainbowManMessage: nextTour.rainbowManMessage,
+                        }),
+                }).start(this.env);
+            } catch (err) {
+                console.warn("Could not resume tour:", err);
                 tourState.clear();
-                return;
             }
-            const { TourInteractive } = module;
-            new TourInteractive(tour, {
-                orm: this.orm,
-                effect: this.effect,
-                overlay: this.overlay,
-                onChainNextTour: (nextTour) =>
-                    this.startTour(nextTour.name, {
-                        mode: "manual",
-                        fromDB: true,
-                        redirect: false,
-                        rainbowManMessage: nextTour.rainbowManMessage,
-                    }),
-            }).start(this.env);
         }
     }
 

@@ -20,8 +20,8 @@ class ProductProduct(models.Model):
     """
     _inherit = "product.product"
 
-    engineering_revision = fields.Integer(string="Revision")
-    engineering_material = fields.Char(string="CAD Raw Material")
+    engineering_revision = fields.Integer(string="Engineering Revision")
+    engineering_material = fields.Char(string="CAD Material")
     engineering_surface = fields.Char(string="CAD Surface Finishing")
 
     def _check_cad_access_token(self):

@@ -12,11 +12,6 @@ def log(msg):
 
 log("Starting Odoo wrapper...")
 
-# Ensure Odoo paths
-server_root = r'C:\Program Files\Odoo 20.0.20260927\server'
-if os.path.exists(server_root) and server_root not in sys.path:
-    sys.path.insert(0, server_root)
-
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 if cur_dir not in sys.path:
     sys.path.insert(0, cur_dir)

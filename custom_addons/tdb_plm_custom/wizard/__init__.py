@@ -3,4 +3,5 @@
 
 from . import plm_transfer_key_wizard
 from . import plm_drawing_link_wizard
+from . import plm_bom_diff_wizard
 

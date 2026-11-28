@@ -26,7 +26,7 @@ class PlmDesktopToken(models.Model):
     _rec_name = 'machine_name'
 
     name = fields.Char(
-        string='Mã Token Hash',
+        string='Token Hash',
         required=True,
         index=True,
         readonly=True,
@@ -36,11 +36,11 @@ class PlmDesktopToken(models.Model):
         string='Session SID',
         index=True,
         readonly=True,
-        help="Session ID của Odoo HTTP Cookie",
+        help="Odoo HTTP Cookie Session ID",
     )
     user_id = fields.Many2one(
         'res.users',
-        string='Kỹ sư CAD',
+        string='CAD Engineer',
         required=True,
         ondelete='cascade',
         index=True,
@@ -51,55 +51,55 @@ class PlmDesktopToken(models.Model):
         index=True,
     )
     machine_name = fields.Char(
-        string='Tên máy trạm CAD',
+        string='Workstation Name',
         required=True,
     )
     client_ip = fields.Char(
-        string='IP LAN / Máy trạm',
+        string='IP Address',
         index=True,
     )
     cad_version = fields.Char(
-        string='Phiên bản CAD',
+        string='CAD Version',
         default='SolidWorks 2022',
     )
     issued_at = fields.Datetime(
-        string='Ngày cấp',
+        string='Issued At',
         default=fields.Datetime.now,
         readonly=True,
     )
     expires_at = fields.Datetime(
-        string='Hạn chót (180 ngày)',
+        string='Expires At (180 days)',
         required=True,
         index=True,
     )
     last_used_date = fields.Datetime(
-        string='Lần truy cập cuối',
+        string='Last Used',
         default=fields.Datetime.now,
     )
     is_revoked = fields.Boolean(
-        string='Bị thu hồi thủ công',
+        string='Manually Revoked',
         default=False,
         index=True,
     )
     is_active = fields.Boolean(
-        string='Còn hiệu lực',
+        string='Is Active',
         compute='_compute_is_active',
         store=True,
         index=True,
     )
     state = fields.Selection(
         [
-            ('active', 'Đang hoạt động'),
-            ('revoked', 'Đã thu hồi'),
-            ('expired', 'Hết hạn'),
-            ],
-        string='Trạng thái',
+            ('active', 'Active'),
+            ('revoked', 'Revoked'),
+            ('expired', 'Expired'),
+        ],
+        string='Status',
         compute='_compute_state',
         store=True,
         index=True,
     )
     is_current_user_admin = fields.Boolean(
-        string="Là Admin",
+        string="Is Admin",
         compute="_compute_is_current_user_admin",
     )
 

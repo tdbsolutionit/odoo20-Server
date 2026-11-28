@@ -3,7 +3,7 @@
     <!-- ======================================================================= -->
     <!-- TDB SOLUTION - PHÂN TẦNG LAYER 5: VIEWS VÀ GIAO DIỆN BACKEND PLM       -->
     <!-- Kế thừa giao diện danh sách & Form Engineering Parts                   -->
-    <!-- Chuỗi gốc tiếng Anh chuẩn quốc tế - Hỗ trợ đa ngôn ngữ Anh / Việt     -->
+    <!-- Chuẩn hóa chuỗi gốc tiếng Anh chuẩn quốc tế - Hỗ trợ đa ngôn ngữ       -->
     <!-- ======================================================================= -->
 
     <!-- 1. Danh sách linh kiện kỹ thuật (Tree / List View) -->
@@ -13,10 +13,9 @@
         <field name="inherit_id" ref="plm.plm_component_base_tree"/>
         <field name="priority" eval="10"/>
         <field name="arch" type="xml">
-            <!-- Thêm class nhận diện riêng cho bảng danh sách linh kiện PLM -->
             <xpath expr="//list" position="attributes">
                 <attribute name="class">tdb_plm_list_view</attribute>
-                <attribute name="string">Engineering Parts</attribute>
+                <attribute name="string">Engineering Components</attribute>
             </xpath>
 
             <!-- Cột 1: Hình ảnh -->
@@ -29,13 +28,13 @@
 
             <!-- Cột 2: Tên linh kiện -->
             <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="string">Name</attribute>
+                <attribute name="string">Component Name</attribute>
                 <attribute name="width">180</attribute>
             </xpath>
 
-            <!-- Cột Cấu hình: Ẩn mặc định, hiển thị khi người dùng cần -->
+            <!-- Cột Cấu hình -->
             <xpath expr="//field[@name='configuration_name']" position="attributes">
-                <attribute name="string">Configuration Name</attribute>
+                <attribute name="string">CAD Configuration</attribute>
                 <attribute name="optional">hide</attribute>
                 <attribute name="width">120</attribute>
             </xpath>
@@ -61,7 +60,7 @@
 
             <!-- Cột 6: Engineering Status -->
             <xpath expr="//field[@name='engineering_state']" position="attributes">
-                <attribute name="string">Engineering Status</attribute>
+                <attribute name="string">Engineering State</attribute>
                 <attribute name="class">text-center</attribute>
                 <attribute name="width">115</attribute>
             </xpath>
@@ -85,49 +84,38 @@
 
             <!-- Cột 9: CAD Raw Material -->
             <xpath expr="//field[@name='engineering_material']" position="attributes">
-                <attribute name="string">CAD Raw Material</attribute>
+                <attribute name="string">CAD Material</attribute>
                 <attribute name="optional">show</attribute>
                 <attribute name="width">115</attribute>
             </xpath>
 
             <!-- Cột 10: CAD Surface Finishing -->
             <xpath expr="//field[@name='engineering_surface']" position="attributes">
-                <attribute name="string">CAD Surface Finishing</attribute>
+                <attribute name="string">CAD Surface</attribute>
                 <attribute name="optional">show</attribute>
                 <attribute name="width">115</attribute>
-            </xpath>
-
-            <!-- Cột 11: Linked Documents -->
-            <xpath expr="//field[@name='linkeddocuments']" position="attributes">
-                <attribute name="string">Linked Documents</attribute>
-                <attribute name="invisible">0</attribute>
-                <attribute name="optional">show</attribute>
-                <attribute name="widget">many2many_tags</attribute>
-                <attribute name="width">125</attribute>
-            </xpath>
-
-            <!-- Cột 12: Checked-Out By -->
-            <xpath expr="//field[@name='document_checkout_user_ids']" position="attributes">
-                <attribute name="string">Checked-Out By</attribute>
-                <attribute name="optional">show</attribute>
-                <attribute name="widget">many2many_tags</attribute>
-                <attribute name="width">135</attribute>
             </xpath>
         </field>
     </record>
 
-    <!-- 2. Giao diện tìm kiếm PLM Component Search (Filters & Group By) -->
+    <!-- 2. Bộ lọc tìm kiếm Linh kiện PLM (Search View) -->
     <record id="plm_component_base_search_inherit_tdb" model="ir.ui.view">
         <field name="name">product.product.search.plm.tdb.custom</field>
         <field name="model">product.product</field>
         <field name="inherit_id" ref="plm.plm_component_base_search"/>
         <field name="priority" eval="10"/>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='latest']" position="attributes">
-                <attribute name="string">Latest</attribute>
+            <xpath expr="//filter[@name='last_year']" position="attributes">
+                <attribute name="string">Last Year</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='last_month']" position="attributes">
+                <attribute name="string">Last Month</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='last_week']" position="attributes">
+                <attribute name="string">Last Week</attribute>
             </xpath>
             <xpath expr="//filter[@name='checked_out']" position="attributes">
-                <attribute name="string">Checked Out</attribute>
+                <attribute name="string">Checked-Out</attribute>
             </xpath>
             <xpath expr="//filter[@name='string']" position="attributes">
                 <attribute name="string">Confirmed</attribute>
@@ -137,6 +125,18 @@
             </xpath>
             <xpath expr="//filter[@name='obsolated']" position="attributes">
                 <attribute name="string">Obsoleted</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='latest']" position="attributes">
+                <attribute name="string">Latest</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='create_by_me']" position="attributes">
+                <attribute name="string">Created by Me</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='changed_by_me']" position="attributes">
+                <attribute name="string">Modified by Me</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='status']" position="attributes">
+                <attribute name="string">Engineering State</attribute>
             </xpath>
         </field>
     </record>
@@ -152,7 +152,7 @@
                 <attribute name="string">Release Component</attribute>
             </xpath>
             <xpath expr="//button[@name='action_draft']" position="attributes">
-                <attribute name="string">Correct Component</attribute>
+                <attribute name="string">Draft Component</attribute>
             </xpath>
             <xpath expr="//button[@name='action_confirm']" position="attributes">
                 <attribute name="string">Confirm Component</attribute>
@@ -161,7 +161,7 @@
                 <field name="engineering_state" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="string">Description</attribute>
+                <attribute name="string">Component Description</attribute>
                 <attribute name="readonly">engineering_state != 'draft'</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_code']" position="attributes">
@@ -174,13 +174,13 @@
                 <attribute name="string">Standard Description</attribute>
             </xpath>
             <xpath expr="//group[@name='std_desc_attrs']" position="attributes">
-                <attribute name="string">Standard Description Parameters</attribute>
+                <attribute name="string">Standard Description Attributes</attribute>
             </xpath>
             <xpath expr="//page[@name='technical_infos']" position="attributes">
                 <attribute name="string">Technical Information</attribute>
             </xpath>
             <xpath expr="//field[@name='categ_id']" position="attributes">
-                <attribute name="string">Category</attribute>
+                <attribute name="string">Product Category</attribute>
                 <attribute name="readonly">engineering_state != 'draft'</attribute>
             </xpath>
             <xpath expr="//group[@name='technical_infos_group']" position="attributes">
@@ -196,13 +196,13 @@
                 <attribute name="string">Release Date</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_revision_user']" position="attributes">
-                <attribute name="string">Revision By</attribute>
+                <attribute name="string">Revised By</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_revision_date']" position="attributes">
                 <attribute name="string">Revision Date</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_workflow_user']" position="attributes">
-                <attribute name="string">Workflow User</attribute>
+                <attribute name="string">Workflow By</attribute>
             </xpath>
             <xpath expr="//field[@name='engineering_workflow_date']" position="attributes">
                 <attribute name="string">Workflow Date</attribute>
@@ -217,17 +217,20 @@
         <field name="inherit_id" ref="plm.plm_product_product_normal_form_view_inherit"/>
         <field name="priority" eval="10"/>
         <field name="arch" type="xml">
+            <!-- Header buttons -->
             <xpath expr="//button[@name='action_release']" position="attributes">
                 <attribute name="string">Release Component</attribute>
             </xpath>
             <xpath expr="//button[@name='action_draft']" position="attributes">
-                <attribute name="string">Correct Component</attribute>
+                <attribute name="string">Draft Component</attribute>
             </xpath>
             <xpath expr="//button[@name='action_confirm']" position="attributes">
                 <attribute name="string">Confirm Component</attribute>
             </xpath>
+
+            <!-- Stat buttons -->
             <xpath expr="//button[@name='open_related_revisions']" position="attributes">
-                <attribute name="string">Revision</attribute>
+                <attribute name="string">Revisions</attribute>
             </xpath>
             <xpath expr="//button[@name='open_template']" position="attributes">
                 <attribute name="string">Template</attribute>
@@ -235,18 +238,71 @@
             <xpath expr="//button[@name='action_print_bom_report']" position="attributes">
                 <attribute name="string">Print BoM</attribute>
             </xpath>
+            <xpath expr="//button[@name='action_open_documents']/field[@name='product_document_count']" position="attributes">
+                <attribute name="string">CAD Documents</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_view_bom']/field[@name='bom_count']" position="attributes">
+                <attribute name="string">Bill of Materials</attribute>
+            </xpath>
+
+            <!-- Checkboxes & Placeholder -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="placeholder">e.g. Spur Gear, Drive Shaft, Hex Bolt M8...</attribute>
+            </xpath>
+            <xpath expr="//label[@for='sale_ok']" position="attributes">
+                <attribute name="string">Can be Sold</attribute>
+            </xpath>
+            <xpath expr="//label[@for='purchase_ok']" position="attributes">
+                <attribute name="string">Purchase</attribute>
+            </xpath>
+            <xpath expr="//label[@for='kit_bom']" position="attributes">
+                <attribute name="string">KIT BoM Type</attribute>
+            </xpath>
+
+            <!-- Nhãn section OdooPLM Information -->
             <xpath expr="//field[@name='engineering_code']/ancestor::group[1]" position="attributes">
-                <attribute name="string">OdooPLM Information</attribute>
+                <attribute name="string">ODOOPLM INFORMATION</attribute>
+            </xpath>
+
+            <!-- Nhãn mô tả tiêu chuẩn -->
+            <xpath expr="//field[@name='std_description']" position="attributes">
+                <attribute name="string">Standard Description</attribute>
+            </xpath>
+            <xpath expr="//group[@name='std_desc_attrs']/group[1]" position="attributes">
+                <attribute name="string">Standard Description Attributes</attribute>
+            </xpath>
+
+            <!-- Tab Thông tin kỹ thuật & Tài liệu liên kết -->
+            <xpath expr="//page[@name='general_information']" position="attributes">
+                <attribute name="string">General Information</attribute>
+            </xpath>
+            <xpath expr="//page[@name='inventory']" position="attributes">
+                <attribute name="string">Inventory</attribute>
+            </xpath>
+            <xpath expr="//page[@name='technical_infos']" position="attributes">
+                <attribute name="string">Technical Information</attribute>
+            </xpath>
+            <xpath expr="//page[@name='technical_infos']//group[@name='technical_infos_group']" position="attributes">
+                <attribute name="string">Material / Surface / Treatment</attribute>
+            </xpath>
+            <xpath expr="//page[@name='technical_infos']//group[@name='workflow_section']" position="attributes">
+                <attribute name="string">Workflow</attribute>
+            </xpath>
+            <xpath expr="//page[@name='linkeddocuments']" position="attributes">
+                <attribute name="string">Linked Documents</attribute>
+            </xpath>
+            <xpath expr="//page[@name='linkeddocuments']//button[@name='action_rev_docs']" position="attributes">
+                <attribute name="string">Linked Documents by Revision</attribute>
             </xpath>
         </field>
     </record>
 
     <!-- 5. Tiêu đề Action cửa sổ phân hệ PLM -->
     <record id="plm.action_plm_component_base" model="ir.actions.act_window">
-        <field name="name">Engineering Parts</field>
+        <field name="name">Engineering Components</field>
     </record>
 
     <record id="plm.action_plm_component_base_cad_form" model="ir.actions.act_window">
-        <field name="name">Engineering Parts</field>
+        <field name="name">Engineering Components</field>
     </record>
 </odoo>

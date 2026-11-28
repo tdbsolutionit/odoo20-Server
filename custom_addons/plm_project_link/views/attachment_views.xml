@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_attachment_form_plm_project" model="ir.ui.view">
+        <field name="name">ir.attachment.form.plm.project</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="plm.view_attachment_form_plm_hinerit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='main_doc_info']" position="inside">
+                <field name="plm_project_id" string="Dự án" readonly="1"/>
+                <field name="plm_folder" string="Thư mục" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

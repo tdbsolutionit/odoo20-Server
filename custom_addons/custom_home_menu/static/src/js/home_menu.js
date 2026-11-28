@@ -284,20 +284,5 @@ patch(NavBar.prototype, {
         lang = (lang || "").toLowerCase();
         return lang.startsWith("en") ? "EN" : "VI";
     },
-
-    async switchLanguage(targetLangCode) {
-        const lang = targetLangCode === "VI" ? "vi_VN" : "en_US";
-        try {
-            document.cookie = "frontend_lang=" + lang + ";path=/;max-age=" + (365 * 24 * 3600);
-            if (typeof rpc === "function") {
-                await rpc("/web/session/switch_language", { lang: lang });
-            } else if (this.rpc) {
-                await this.rpc("/web/session/switch_language", { lang: lang });
-            }
-        } catch (e) {
-            console.warn("Lưu ý switch_language:", e);
-        }
-        window.location.href = "/web/session/switch_language_http?lang=" + lang + "&redirect=" + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
-    },
 });
 

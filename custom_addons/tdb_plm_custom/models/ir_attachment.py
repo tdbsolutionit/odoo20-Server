@@ -37,32 +37,32 @@ class IrAttachment(models.Model):
         readonly=True,
         index=True,
         tracking=True,
-        help="Engineer who holds exclusive Check-in permission for this CAD document."
+        help="Engineer currently holding exclusive Check-in rights."
     )
     is_key_holder = fields.Boolean(
-        string="I Hold Key",
+        string="Holding Key",
         compute="_compute_is_key_holder",
         store=False
     )
     is_checked_out_by_me = fields.Boolean(
-        string="Checked Out By Me",
+        string="Checked-out by Me",
         compute="_compute_is_checked_out_by_me",
         store=False,
-        help="Marks whether this document has been checked out by current user."
+        help="Indicates this document is checked out by current user."
     )
     lock_state = fields.Selection(
         [
             ('unlocked', 'Unlocked'),
-            ('locked', 'Locked'),
+            ('locked', 'Locked (Key held)'),
         ],
-        string="Status",
+        string="Lock State",
         compute="_compute_lock_state",
         store=False,
-        help="Check-out lock status of document."
+        help="Check-out/Lock status of the CAD document."
     )
     locked_user_id = fields.Many2one(
         "res.users",
-        string="Checked Out By",
+        string="Checked-out User",
         compute="_compute_lock_state",
         store=False
     )
@@ -80,9 +80,9 @@ class IrAttachment(models.Model):
     # =========================================================================
     # FIELD-LEVEL TRACKING CHO QUẢN LÝ VÒNG ĐỜI & BẢN VẼ PLM (HT-5)
     # =========================================================================
-    engineering_state = fields.Selection(tracking=True)
-    engineering_revision = fields.Integer(tracking=True)
-    document_type = fields.Selection(tracking=True)
+    engineering_state = fields.Selection(string="Engineering State", tracking=True)
+    engineering_revision = fields.Integer(string="Engineering Revision", tracking=True)
+    document_type = fields.Selection(string="CAD Document Type", tracking=True)
 
     # Trường datas tương thích ngược cho Odoo 18 / phân hệ DMS / CAD Client
     datas = fields.Binary(
@@ -380,6 +380,7 @@ class IrAttachment(models.Model):
     parent_relation_ids = fields.One2many(
         "ir.attachment.relation",
         "child_id",
+        domain=[("link_kind", "!=", "LyTree")],
         string="Where Used",
         help="List of parent assemblies referencing this document."
     )
@@ -597,16 +598,16 @@ class IrAttachment(models.Model):
     # TASK HT-1: LIÊN KẾT BẢN VẼ 2D VỚI MÔ HÌNH 3D (2D - 3D LYTREE RELATION)
     # =========================================================================
     has_printout = fields.Boolean(
-        string="Đã có bản in PDF",
+        string="Has PDF Printout",
         compute="_compute_has_printout",
         store=False,
-        help="Đánh dấu True nếu tài liệu đã có tệp PDF in kỹ thuật (printout)."
+        help="Checks if the document has a technical PDF printout file."
     )
     preview_pdf_html = fields.Html(
-        string="Bản xem trước PDF",
+        string="PDF Preview",
         compute="_compute_preview_pdf_html",
         sanitize=False,
-        help="Khung hiển thị bản xem trước PDF kỹ thuật trong cửa sổ popup."
+        help="Frame for previewing technical PDF in modal."
     )
     printout_name = fields.Char(
         string="Printout Name",
@@ -614,34 +615,34 @@ class IrAttachment(models.Model):
         inverse="_inverse_printout_name",
     )
     drawing_count = fields.Integer(
-        string="Số bản vẽ 2D",
+        string="2D Drawing Count",
         compute="_compute_drawing_info",
         store=False,
-        help="Số lượng bản vẽ 2D (Layout Tree) liên kết với mô hình 3D này."
+        help="Number of 2D Drawings (Layout Tree) linked to this 3D model."
     )
     has_drawing = fields.Boolean(
-        string="Có bản vẽ 2D",
+        string="Has 2D Drawings",
         compute="_compute_drawing_info",
         store=False,
-        help="Đánh dấu True nếu mô hình 3D này có ít nhất một bản vẽ 2D liên kết."
+        help="Checks if this 3D model has at least one linked 2D drawing."
     )
     source_3d_count = fields.Integer(
-        string="Số mô hình 3D nguồn",
+        string="Source 3D Models Count",
         compute="_compute_source_3d_info",
         store=False,
-        help="Số lượng mô hình 3D nguồn mà bản vẽ 2D này biểu diễn."
+        help="Number of source 3D models this 2D drawing represents."
     )
     linked_drawing_ids = fields.Many2many(
         "ir.attachment",
         compute="_compute_drawing_info",
-        string="Bản vẽ 2D liên kết",
-        help="Danh sách các bản vẽ 2D (Layout Tree) liên kết với mô hình 3D này."
+        string="Linked 2D Drawings",
+        help="List of 2D Drawings (Layout Tree) linked to this 3D model."
     )
     linked_source_3d_ids = fields.Many2many(
         "ir.attachment",
         compute="_compute_source_3d_info",
-        string="Mô hình 3D nguồn",
-        help="Danh sách các mô hình 3D mà bản vẽ 2D này liên kết."
+        string="Source 3D Models",
+        help="List of source 3D models this 2D drawing is linked to."
     )
 
     @api.depends("printout", "raw", "datas", "name")

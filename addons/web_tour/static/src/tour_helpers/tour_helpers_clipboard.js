@@ -1,7 +1,10 @@
 import { patch } from "@web/core/utils/patch";
 import { TourHelpers } from "./tour_helpers";
 
-const originalClipboardWriteText = window.navigator.clipboard?.writeText;
+const originalClipboardWriteText =
+    typeof window !== "undefined" && window.navigator && window.navigator.clipboard
+        ? window.navigator.clipboard.writeText
+        : undefined;
 
 patch(TourHelpers.prototype, {
     /**

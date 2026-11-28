@@ -40,13 +40,13 @@ class PlmDocumentRelations(models.Model):
     )
     child_printout_name = fields.Char(
         related="child_id.printout_name",
-        string="Bản in PDF con",
+        string="Child PDF Printout",
         store=False,
         readonly=True
     )
     child_has_printout = fields.Boolean(
         related="child_id.has_printout",
-        string="Đã có PDF con",
+        string="Has Child PDF Printout",
         store=False,
         readonly=True
     )
@@ -74,13 +74,13 @@ class PlmDocumentRelations(models.Model):
     )
     parent_printout_name = fields.Char(
         related="parent_id.printout_name",
-        string="Bản in PDF cha",
+        string="Parent PDF Printout",
         store=False,
         readonly=True
     )
     parent_has_printout = fields.Boolean(
         related="parent_id.has_printout",
-        string="Đã có PDF cha",
+        string="Has Parent PDF Printout",
         store=False,
         readonly=True
     )
@@ -89,7 +89,7 @@ class PlmDocumentRelations(models.Model):
     # 3. CHUẨN HÓA HIỂN THỊ CẤU HÌNH CAD (LOẠI BỎ DẤU GẠCH MẶC ĐỊNH '-')
     # =========================================================================
     cad_configuration = fields.Char(
-        string="Cấu hình CAD",
+        string="CAD Configuration",
         compute="_compute_cad_configuration",
         inverse="_inverse_cad_configuration",
         store=False,
@@ -237,8 +237,7 @@ class PlmDocumentRelations(models.Model):
                         parent.sudo().message_post(
                             body=Markup(
                                 '<p style="margin-bottom: 2px;">'
-                                '  <span class="badge bg-primary" style="font-size: 11px;">📐 Liên kết bản vẽ 2D</span> '
-                                '  Đã liên kết bản vẽ <strong>%(child)s</strong> (ID: %(child_id)s)'
+                                'Đã liên kết bản vẽ 2D: <strong>%(child)s</strong> (ID: %(child_id)s)'
                                 '</p>'
                             ) % {
                                 "child": child_desc,
@@ -250,8 +249,7 @@ class PlmDocumentRelations(models.Model):
                         child.sudo().message_post(
                             body=Markup(
                                 '<p style="margin-bottom: 2px;">'
-                                '  <span class="badge bg-info text-dark" style="font-size: 11px;">📐 Liên kết mô hình 3D</span> '
-                                '  Đã liên kết biểu diễn cho mô hình 3D <strong>%(parent)s</strong> (ID: %(parent_id)s)'
+                                'Đã liên kết mô hình 3D: <strong>%(parent)s</strong> (ID: %(parent_id)s)'
                                 '</p>'
                             ) % {
                                 "parent": parent_desc,
@@ -264,8 +262,7 @@ class PlmDocumentRelations(models.Model):
                         parent.sudo().message_post(
                             body=Markup(
                                 '<p style="margin-bottom: 2px;">'
-                                '  <span class="badge bg-success" style="font-size: 11px;">🧩 Thêm chi tiết con</span> '
-                                '  Đã thêm <strong>%(child)s</strong> vào cây cấu trúc%(cfg)s'
+                                'Đã thêm chi tiết con: <strong>%(child)s</strong> vào cây cấu trúc%(cfg)s'
                                 '</p>'
                             ) % {
                                 "child": child_desc,
@@ -320,8 +317,7 @@ class PlmDocumentRelations(models.Model):
                     parent.sudo().message_post(
                         body=Markup(
                             '<p style="margin-bottom: 2px;">'
-                            '  <span class="badge bg-danger" style="font-size: 11px;">📐 Gỡ liên kết bản vẽ 2D</span> '
-                            '  Đã gỡ bỏ liên kết bản vẽ 2D <strong>%(child)s</strong>'
+                            'Đã gỡ bỏ liên kết bản vẽ 2D: <strong>%(child)s</strong>'
                             '</p>'
                         ) % {"child": item["child_desc"]}
                     )
@@ -329,8 +325,7 @@ class PlmDocumentRelations(models.Model):
                     child.sudo().message_post(
                         body=Markup(
                             '<p style="margin-bottom: 2px;">'
-                            '  <span class="badge bg-danger" style="font-size: 11px;">📐 Gỡ liên kết mô hình 3D</span> '
-                            '  Đã gỡ bỏ liên kết với mô hình 3D <strong>%(parent)s</strong>'
+                            'Đã gỡ bỏ liên kết với mô hình 3D: <strong>%(parent)s</strong>'
                             '</p>'
                         ) % {"parent": item["parent_desc"]}
                     )
@@ -339,8 +334,7 @@ class PlmDocumentRelations(models.Model):
                     parent.sudo().message_post(
                         body=Markup(
                             '<p style="margin-bottom: 2px;">'
-                            '  <span class="badge bg-danger" style="font-size: 11px;">🧩 Bỏ chi tiết con</span> '
-                            '  Đã gỡ bỏ <strong>%(child)s</strong> khỏi cây cấu trúc'
+                            'Đã gỡ bỏ chi tiết con: <strong>%(child)s</strong> khỏi cây cấu trúc'
                             '</p>'
                         ) % {"child": item["child_desc"]}
                     )
